@@ -8,3 +8,5 @@ const app = document.getElementById("app");
 const root = createRoot(app!);
 
 root.render(<App />);
+
+console.log("test");
