@@ -1,4 +1,5 @@
 import Button from "./Button";
+import HeaderMenu from "./HeaderMenu";
 import IconButton from "./IconButton";
 import WithTooltip from "./WithTooltip";
 
@@ -34,11 +35,7 @@ function Header() {
             className="hidden md:flex"
           />
         </WithTooltip>
-        <IconButton
-          icon="hamburger-menu"
-          label="Options menu"
-          className="md:hidden"
-        />
+        <HeaderMenu />
       </div>
     </header>
   );
