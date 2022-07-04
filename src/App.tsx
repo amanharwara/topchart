@@ -1,11 +1,11 @@
-import { TooltipProvider } from "@radix-ui/react-tooltip";
 import Header from "./components/Header";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 function App() {
   return (
-    <TooltipProvider>
+    <Tooltip.Provider>
       <Header />
-    </TooltipProvider>
+    </Tooltip.Provider>
   );
 }
 
