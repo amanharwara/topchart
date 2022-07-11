@@ -9,4 +9,4 @@ A webapp to create custom charts of music, movies, etc.
 1. Clone the repo
 2. `yarn install`
 3. `yarn start`
-4. Open `http://localhost:1234` in your browser
+4. Open `http://localhost:3000` in your browser
