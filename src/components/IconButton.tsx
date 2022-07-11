@@ -1,31 +1,28 @@
-import { ComponentPropsWithoutRef, forwardRef, ReactNode, Ref } from "react";
-import type { IconType } from "../icons";
+import { Component, ComponentProps, JSX, splitProps } from "solid-js";
 import classNames from "../utils/classNames";
-import Icon from "./Icon";
 
 type Props = {
-  icon: IconType;
+  icon: Component<JSX.IntrinsicElements["svg"]>;
   label: string;
   className?: string;
-} & ComponentPropsWithoutRef<"button">;
+} & ComponentProps<"button">;
 
-const IconButton = forwardRef(
-  (
-    { icon, label, className, ...props }: Props,
-    ref: Ref<HTMLButtonElement>
-  ) => (
+const IconButton = (props: Props) => {
+  const [, otherProps] = splitProps(props, ["label", "icon", "className"]);
+  const IconComponent = props.icon;
+
+  return (
     <button
-      aria-label={label}
-      className={classNames(
+      aria-label={props.label}
+      class={classNames(
         "flex items-center gap-2 rounded border border-slate-600 p-1.5 hover:bg-slate-600",
-        className
+        props.className
       )}
-      ref={ref}
-      {...props}
+      {...otherProps}
     >
-      <Icon icon={icon} className="h-4 w-4 text-white" />
+      {<IconComponent class="h-4 w-4 text-white" />}
     </button>
-  )
-);
+  );
+};
 
 export default IconButton;

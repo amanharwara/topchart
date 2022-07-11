@@ -1,7 +1,15 @@
 export default function classNames(
-  ...values: (string | boolean | undefined)[]
+  ...values: (string | boolean | (() => string) | undefined)[]
 ): string {
   return values
-    .map((value) => (typeof value === "string" ? value : null))
+    .map((value) => {
+      if (typeof value === "string") {
+        return value;
+      } else if (typeof value === "function") {
+        return value();
+      } else {
+        return null;
+      }
+    })
     .join(" ");
 }

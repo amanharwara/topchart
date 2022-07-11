@@ -1,12 +1,6 @@
-import { createRoot } from "react-dom/client";
-import App from "./App";
+import { render } from "solid-js/web";
 import "./styles/index.scss";
 import "./fonts/inter.css";
+import App from "./App";
 
-const app = document.getElementById("app");
-
-const root = createRoot(app!);
-
-root.render(<App />);
-
-console.log("test");
+render(() => <App />, document.getElementById("root") as HTMLElement);
