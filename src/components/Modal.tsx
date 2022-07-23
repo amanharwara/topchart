@@ -46,7 +46,7 @@ const Modal: Component<Props> = (props) => {
           class="absolute top-0 left-0 h-full w-full bg-gray-900 opacity-60"
           onClick={props.closeModal}
         />
-        <div class="absolute top-1/2 left-1/2 min-w-96 -translate-y-1/2 -translate-x-1/2 rounded-sm bg-slate-700 text-white">
+        <div class="absolute top-1/2 left-1/2 min-w-96 -translate-y-1/2 -translate-x-1/2 rounded-sm bg-slate-700 text-white shadow">
           <div class="flex w-full items-center border-b border-slate-600">
             <div class="flex-grow px-3 text-sm font-semibold">
               {props.title}
