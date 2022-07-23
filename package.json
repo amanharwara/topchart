@@ -12,8 +12,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "check": "tsc --noEmit",
-    "format": "prettier --write src/components",
-    "lint": "eslint --fix src/components"
+    "format": "prettier --write src/",
+    "lint": "eslint --fix src/"
   },
   "devDependencies": {
     "@types/node": "^18.0.3",
