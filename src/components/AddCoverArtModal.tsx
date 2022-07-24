@@ -26,26 +26,67 @@ const TabButton: Component<{
 );
 
 const CoverArtSearchTab: Component = () => {
+  const [searchQuery, setSearchQuery] = createSignal("");
+  const results = new Array(23).fill(0);
+
   return (
-    <div class="flex flex-col">
+    <div class="flex min-h-0 flex-grow flex-col">
       <div class="flex gap-2.5 px-2.5 py-3.5">
         <input
           class="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-1.5 text-xs placeholder:text-slate-400"
           placeholder="Search for music..."
+          value={searchQuery()}
+          onInput={(event) => {
+            setSearchQuery(event.currentTarget.value);
+          }}
         />
         <IconButton icon={SearchIcon} label="Search" />
       </div>
-      <div class="flex flex-col items-center gap-2.5 px-3 pt-1 pb-5">
-        <div class="rounded-full bg-slate-600 p-4">
-          <MusicIcon class="h-12 w-12 text-white" />
-        </div>
-        <div class="max-w-[20ch] text-center font-semibold">
-          Search for any album, artist or song to add cover art
-        </div>
-        <div class="text-xs text-slate-200">
-          Example:{" "}
-          <span class="font-semibold">"It's Almost Dry by Pusha T"</span>
-        </div>
+      <div class="flex flex-col items-center gap-2.5 overflow-y-auto px-3 pt-1 pb-5">
+        <Switch>
+          <Match when={!searchQuery()}>
+            <div class="rounded-full bg-slate-600 p-4">
+              <MusicIcon class="h-12 w-12 text-white" />
+            </div>
+            <div class="max-w-[20ch] text-center font-semibold">
+              Search for any album, artist or song to add cover art
+            </div>
+            <div class="text-xs text-slate-200">
+              Example:{" "}
+              <span
+                class="cursor-pointer font-semibold"
+                onClick={() => setSearchQuery("It's Almost Dry by Pusha T")}
+              >
+                "It's Almost Dry by Pusha T"
+              </span>
+            </div>
+          </Match>
+          <Match when={searchQuery() !== "Brian Eno"}>
+            <div class="rounded-full bg-slate-600 p-4">
+              <MusicIcon class="h-12 w-12 text-white" />
+            </div>
+            <div class="max-w-[20ch] text-center font-semibold">
+              Couldn’t find any results
+            </div>
+            <div class="max-w-[40ch] text-center text-xs text-slate-200">
+              Check your search for typos, or try a different search. For
+              example,{" "}
+              <span
+                class="cursor-pointer font-semibold"
+                onClick={() => setSearchQuery("Brian Eno")}
+              >
+                "Brian Eno"
+              </span>
+            </div>
+          </Match>
+          <Match when={searchQuery() === "Brian Eno"}>
+            <div class="grid w-full max-w-sm grid-cols-3 gap-2">
+              {results.map(() => (
+                <div class="h-28 rounded bg-slate-600" />
+              ))}
+            </div>
+          </Match>
+        </Switch>
       </div>
     </div>
   );
