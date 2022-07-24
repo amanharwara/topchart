@@ -114,15 +114,33 @@ const CoverArtLinkTab: Component = () => {
 };
 
 const CoverArtUploadTab: Component = () => {
+  let fileInputRef: HTMLInputElement | null;
+
   return (
     <div class="p-4">
-      <div class="flex flex-col items-center gap-1 rounded border-2 border-dashed border-slate-600 py-6">
+      <input
+        type="file"
+        class="hidden"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={() => {
+          for (const file of fileInputRef.files) {
+            console.log(file.name);
+          }
+        }}
+      />
+      <button
+        class="flex w-full cursor-pointer flex-col items-center gap-1 rounded border-2 border-dashed border-slate-600 py-6 transition-colors duration-150 hover:border-slate-500"
+        onClick={() => {
+          fileInputRef.click();
+        }}
+      >
         <div class="mb-1 rounded-full bg-slate-600 p-4">
           <ImageIcon class="h-12 w-12 text-white" />
         </div>
         <div class="font-semibold">Click to browse images</div>
         <div class="text-sm">Or drop your files here</div>
-      </div>
+      </button>
     </div>
   );
 };
