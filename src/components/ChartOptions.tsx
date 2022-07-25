@@ -1,10 +1,30 @@
-import { Component } from "solid-js";
+import { Component, ComponentProps, JSX, splitProps } from "solid-js";
 import IconButton from "./IconButton";
 import ColorPickerIcon from "./icons/ColorPickerIcon";
 import EditIcon from "./icons/EditIcon";
 import HashIcon from "./icons/HashIcon";
 import LinkIcon from "./icons/LinkIcon";
 import TrashIcon from "./icons/TrashIcon";
+
+const InputWithIcon: Component<
+  {
+    icon: Component<JSX.IntrinsicElements["svg"]>;
+  } & ComponentProps<"input">
+> = (props) => {
+  const [, inputProps] = splitProps(props, ["icon"]);
+
+  return (
+    <div class="flex flex-grow rounded border border-slate-600">
+      <div class="flex items-center border-r border-slate-600 px-2.5 py-2">
+        {<props.icon class="h-4 w-4" />}
+      </div>
+      <input
+        class="flex-grow bg-transparent px-2.5 py-2 text-xs placeholder:text-slate-400"
+        {...inputProps}
+      />
+    </div>
+  );
+};
 
 const ChartOptions: Component = () => {
   return (
@@ -55,16 +75,11 @@ const ChartOptions: Component = () => {
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Background:</div>
-        <div class="flex rounded border border-slate-600">
-          <div class="flex items-center border-r border-slate-600 px-2.5 py-2">
-            <LinkIcon class="h-4 w-4" />
-          </div>
-          <input
-            class="flex-grow bg-transparent px-2.5 py-2 text-xs placeholder:text-slate-400"
-            placeholder="Enter image URL..."
-            value="https://somewebsite.com/image.png"
-          />
-        </div>
+        <InputWithIcon
+          icon={LinkIcon}
+          placeholder="Enter image URL..."
+          value="https://somewebsite.com/image.png"
+        />
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Font style:</div>
@@ -74,16 +89,11 @@ const ChartOptions: Component = () => {
           value="Inter"
         />
         <div class="flex flex-grow gap-1.5">
-          <div class="flex flex-grow rounded border border-slate-600">
-            <div class="flex items-center border-r border-slate-600 px-2.5 py-2">
-              <HashIcon class="h-4 w-4" />
-            </div>
-            <input
-              class="flex-grow bg-transparent px-2.5 py-2 text-xs placeholder:text-slate-400"
-              placeholder="Enter color..."
-              value="FFFFFF"
-            />
-          </div>
+          <InputWithIcon
+            icon={HashIcon}
+            placeholder="Enter color..."
+            value="FFFFFF"
+          />
           <IconButton
             className="flex-shrink-0"
             icon={ColorPickerIcon}
