@@ -17,7 +17,7 @@ const TabButton: Component<{
   <button
     class={classNames(
       "flex-grow border-slate-600 py-2.5 text-sm uppercase first:border-r last:border-l hover:bg-slate-500",
-      props.selected && "bg-slate-600"
+      props.selected && "bg-slate-600 font-semibold"
     )}
     onClick={props.onClick}
   >
