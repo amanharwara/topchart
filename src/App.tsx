@@ -19,7 +19,7 @@ function App() {
             Cover art modal
           </Button>
         </div>
-        <div class="border-x border-slate-600"></div>
+        <div class=""></div>
         <div class="flex min-h-0 flex-col bg-gray-800">
           <AddCoverArt />
         </div>
