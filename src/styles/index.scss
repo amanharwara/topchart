@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body,
+#root {
+  @apply h-auto md:h-full;
+}
+
 body {
   @apply bg-slate-700;
 }
