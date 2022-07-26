@@ -37,6 +37,7 @@ const InputWithIcon: Component<
 
 const ChartOptions: Component = () => {
   const [showBgColorInput, setShowBgColorInput] = createSignal(false);
+  const [showAlbumTitles, setShowAlbumTitles] = createSignal(true);
 
   return (
     <div class="flex flex-col gap-6 bg-gray-800 py-4 px-5 text-white">
@@ -94,18 +95,31 @@ const ChartOptions: Component = () => {
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Album Titles:</div>
-        <div class="flex items-center gap-3">
-          <Toggle defaultValue={true} />
+        <label class="flex items-center gap-3">
+          <Toggle
+            value={showAlbumTitles()}
+            onChange={(checked) => setShowAlbumTitles(checked)}
+          />
           Show album titles
-        </div>
-        <div class="flex items-center gap-3">
-          <Toggle />
+        </label>
+        <label
+          class={classNames(
+            "flex items-center gap-3",
+            !showAlbumTitles() && "cursor-not-allowed text-gray-500"
+          )}
+        >
+          <Toggle disabled={!showAlbumTitles()} />
           Position album titles below cover
-        </div>
-        <div class="flex items-center gap-3">
-          <Toggle />
+        </label>
+        <label
+          class={classNames(
+            "flex items-center gap-3",
+            !showAlbumTitles() && "cursor-not-allowed text-gray-500"
+          )}
+        >
+          <Toggle disabled={!showAlbumTitles()} />
           Allow editing titles
-        </div>
+        </label>
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Background:</div>
