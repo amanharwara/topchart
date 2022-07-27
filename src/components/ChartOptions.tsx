@@ -1,6 +1,7 @@
 import {
   Component,
   ComponentProps,
+  createEffect,
   createSignal,
   JSX,
   Show,
@@ -13,6 +14,7 @@ import EditIcon from "./icons/EditIcon";
 import HashIcon from "./icons/HashIcon";
 import LinkIcon from "./icons/LinkIcon";
 import TrashIcon from "./icons/TrashIcon";
+import Select from "./Select";
 import Toggle from "./Toggle";
 
 const InputWithIcon: Component<
@@ -39,15 +41,22 @@ const ChartOptions: Component = () => {
   const [showBgColorInput, setShowBgColorInput] = createSignal(false);
   const [showAlbumTitles, setShowAlbumTitles] = createSignal(true);
 
+  const [selectValue, setSelectValue] = createSignal("test2");
+
   return (
     <div class="flex flex-col gap-6 bg-gray-800 py-4 px-5 text-white">
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Current chart:</div>
         <div class="flex gap-2">
-          <input
-            class="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            placeholder="Select chart"
-            value="Untitled chart"
+          <Select
+            value={selectValue()}
+            onChange={(value) => setSelectValue(value)}
+            options={[
+              { value: "test", label: "test" },
+              { value: "test1", label: "test1" },
+              { value: "test2", label: "test2" },
+              { value: "test3", label: "test3" },
+            ]}
           />
           <IconButton
             className="px-2.5"
@@ -64,10 +73,8 @@ const ChartOptions: Component = () => {
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Chart type:</div>
         <div class="flex gap-3">
-          <input
-            class="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            placeholder="Select chart type"
-            value="Music Collage"
+          <Select
+            options={[{ value: "music-collage", label: "Music Collage" }]}
           />
         </div>
       </div>

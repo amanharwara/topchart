@@ -59,13 +59,14 @@ const CoverArtSearchTab: Component = () => {
               Search for any album, artist or song to add cover art
             </div>
             <div class="text-xs text-slate-200">
-              Example:{" "}
+              Example: "
               <span
-                class="cursor-pointer font-semibold"
+                class="cursor-pointer border-b border-dotted border-slate-300 font-semibold"
                 onClick={() => setSearchQuery("It's Almost Dry by Pusha T")}
               >
-                "It's Almost Dry by Pusha T"
+                It's Almost Dry by Pusha T
               </span>
+              "
             </div>
           </Match>
           <Match when={searchQuery() !== "Brian Eno"}>
@@ -77,13 +78,14 @@ const CoverArtSearchTab: Component = () => {
             </div>
             <div class="max-w-[40ch] text-center text-xs text-slate-200">
               Check your search for typos, or try a different search. For
-              example,{" "}
+              example, "
               <span
-                class="cursor-pointer font-semibold"
+                class="cursor-pointer border-b border-dotted border-slate-300 font-semibold"
                 onClick={() => setSearchQuery("Brian Eno")}
               >
-                "Brian Eno"
+                Brian Eno
               </span>
+              "
             </div>
           </Match>
           <Match when={searchQuery() === "Brian Eno"}>
