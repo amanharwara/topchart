@@ -17,6 +17,15 @@ module.exports = {
           "sans-serif",
         ],
       },
+      minWidth: {
+        8.5: "2.125rem",
+        10: "2.5rem",
+        96: "24rem",
+      },
+      minHeight: {
+        4: "1rem",
+        5: "1.25rem",
+      },
     },
   },
   plugins: [],

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body,
+#root {
+  @apply h-auto md:h-full;
+}
+
 body {
   @apply bg-slate-700;
+}
+
+*:focus,
+.focus-within-ring:focus-within {
+  @apply shadow-none outline-none ring-2 ring-blue-500 ring-offset-1 ring-offset-slate-900;
 }
