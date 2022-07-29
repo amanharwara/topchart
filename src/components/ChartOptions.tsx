@@ -21,9 +21,8 @@ const CurrentChartOption = () => {
     name: charts[0].name,
   });
 
-  const [isAddingChart, setIsAddingChart] = createSignal(false);
   const [isEditingChart, setIsEditingChart] = createSignal(false);
-  const isSelectingChart = () => !isAddingChart() && !isEditingChart();
+  const isSelectingChart = () => !isEditingChart();
 
   const [currentTitle, setCurrentTitle] = createSignal("");
 
@@ -53,9 +52,14 @@ const CurrentChartOption = () => {
             icon={AddIcon}
             label="Add new chart"
             onClick={() => {
-              setIsAddingChart(true);
-              setCurrentTitle("");
-              chartTitleInput?.focus();
+              const id = nanoid();
+
+              setCharts(charts.length, {
+                id,
+                name: `Untitled ${charts.length + 1}`,
+              });
+
+              setSelectedChart(charts.find((chart) => chart.id === id));
             }}
           />
           <IconButton
@@ -73,7 +77,7 @@ const CurrentChartOption = () => {
             label="Delete chart"
           />
         </Show>
-        <Show when={isAddingChart() || isEditingChart()}>
+        <Show when={isEditingChart()}>
           <input
             class="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
             placeholder="Enter chart title..."
@@ -86,28 +90,16 @@ const CurrentChartOption = () => {
           <IconButton
             className="px-2.5"
             icon={SaveIcon}
-            label={isAddingChart() ? "Add chart" : "Save chart"}
+            label={"Save chart title"}
             onClick={() => {
-              if (isAddingChart()) {
-                const id = nanoid();
-                const title = currentTitle();
-
-                setCharts(charts.length, {
-                  id,
-                  name: title.length ? title : `Untitled ${charts.length + 1}`,
-                });
-                setIsAddingChart(false);
-                setSelectedChart(charts.find((chart) => chart.id === id));
-              } else {
-                setCharts(
-                  (chart) => chart.id === selectedChart().id,
-                  (chart) => ({
-                    ...chart,
-                    name: currentTitle(),
-                  })
-                );
-                setIsEditingChart(false);
-              }
+              setCharts(
+                (chart) => chart.id === selectedChart().id,
+                (chart) => ({
+                  ...chart,
+                  name: currentTitle(),
+                })
+              );
+              setIsEditingChart(false);
             }}
           />
         </Show>
