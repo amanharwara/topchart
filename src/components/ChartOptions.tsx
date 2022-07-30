@@ -1,5 +1,4 @@
-import { nanoid } from "nanoid";
-import { Component, createEffect, createSignal, Show } from "solid-js";
+import { Component, createEffect, createSignal, JSX, Show } from "solid-js";
 import classNames from "../utils/classNames";
 import IconButton from "./IconButton";
 import AddIcon from "./icons/AddIcon";
@@ -12,15 +11,19 @@ import TrashIcon from "./icons/TrashIcon";
 import InputWithIcon from "./InputWithIcon";
 import Select from "./Select";
 import Toggle from "./Toggle";
-import { addChart, charts, editChartTitle } from "../chartStore";
-import type { Chart } from "../chartStore";
+import {
+  addNewChart,
+  changeChartRowsOrColumns,
+  changeChartType,
+  charts,
+  ChartTypes,
+  editChartTitle,
+} from "../chartStore";
+import type { Chart, ChartType, ChartRowColumnRange } from "../chartStore";
+
+const [selectedChart, setSelectedChart] = createSignal<Chart>(charts[0]);
 
 const CurrentChartOption = () => {
-  const [selectedChart, setSelectedChart] = createSignal<Chart>({
-    id: charts[0].id,
-    title: charts[0].title,
-  });
-
   const [isEditingChart, setIsEditingChart] = createSignal(false);
   const isSelectingChart = () => !isEditingChart();
 
@@ -39,8 +42,8 @@ const CurrentChartOption = () => {
         <Show when={isSelectingChart()}>
           <Select
             value={selectedChart().id}
-            onChange={(value) =>
-              setSelectedChart(charts.find((chart) => chart.id === value))
+            onChange={(id) =>
+              setSelectedChart(charts.find((chart) => chart.id === id))
             }
             options={charts.map(({ id, title }) => ({
               value: id,
@@ -52,12 +55,7 @@ const CurrentChartOption = () => {
             icon={AddIcon}
             label="Add new chart"
             onClick={() => {
-              const id = nanoid();
-
-              addChart({
-                id,
-                title: `Untitled ${charts.length + 1}`,
-              });
+              const id = addNewChart();
 
               setSelectedChart(charts.find((chart) => chart.id === id));
             }}
@@ -106,6 +104,26 @@ const ChartOptions: Component = () => {
   const [showBgColorInput, setShowBgColorInput] = createSignal(false);
   const [showAlbumTitles, setShowAlbumTitles] = createSignal(true);
 
+  const onRowsInput: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (
+    event
+  ) => {
+    changeChartRowsOrColumns(
+      selectedChart().id,
+      "rows",
+      parseInt(event.currentTarget.value) as ChartRowColumnRange
+    );
+  };
+
+  const onColumnsInput: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (
+    event
+  ) => {
+    changeChartRowsOrColumns(
+      selectedChart().id,
+      "columns",
+      parseInt(event.currentTarget.value) as ChartRowColumnRange
+    );
+  };
+
   return (
     <div class="flex flex-col gap-6 bg-gray-800 py-4 px-5 text-white">
       <CurrentChartOption />
@@ -113,29 +131,56 @@ const ChartOptions: Component = () => {
         <div class="text-lg font-semibold">Chart type:</div>
         <div class="flex gap-3">
           <Select
-            options={[{ value: "music-collage", label: "Music Collage" }]}
+            value={selectedChart().type}
+            options={Object.entries(ChartTypes).map(([value, label]) => ({
+              value,
+              label,
+            }))}
+            onChange={(type: ChartType) => {
+              changeChartType(selectedChart().id, type);
+            }}
           />
         </div>
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Rows:</div>
         <div class="flex gap-3">
-          <input type="range" class="flex-grow " value={3} min={1} max={10} />
+          <input
+            type="range"
+            class="flex-grow "
+            value={selectedChart().rows}
+            min={1}
+            max={10}
+            onInput={onRowsInput}
+          />
           <input
             type="number"
             class="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={3}
+            value={selectedChart().rows}
+            min={1}
+            max={10}
+            onInput={onRowsInput}
           />
         </div>
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Columns:</div>
         <div class="flex gap-3">
-          <input type="range" class="flex-grow " value={3} min={1} max={10} />
+          <input
+            type="range"
+            class="flex-grow "
+            value={selectedChart().columns}
+            min={1}
+            max={10}
+            onInput={onColumnsInput}
+          />
           <input
             type="number"
             class="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={3}
+            value={selectedChart().columns}
+            min={1}
+            max={10}
+            onInput={onColumnsInput}
           />
         </div>
       </div>
