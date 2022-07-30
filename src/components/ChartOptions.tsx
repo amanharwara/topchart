@@ -12,13 +12,13 @@ import TrashIcon from "./icons/TrashIcon";
 import InputWithIcon from "./InputWithIcon";
 import Select from "./Select";
 import Toggle from "./Toggle";
-import { charts, setCharts } from "../chartStore";
+import { addChart, charts, editChartTitle } from "../chartStore";
 import type { Chart } from "../chartStore";
 
 const CurrentChartOption = () => {
   const [selectedChart, setSelectedChart] = createSignal<Chart>({
     id: charts[0].id,
-    name: charts[0].name,
+    title: charts[0].title,
   });
 
   const [isEditingChart, setIsEditingChart] = createSignal(false);
@@ -27,7 +27,7 @@ const CurrentChartOption = () => {
   const [currentTitle, setCurrentTitle] = createSignal("");
 
   createEffect(() => {
-    setCurrentTitle(selectedChart().name);
+    setCurrentTitle(selectedChart().title);
   });
 
   let chartTitleInput: HTMLInputElement | undefined;
@@ -42,9 +42,9 @@ const CurrentChartOption = () => {
             onChange={(value) =>
               setSelectedChart(charts.find((chart) => chart.id === value))
             }
-            options={charts.map(({ id, name }) => ({
+            options={charts.map(({ id, title }) => ({
               value: id,
-              label: name,
+              label: title,
             }))}
           />
           <IconButton
@@ -54,9 +54,9 @@ const CurrentChartOption = () => {
             onClick={() => {
               const id = nanoid();
 
-              setCharts(charts.length, {
+              addChart({
                 id,
-                name: `Untitled ${charts.length + 1}`,
+                title: `Untitled ${charts.length + 1}`,
               });
 
               setSelectedChart(charts.find((chart) => chart.id === id));
@@ -92,13 +92,7 @@ const CurrentChartOption = () => {
             icon={SaveIcon}
             label={"Save chart title"}
             onClick={() => {
-              setCharts(
-                (chart) => chart.id === selectedChart().id,
-                (chart) => ({
-                  ...chart,
-                  name: currentTitle(),
-                })
-              );
+              editChartTitle(selectedChart().id, currentTitle());
               setIsEditingChart(false);
             }}
           />

@@ -1,10 +1,22 @@
 import { nanoid } from "nanoid";
 import { createLocalStore } from "./utils";
 
-export type Chart = { id: string; name: string };
+export type Chart = { id: string; title: string };
 
 const [charts, setCharts] = createLocalStore<Chart[]>("charts", [
-  { id: nanoid(), name: "Untitled" },
+  { id: nanoid(), title: "Untitled" },
 ]);
 
-export { charts, setCharts };
+const addChart = (chart: Chart) => setCharts(charts.length, chart);
+
+const editChartTitle = (id: string, title: string) => {
+  setCharts(
+    (chart) => chart.id === id,
+    (chart) => ({
+      ...chart,
+      title,
+    })
+  );
+};
+
+export { charts, setCharts, addChart, editChartTitle };
