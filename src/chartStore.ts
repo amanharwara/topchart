@@ -56,6 +56,11 @@ export const changeChartType = (id: string, type: ChartType) => {
   setCharts((chart) => chart.id === id, "type", type);
 };
 
+export const deleteChart = (id: string) => {
+  setCharts((charts) => charts.filter((chart) => chart.id !== id));
+  setSelectedChart(charts[0]);
+};
+
 export const changeChartRowsOrColumns = (
   id: string,
   selector: "rows" | "columns",

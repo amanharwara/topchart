@@ -73,6 +73,15 @@ const CurrentChartOption = () => {
             className="px-2.5"
             icon={TrashIcon}
             label="Delete chart"
+            onClick={() => {
+              const shouldDeleteChart = confirm(
+                `Do you want to delete chart "${selectedChart().title}"?`
+              );
+
+              if (shouldDeleteChart) {
+                deleteChart(selectedChart().id);
+              }
+            }}
           />
         </Show>
         <Show when={isEditingChart()}>
