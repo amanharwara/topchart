@@ -16,12 +16,16 @@ import {
   changeChartRowsOrColumns,
   changeChartType,
   charts,
-  ChartTypes,
+  deleteChart,
   editChartTitle,
+  selectedChart,
+  setSelectedChart,
 } from "../chartStore";
-import type { Chart, ChartType, ChartRowColumnRange } from "../chartStore";
+import type { ChartType } from "../chartStore";
 
-const [selectedChart, setSelectedChart] = createSignal<Chart>(charts[0]);
+const ChartTypeLabels: Record<ChartType, string> = {
+  "music-collage": "Music Collage",
+} as const;
 
 const CurrentChartOption = () => {
   const [isEditingChart, setIsEditingChart] = createSignal(false);
@@ -119,7 +123,7 @@ const ChartOptions: Component = () => {
     changeChartRowsOrColumns(
       selectedChart().id,
       "rows",
-      parseInt(event.currentTarget.value) as ChartRowColumnRange
+      parseInt(event.currentTarget.value)
     );
   };
 
@@ -129,7 +133,7 @@ const ChartOptions: Component = () => {
     changeChartRowsOrColumns(
       selectedChart().id,
       "columns",
-      parseInt(event.currentTarget.value) as ChartRowColumnRange
+      parseInt(event.currentTarget.value)
     );
   };
 
@@ -141,7 +145,7 @@ const ChartOptions: Component = () => {
         <div class="flex gap-3">
           <Select
             value={selectedChart().type}
-            options={Object.entries(ChartTypes).map(([value, label]) => ({
+            options={Object.entries(ChartTypeLabels).map(([value, label]) => ({
               value,
               label,
             }))}
@@ -157,7 +161,7 @@ const ChartOptions: Component = () => {
           <input
             type="range"
             class="flex-grow "
-            value={selectedChart().rows}
+            value={selectedChart().options["music-collage"].rows}
             min={1}
             max={10}
             onInput={onRowsInput}
@@ -165,7 +169,7 @@ const ChartOptions: Component = () => {
           <input
             type="number"
             class="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={selectedChart().rows}
+            value={selectedChart().options["music-collage"].rows}
             min={1}
             max={10}
             onInput={onRowsInput}
@@ -178,7 +182,7 @@ const ChartOptions: Component = () => {
           <input
             type="range"
             class="flex-grow "
-            value={selectedChart().columns}
+            value={selectedChart().options["music-collage"].columns}
             min={1}
             max={10}
             onInput={onColumnsInput}
@@ -186,7 +190,7 @@ const ChartOptions: Component = () => {
           <input
             type="number"
             class="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={selectedChart().columns}
+            value={selectedChart().options["music-collage"].columns}
             min={1}
             max={10}
             onInput={onColumnsInput}

@@ -1,20 +1,19 @@
 import { nanoid } from "nanoid";
+import { createSignal } from "solid-js";
 import { createLocalStore } from "./utils";
 
-export const ChartTypes = {
-  "music-collage": "Music Collage",
-} as const;
-
-export type ChartType = keyof typeof ChartTypes;
-
-export type ChartRowColumnRange = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type ChartType = "music-collage";
 
 export type Chart = {
   id: string;
   title: string;
   type: ChartType;
-  rows: ChartRowColumnRange;
-  columns: ChartRowColumnRange;
+  options: {
+    "music-collage": {
+      rows: number;
+      columns: number;
+    };
+  };
 };
 
 const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
@@ -23,8 +22,8 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
   type: "music-collage",
   options: {
     "music-collage": {
-    rows: 3,
-    columns: 3,
+      rows: 3,
+      columns: 3,
     },
   },
 });
@@ -33,7 +32,9 @@ const [charts, setCharts] = createLocalStore<Chart[]>("charts", [
   getNewChartWithDefaults(),
 ]);
 
-export { charts, setCharts };
+const [selectedChart, setSelectedChart] = createSignal<Chart>(charts[0]);
+
+export { charts, setCharts, selectedChart, setSelectedChart };
 
 /**
  * @return ID of added chart
@@ -67,7 +68,13 @@ export const deleteChart = (id: string) => {
 export const changeChartRowsOrColumns = (
   id: string,
   selector: "rows" | "columns",
-  value: ChartRowColumnRange
+  value: number
 ) => {
-  setCharts((chart) => chart.id === id, selector, value);
+  setCharts(
+    (chart) => chart.id === id,
+    "options",
+    "music-collage",
+    selector,
+    value
+  );
 };
