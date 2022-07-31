@@ -17,14 +17,20 @@ export type Chart = {
   columns: ChartRowColumnRange;
 };
 
-const [charts, setCharts] = createLocalStore<Chart[]>("charts", [
-  {
-    id: nanoid(),
-    title: "Untitled",
-    type: "music-collage",
+const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
+  id: id ?? nanoid(),
+  title: title ?? "Untitled",
+  type: "music-collage",
+  options: {
+    "music-collage": {
     rows: 3,
     columns: 3,
+    },
   },
+});
+
+const [charts, setCharts] = createLocalStore<Chart[]>("charts", [
+  getNewChartWithDefaults(),
 ]);
 
 export { charts, setCharts };
@@ -35,13 +41,10 @@ export { charts, setCharts };
 export const addNewChart = () => {
   const id = nanoid();
 
-  const newChart: Chart = {
+  const newChart: Chart = getNewChartWithDefaults(
     id,
-    title: `Untitled ${charts.length + 1}`,
-    type: "music-collage",
-    rows: 3,
-    columns: 3,
-  };
+    `Untitled ${charts.length + 1}`
+  );
 
   setCharts(charts.length, newChart);
 
