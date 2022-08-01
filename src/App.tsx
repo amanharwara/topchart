@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { Toaster } from "solid-toast";
 import AddCoverArt from "./components/AddCoverArt";
 import AddCoverArtModal from "./components/AddCoverArtModal";
 import Button from "./components/Button";
@@ -29,6 +30,7 @@ function App() {
         isOpen={isCoverArtModalOpen()}
         closeModal={() => toggleCoverArtModal(false)}
       />
+      <Toaster position="bottom-right" />
     </div>
   );
 }

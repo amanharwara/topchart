@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "nanoid": "^4.0.0",
-    "solid-js": "^1.4.7"
+    "solid-js": "^1.4.7",
+    "solid-toast": "^0.3.4"
   }
 }
