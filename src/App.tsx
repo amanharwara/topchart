@@ -1,10 +1,10 @@
 import { createSignal } from "solid-js";
-import { Toaster } from "solid-toast";
 import AddCoverArt from "./components/AddCoverArt";
 import AddCoverArtModal from "./components/AddCoverArtModal";
 import Button from "./components/Button";
 import ChartOptions from "./components/ChartOptions";
 import Header from "./components/Header";
+import { addToast, ToastContainer } from "./components/Toasts";
 
 function App() {
   const [isCoverArtModalOpen, toggleCoverArtModal] = createSignal(false);
@@ -21,6 +21,29 @@ function App() {
           >
             Cover art modal
           </Button>
+          <Button
+            onClick={() => {
+              addToast({
+                type: "error",
+                message: "hi",
+              });
+              addToast({
+                type: "success",
+                message: "hi",
+                manuallyClose: true,
+              });
+              addToast({
+                message: "hi",
+              });
+              addToast({
+                type: "loading",
+                message: "hi",
+              });
+            }}
+            hideLabelOnMobile={false}
+          >
+            Toast
+          </Button>
         </div>
         <div class="flex min-h-0 flex-col bg-gray-800">
           <AddCoverArt />
@@ -30,7 +53,7 @@ function App() {
         isOpen={isCoverArtModalOpen()}
         closeModal={() => toggleCoverArtModal(false)}
       />
-      <Toaster position="bottom-right" />
+      <ToastContainer />
     </div>
   );
 }

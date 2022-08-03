@@ -26,6 +26,9 @@ module.exports = {
         4: "1rem",
         5: "1.25rem",
       },
+      spacing: {
+        5.5: "1.375rem",
+      },
     },
   },
   plugins: [],
