@@ -30,7 +30,12 @@ function App() {
               addToast({
                 type: "success",
                 message: "hi",
-                manuallyClose: true,
+                autoClose: false,
+              });
+              addToast({
+                type: "success",
+                message: "should close in 1",
+                duration: 1000,
               });
               addToast({
                 message: "hi",

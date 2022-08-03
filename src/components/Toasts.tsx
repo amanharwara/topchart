@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { Component, For, Match, Switch } from "solid-js";
+import { Component, For, Match, onCleanup, onMount, Switch } from "solid-js";
 import { createStore } from "solid-js/store";
 import { TransitionGroup } from "solid-transition-group";
 import classNames from "../utils/classNames";
@@ -14,20 +14,20 @@ type ToastAction = {
 type ToastType = "regular" | "success" | "error" | "loading";
 
 type Toast = {
-  message: string;
   actions: ToastAction[];
+  autoClose: boolean;
   duration: number;
   id: string;
-  manuallyClose: boolean;
+  message: string;
   type: ToastType;
 };
 
 type ToastOptions = {
-  message: string;
   actions?: ToastAction[];
+  autoClose?: boolean;
   duration?: number;
   id?: string;
-  manuallyClose?: boolean;
+  message: string;
   type?: ToastType;
 };
 
@@ -50,30 +50,110 @@ export const addToast = (options: ToastOptions) => {
   const type = options.type || "regular";
   const actions =
     options.actions && options.actions.length ? options.actions : [];
-  const duration = ToastDurationMap[type];
-  const manuallyClose =
-    typeof options.manuallyClose !== "undefined"
-      ? options.manuallyClose
-      : false;
+  const duration = options.duration ? options.duration : ToastDurationMap[type];
+  const autoClose =
+    typeof options.autoClose !== "undefined" ? options.autoClose : true;
 
   const toast: Toast = {
     message: options.message,
     actions,
     duration,
     id,
-    manuallyClose,
+    autoClose,
     type,
   };
 
   setToasts(toasts.length, toast);
 
-  if (toast.type !== "loading" && !manuallyClose) {
-    setTimeout(() => {
-      dismissToast(id);
-    }, duration);
-  }
-
   return id;
+};
+
+const Toast: Component<Toast> = (props) => {
+  let toastElement: HTMLDivElement | null;
+  let toastTimerId: number;
+
+  let startTime = props.duration;
+  let remainingTime = props.duration;
+
+  const clearTimer = () => {
+    if (toastTimerId) clearTimeout(toastTimerId);
+  };
+
+  const pauseTimer = () => {
+    clearTimer();
+    remainingTime -= Date.now() - startTime;
+  };
+
+  const resumeTimer = () => {
+    startTime = Date.now();
+    clearTimer();
+    if (props.type !== "loading" && props.autoClose) {
+      toastTimerId = window.setTimeout(() => {
+        dismissToast(props.id);
+      }, remainingTime);
+    }
+  };
+
+  onMount(() => {
+    clearTimer();
+
+    resumeTimer();
+
+    window.addEventListener("focus", resumeTimer);
+    window.addEventListener("blur", pauseTimer);
+  });
+
+  onCleanup(() => {
+    clearTimer();
+    window.removeEventListener("focus", resumeTimer);
+    window.removeEventListener("blur", pauseTimer);
+  });
+
+  return (
+    <div
+      class={classNames(
+        "flex items-center gap-2.5 rounded bg-slate-700 py-2.5 px-3.5 text-sm text-white",
+        "transition-opacity duration-100"
+      )}
+      onClick={() => {
+        if (props.type !== "loading") dismissToast(props.id);
+      }}
+      onMouseEnter={pauseTimer}
+      onMouseLeave={resumeTimer}
+      ref={toastElement}
+    >
+      <Switch>
+        <Match when={props.type === "error"}>
+          <div class="h-5.5 w-5.5 rounded-full bg-white">
+            <ErrorIcon class="h-5.5 w-5.5 text-red-600" />
+          </div>
+        </Match>
+        <Match when={props.type === "success"}>
+          <div class="h-5.5 w-5.5 rounded-full bg-white">
+            <SuccessIcon class="h-5.5 w-5.5 text-green-600" />
+          </div>
+        </Match>
+        <Match when={props.type === "loading"}>
+          <div class="h-5.5 w-5.5 animate-spin rounded-full border-2 border-solid border-blue-400 border-r-transparent" />
+        </Match>
+      </Switch>
+      {props.message}
+      {!!props.actions.length && (
+        <For each={props.actions}>
+          {(action) => (
+            <button
+              class="rounded bg-slate-600 p-1 px-1.5 hover:bg-slate-500"
+              onClick={() => {
+                action.onClick(props);
+              }}
+            >
+              {action.label}
+            </button>
+          )}
+        </For>
+      )}
+    </div>
+  );
 };
 
 export const ToastContainer: Component = () => {
@@ -103,52 +183,7 @@ export const ToastContainer: Component = () => {
           a.finished.then(done);
         }}
       >
-        <For each={toasts}>
-          {(toast) => (
-            <div
-              class={classNames(
-                "flex items-center gap-2.5 rounded bg-slate-700 py-2.5 px-3.5 text-sm text-white",
-                "transition-opacity duration-100"
-              )}
-              onClick={() => {
-                if (toast.manuallyClose) {
-                  dismissToast(toast.id);
-                }
-              }}
-            >
-              <Switch>
-                <Match when={toast.type === "error"}>
-                  <div class="h-5.5 w-5.5 rounded-full bg-white">
-                    <ErrorIcon class="h-5.5 w-5.5 text-red-600" />
-                  </div>
-                </Match>
-                <Match when={toast.type === "success"}>
-                  <div class="h-5.5 w-5.5 rounded-full bg-white">
-                    <SuccessIcon class="h-5.5 w-5.5 text-green-600" />
-                  </div>
-                </Match>
-                <Match when={toast.type === "loading"}>
-                  <div class="h-5.5 w-5.5 animate-spin rounded-full border-2 border-solid border-blue-400 border-r-transparent" />
-                </Match>
-              </Switch>
-              {toast.message}
-              {!!toast.actions.length && (
-                <For each={toast.actions}>
-                  {(action) => (
-                    <button
-                      class="rounded bg-slate-600 p-1 px-1.5 hover:bg-slate-500"
-                      onClick={() => {
-                        action.onClick(toast);
-                      }}
-                    >
-                      {action.label}
-                    </button>
-                  )}
-                </For>
-              )}
-            </div>
-          )}
-        </For>
+        <For each={toasts}>{(toast) => <Toast {...toast} />}</For>
       </TransitionGroup>
     </div>
   );
