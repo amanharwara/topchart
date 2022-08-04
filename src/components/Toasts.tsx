@@ -112,8 +112,9 @@ const Toast: Component<Toast> = (props) => {
   return (
     <div
       class={classNames(
-        "flex items-center gap-2.5 rounded bg-slate-700 py-2.5 px-3.5 text-sm text-white",
-        "transition-opacity duration-100"
+        "flex items-center gap-2.5 rounded bg-slate-700 text-sm text-white",
+        "transition-opacity duration-100",
+        props.actions.length ? "py-2 px-2.5" : "py-2.5 px-3.5"
       )}
       onClick={() => {
         if (props.type !== "loading") dismissToast(props.id);
@@ -124,17 +125,17 @@ const Toast: Component<Toast> = (props) => {
     >
       <Switch>
         <Match when={props.type === "error"}>
-          <div class="h-5.5 w-5.5 rounded-full bg-white">
-            <ErrorIcon class="h-5.5 w-5.5 text-red-600" />
+          <div class="h-5 w-5 rounded-full bg-white">
+            <ErrorIcon class="h-5 w-5 text-red-600" />
           </div>
         </Match>
         <Match when={props.type === "success"}>
-          <div class="h-5.5 w-5.5 rounded-full bg-white">
-            <SuccessIcon class="h-5.5 w-5.5 text-green-600" />
+          <div class="h-5 w-5 rounded-full bg-white">
+            <SuccessIcon class="h-5 w-5 text-green-600" />
           </div>
         </Match>
         <Match when={props.type === "loading"}>
-          <div class="h-5.5 w-5.5 animate-spin rounded-full border-2 border-solid border-blue-400 border-r-transparent" />
+          <div class="h-5 w-5 animate-spin rounded-full border-2 border-solid border-blue-400 border-r-transparent" />
         </Match>
       </Switch>
       {props.message}
