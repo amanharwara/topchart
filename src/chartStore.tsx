@@ -5,6 +5,8 @@ import { createLocalStore } from "./utils";
 
 export type ChartType = "music-collage";
 
+export type MusicCollageSpacing = "none" | "small" | "medium" | "large";
+
 export type Chart = {
   id: string;
   title: string;
@@ -13,6 +15,8 @@ export type Chart = {
     "music-collage": {
       rows: number;
       columns: number;
+      gap: MusicCollageSpacing;
+      padding: MusicCollageSpacing;
     };
   };
 };
@@ -25,6 +29,8 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
     "music-collage": {
       rows: 3,
       columns: 3,
+      gap: "small",
+      padding: "small",
     },
   },
 });
@@ -91,6 +97,32 @@ export const changeChartRowsOrColumns = (
     "options",
     "music-collage",
     selector,
+    value
+  );
+};
+
+export const changeMusicCollageGap = (
+  id: string,
+  value: MusicCollageSpacing
+) => {
+  setCharts(
+    (charts) => charts.id === id,
+    "options",
+    "music-collage",
+    "gap",
+    value
+  );
+};
+
+export const changeMusicCollagePadding = (
+  id: string,
+  value: MusicCollageSpacing
+) => {
+  setCharts(
+    (charts) => charts.id === id,
+    "options",
+    "music-collage",
+    "padding",
     value
   );
 };

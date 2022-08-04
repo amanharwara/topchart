@@ -15,13 +15,17 @@ import {
   addNewChart,
   changeChartRowsOrColumns,
   changeChartType,
+  changeMusicCollageGap,
+  changeMusicCollagePadding,
   charts,
   deleteChart,
   editChartTitle,
+  MusicCollageSpacing,
   selectedChart,
   setSelectedChart,
 } from "../chartStore";
 import type { ChartType } from "../chartStore";
+import { RadioButtonGroup } from "./RadioButtonGroup";
 
 const ChartTypeLabels: Record<ChartType, string> = {
   "music-collage": "Music Collage",
@@ -138,7 +142,7 @@ const ChartOptions: Component = () => {
   };
 
   return (
-    <div class="flex flex-col gap-6 bg-gray-800 py-4 px-5 text-white">
+    <section class="flex flex-col gap-6 overflow-y-auto bg-gray-800 py-4 px-5 text-white">
       <CurrentChartOption />
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Chart type:</div>
@@ -196,6 +200,62 @@ const ChartOptions: Component = () => {
             onInput={onColumnsInput}
           />
         </div>
+      </div>
+      <div class="flex flex-col gap-2.5">
+        <div class="text-lg font-semibold">Gap Between Items:</div>
+        <RadioButtonGroup
+          name="music-collage-gap"
+          items={[
+            {
+              label: "None",
+              value: "none",
+            },
+            {
+              label: "Small",
+              value: "small",
+            },
+            {
+              label: "Medium",
+              value: "medium",
+            },
+            {
+              label: "Large",
+              value: "large",
+            },
+          ]}
+          value={selectedChart().options["music-collage"].gap}
+          onChange={(value: MusicCollageSpacing) => {
+            changeMusicCollageGap(selectedChart().id, value);
+          }}
+        />
+      </div>
+      <div class="flex flex-col gap-2.5">
+        <div class="text-lg font-semibold">Padding:</div>
+        <RadioButtonGroup
+          name="music-collage-padding"
+          items={[
+            {
+              label: "None",
+              value: "none",
+            },
+            {
+              label: "Small",
+              value: "small",
+            },
+            {
+              label: "Medium",
+              value: "medium",
+            },
+            {
+              label: "Large",
+              value: "large",
+            },
+          ]}
+          value={selectedChart().options["music-collage"].padding}
+          onChange={(value: MusicCollageSpacing) => {
+            changeMusicCollagePadding(selectedChart().id, value);
+          }}
+        />
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Album Titles:</div>
@@ -281,7 +341,7 @@ const ChartOptions: Component = () => {
           />
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
