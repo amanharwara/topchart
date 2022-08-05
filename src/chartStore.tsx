@@ -7,7 +7,7 @@ export type ChartType = "music-collage";
 
 export type MusicCollageSpacing = "none" | "small" | "medium" | "large";
 
-type MusicCollageItem = {
+export type MusicCollageItem = {
   image: string | undefined;
   title: string;
 };

@@ -1,7 +1,50 @@
 import { Component, createEffect, createSignal, Show } from "solid-js";
-import { selectedChart, setMusicCollageItemImage } from "../chartStore";
+import {
+  MusicCollageItem,
+  selectedChart,
+  setMusicCollageItemImage,
+} from "../chartStore";
 import { getImageFromDB } from "../imageDB";
 import classNames from "../utils/classNames";
+
+const preventDefaultOnDrag = (event: DragEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
+
+const CollageItem: Component<{
+  item: MusicCollageItem;
+  index: number;
+}> = (props) => {
+  const [imageContent, setImageContent] = createSignal("");
+
+  const handleDrop = async (event: DragEvent) => {
+    const imageID = event.dataTransfer.getData("text");
+
+    setMusicCollageItemImage(selectedChart().id, props.index, imageID);
+  };
+
+  createEffect(async () => {
+    if (!props.item.image) return;
+    const imageFromDB = await getImageFromDB(props.item.image);
+    if (imageFromDB) setImageContent(imageFromDB);
+  });
+
+  return (
+    <div
+      class="bg-white"
+      onDrag={preventDefaultOnDrag}
+      onDragEnter={preventDefaultOnDrag}
+      onDragExit={preventDefaultOnDrag}
+      onDragOver={preventDefaultOnDrag}
+      onDrop={handleDrop}
+    >
+      <Show when={imageContent()}>
+        {(src) => <img src={src} class="h-full w-full" />}
+      </Show>
+    </div>
+  );
+};
 
 export const MusicCollage: Component = () => {
   const totalNumberOfItems = () =>
@@ -30,21 +73,6 @@ export const MusicCollage: Component = () => {
     }
   };
 
-  const preventDefaultOnDrag = (event: DragEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
-  const handleDragEnter = (event: DragEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
-  const handleDragExit = (event: DragEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
   return (
     <div
       class={classNames("grid w-min bg-black", gap(), padding())}
@@ -59,36 +87,9 @@ export const MusicCollage: Component = () => {
     >
       {selectedChart()
         .options["music-collage"].items.slice(0, totalNumberOfItems())
-        .map((item, index) => {
-          const [imageContent, setImageContent] = createSignal("");
-
-          const handleDrop = async (event: DragEvent) => {
-            const imageID = event.dataTransfer.getData("text");
-
-            setMusicCollageItemImage(selectedChart().id, index, imageID);
-          };
-
-          createEffect(async () => {
-            if (!item.image) return;
-            const imageFromDB = await getImageFromDB(item.image);
-            if (imageFromDB) setImageContent(imageFromDB);
-          });
-
-          return (
-            <div
-              class="bg-white"
-              onDrag={preventDefaultOnDrag}
-              onDragEnter={handleDragEnter}
-              onDragExit={handleDragExit}
-              onDragOver={preventDefaultOnDrag}
-              onDrop={handleDrop}
-            >
-              <Show when={imageContent()}>
-                {(src) => <img src={src} class="h-full w-full" />}
-              </Show>
-            </div>
-          );
-        })}
+        .map((item, index) => (
+          <CollageItem item={item} index={index} />
+        ))}
     </div>
   );
 };
