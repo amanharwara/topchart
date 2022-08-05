@@ -9,7 +9,7 @@ export const MusicCollage: Component = () => {
         selectedChart().options["music-collage"].columns
     ).fill(1);
 
-  const gapForSelectedChart = () => {
+  const gap = () => {
     switch (selectedChart().options["music-collage"].gap) {
       case "small":
         return "gap-2";
@@ -20,7 +20,7 @@ export const MusicCollage: Component = () => {
     }
   };
 
-  const paddingForSelectedChart = () => {
+  const padding = () => {
     switch (selectedChart().options["music-collage"].padding) {
       case "small":
         return "p-2";
@@ -33,11 +33,7 @@ export const MusicCollage: Component = () => {
 
   return (
     <div
-      class={classNames(
-        "grid w-min bg-black",
-        gapForSelectedChart(),
-        paddingForSelectedChart()
-      )}
+      class={classNames("grid w-min bg-black", gap(), padding())}
       style={{
         "grid-template-columns": `repeat(${
           selectedChart().options["music-collage"].columns
