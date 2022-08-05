@@ -234,7 +234,7 @@ const CoverArtUploadTab: Component = () => {
             <img
               draggable
               onDragStart={(event) => {
-                event.dataTransfer.setData("text", image.id);
+                event.dataTransfer.setData("text", `image:${image.id}`);
               }}
               class="h-36 w-36 rounded border-0"
               src={image.content}
