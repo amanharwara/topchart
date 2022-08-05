@@ -20,11 +20,10 @@ import {
   charts,
   deleteChart,
   editChartTitle,
-  MusicCollageSpacing,
   selectedChart,
   setSelectedChart,
 } from "../chartStore";
-import type { ChartType } from "../chartStore";
+import type { ChartType, MusicCollageSpacing } from "../chartStore";
 import { RadioButtonGroup } from "./RadioButtonGroup";
 
 const ChartTypeLabels: Record<ChartType, string> = {
