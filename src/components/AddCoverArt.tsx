@@ -1,4 +1,4 @@
-import { Component, createSignal, JSX, Match, Switch } from "solid-js";
+import { Component, createSignal, JSX, Match, Show, Switch } from "solid-js";
 import classNames from "../utils/classNames";
 import IconButton from "./IconButton";
 import CloseIcon from "./icons/CloseIcon";
@@ -127,6 +127,7 @@ const CoverArtUploadTab: Component = () => {
   let dragCounter = 0;
 
   const [isDraggingFiles, setIsDraggingFiles] = createSignal(false);
+  const [currentImageSrc, setCurrentImageSrc] = createSignal("");
 
   const preventDefaultOnDrag = (event: DragEvent) => {
     event.preventDefault();
@@ -161,6 +162,17 @@ const CoverArtUploadTab: Component = () => {
     return files.filter((file) => file.type.startsWith("image/"))[0];
   };
 
+  const handleFileInput = (files: File[]) => {
+    const image = getFirstImageFile(files);
+    if (image) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setCurrentImageSrc(event.target.result.toString());
+      };
+      reader.readAsDataURL(image);
+    }
+  };
+
   const handleDrop = (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -169,11 +181,9 @@ const CoverArtUploadTab: Component = () => {
     setIsDraggingFiles(false);
 
     if (event.dataTransfer.items.length) {
-      const imageFile = getFirstImageFile(
+      handleFileInput(
         Array.from(event.dataTransfer.items).map((item) => item.getAsFile())
       );
-
-      console.log(imageFile);
 
       event.dataTransfer.clearData();
       dragCounter = 0;
@@ -181,14 +191,14 @@ const CoverArtUploadTab: Component = () => {
   };
 
   return (
-    <div class="p-4">
+    <div class="flex flex-col gap-2.5 p-4">
       <input
         type="file"
         class="hidden"
         accept="image/*"
         ref={fileInputRef}
         onChange={() => {
-          console.log(getFirstImageFile(Array.from(fileInputRef.files)));
+          handleFileInput(Array.from(fileInputRef.files));
         }}
       />
       <button
@@ -211,6 +221,16 @@ const CoverArtUploadTab: Component = () => {
         <div class="font-semibold">Click to browse images</div>
         <div class="text-sm">Or drop your files here</div>
       </button>
+      <Show when={currentImageSrc()}>
+        {(src) => (
+          <div class="flex flex-col items-center gap-2 px-2.5 pb-5">
+            <div class="text-sm">Drag this to your desired cell:</div>
+            <div class="h-36 w-36 overflow-hidden rounded bg-slate-600">
+              <img class="h-full w-full border-0" src={src} />
+            </div>
+          </div>
+        )}
+      </Show>
     </div>
   );
 };
