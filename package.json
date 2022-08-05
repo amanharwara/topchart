@@ -33,6 +33,7 @@
     "vite-plugin-solid": "^2.2.6"
   },
   "dependencies": {
+    "idb": "^7.0.2",
     "nanoid": "^4.0.0",
     "solid-js": "^1.4.7",
     "solid-transition-group": "^0.0.10"

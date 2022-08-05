@@ -1,4 +1,5 @@
 import { Component, createSignal, JSX, Match, Show, Switch } from "solid-js";
+import { Image, storeImageToDB } from "../imageDB";
 import classNames from "../utils/classNames";
 import IconButton from "./IconButton";
 import CloseIcon from "./icons/CloseIcon";
@@ -127,7 +128,7 @@ const CoverArtUploadTab: Component = () => {
   let dragCounter = 0;
 
   const [isDraggingFiles, setIsDraggingFiles] = createSignal(false);
-  const [currentImageSrc, setCurrentImageSrc] = createSignal("");
+  const [currentImage, setCurrentImage] = createSignal<Image>();
 
   const preventDefaultOnDrag = (event: DragEvent) => {
     event.preventDefault();
@@ -166,8 +167,13 @@ const CoverArtUploadTab: Component = () => {
     const image = getFirstImageFile(files);
     if (image) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setCurrentImageSrc(event.target.result.toString());
+      reader.onload = async (event) => {
+        const imageToStore = {
+          id: image.name,
+          content: event.target.result.toString(),
+        };
+        storeImageToDB(imageToStore);
+        setCurrentImage(imageToStore);
       };
       reader.readAsDataURL(image);
     }
@@ -221,13 +227,18 @@ const CoverArtUploadTab: Component = () => {
         <div class="font-semibold">Click to browse images</div>
         <div class="text-sm">Or drop your files here</div>
       </button>
-      <Show when={currentImageSrc()}>
-        {(src) => (
+      <Show when={currentImage()}>
+        {(image) => (
           <div class="flex flex-col items-center gap-2 px-2.5 pb-5">
             <div class="text-sm">Drag this to your desired cell:</div>
-            <div class="h-36 w-36 overflow-hidden rounded bg-slate-600">
-              <img class="h-full w-full border-0" src={src} />
-            </div>
+            <img
+              draggable
+              onDragStart={(event) => {
+                event.dataTransfer.setData("text", image.id);
+              }}
+              class="h-36 w-36 rounded border-0"
+              src={image.content}
+            />
           </div>
         )}
       </Show>

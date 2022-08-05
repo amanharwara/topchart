@@ -7,6 +7,11 @@ export type ChartType = "music-collage";
 
 export type MusicCollageSpacing = "none" | "small" | "medium" | "large";
 
+type MusicCollageItem = {
+  image: string | undefined;
+  title: string;
+};
+
 export type Chart = {
   id: string;
   title: string;
@@ -17,6 +22,7 @@ export type Chart = {
       columns: number;
       gap: MusicCollageSpacing;
       padding: MusicCollageSpacing;
+      items: MusicCollageItem[];
     };
   };
 };
@@ -31,6 +37,10 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
       columns: 3,
       gap: "small",
       padding: "small",
+      items: new Array(10 * 10).fill({
+        title: "",
+        image: undefined,
+      }),
     },
   },
 });
@@ -124,5 +134,23 @@ export const changeMusicCollagePadding = (
     "music-collage",
     "padding",
     value
+  );
+};
+
+export const setMusicCollageItemImage = (
+  chartId: string,
+  index: number,
+  image: string
+) => {
+  setCharts(
+    (charts) => charts.id === chartId,
+    "options",
+    "music-collage",
+    "items",
+    index,
+    (item) => ({
+      ...item,
+      image,
+    })
   );
 };

@@ -1,13 +1,12 @@
-import { Component } from "solid-js";
-import { selectedChart } from "../chartStore";
+import { Component, createEffect, createSignal, Show } from "solid-js";
+import { selectedChart, setMusicCollageItemImage } from "../chartStore";
+import { getImageFromDB } from "../imageDB";
 import classNames from "../utils/classNames";
 
 export const MusicCollage: Component = () => {
-  const childArray = () =>
-    new Array(
-      selectedChart().options["music-collage"].rows *
-        selectedChart().options["music-collage"].columns
-    ).fill(1);
+  const totalNumberOfItems = () =>
+    selectedChart().options["music-collage"].rows *
+    selectedChart().options["music-collage"].columns;
 
   const gap = () => {
     switch (selectedChart().options["music-collage"].gap) {
@@ -31,6 +30,21 @@ export const MusicCollage: Component = () => {
     }
   };
 
+  const preventDefaultOnDrag = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragEnter = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragExit = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   return (
     <div
       class={classNames("grid w-min bg-black", gap(), padding())}
@@ -43,9 +57,38 @@ export const MusicCollage: Component = () => {
         }, 10rem)`,
       }}
     >
-      {childArray().map(() => (
-        <div class="bg-white" />
-      ))}
+      {selectedChart()
+        .options["music-collage"].items.slice(0, totalNumberOfItems())
+        .map((item, index) => {
+          const [imageContent, setImageContent] = createSignal("");
+
+          const handleDrop = async (event: DragEvent) => {
+            const imageID = event.dataTransfer.getData("text");
+
+            setMusicCollageItemImage(selectedChart().id, index, imageID);
+          };
+
+          createEffect(async () => {
+            if (!item.image) return;
+            const imageFromDB = await getImageFromDB(item.image);
+            if (imageFromDB) setImageContent(imageFromDB);
+          });
+
+          return (
+            <div
+              class="bg-white"
+              onDrag={preventDefaultOnDrag}
+              onDragEnter={handleDragEnter}
+              onDragExit={handleDragExit}
+              onDragOver={preventDefaultOnDrag}
+              onDrop={handleDrop}
+            >
+              <Show when={imageContent()}>
+                {(src) => <img src={src} class="h-full w-full" />}
+              </Show>
+            </div>
+          );
+        })}
     </div>
   );
 };
