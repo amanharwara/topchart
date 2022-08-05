@@ -14,7 +14,7 @@ function App() {
       <Header />
       <div class="grid min-h-0 flex-grow grid-cols-[1fr_2.5fr_1fr]">
         <ChartOptions />
-        <main class="p-4">
+        <main class="overflow-auto p-4">
           <MusicCollage />
         </main>
         <section class="flex min-h-0 flex-col bg-gray-800">
