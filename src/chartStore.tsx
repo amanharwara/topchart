@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 import { addToast, dismissToast } from "./components/Toasts";
 import { createLocalStore } from "./utils";
 
@@ -45,9 +45,13 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
   },
 });
 
-const [charts, setCharts] = createLocalStore<Chart[]>("charts", [
-  getNewChartWithDefaults(),
-]);
+const [charts, setCharts] = createLocalStore<Chart[]>("charts", []);
+
+createEffect(() => {
+  if (charts.length < 1) {
+    setCharts([getNewChartWithDefaults()]);
+  }
+});
 
 const [selectedChart, setSelectedChart] = createSignal<Chart>(charts[0]);
 
