@@ -21,16 +21,20 @@ const CollageItem: Component<{
   const [isDragEntered, setIsDragEntered] = createSignal(false);
 
   const handleDragEnter = (event: DragEvent) => {
+    event.preventDefault();
     if (event.dataTransfer.getData("text")) {
       setIsDragEntered(true);
     }
   };
 
-  const handleDragExit = () => {
+  const handleDragExit = (event: DragEvent) => {
+    event.preventDefault();
     setIsDragEntered(false);
   };
 
   const handleDrop = async (event: DragEvent) => {
+    event.preventDefault();
+
     const dataTransferText = event.dataTransfer.getData("text");
 
     if (dataTransferText.startsWith("image:")) {
@@ -71,7 +75,7 @@ const CollageItem: Component<{
 
   createEffect(async () => {
     if (!props.item.image) {
-      setImageContent(undefined);
+      setImageContent("");
       return;
     }
     const imageFromDB = await getImageFromDB(props.item.image);
@@ -81,11 +85,11 @@ const CollageItem: Component<{
   return (
     <div
       class={classNames(
-        "bg-white",
+        "select-none bg-white",
         isDragEntered() &&
-          "ring-2 ring-blue-900 ring-offset-2 ring-offset-slate-900"
+          "ring-2 ring-blue-700 ring-offset-2 ring-offset-slate-900"
       )}
-      draggable
+      draggable={true}
       onDragStart={(event) => {
         event.dataTransfer.setData("text", `index:${props.index}`);
       }}
