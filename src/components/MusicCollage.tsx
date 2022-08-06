@@ -22,7 +22,7 @@ const CollageItem: Component<{
 
   const handleDragEnter = (event: DragEvent) => {
     event.preventDefault();
-    if (event.dataTransfer.getData("text")) {
+    if (event.dataTransfer.types.includes("text/plain")) {
       setIsDragEntered(true);
     }
   };
@@ -97,6 +97,7 @@ const CollageItem: Component<{
       onDragEnter={handleDragEnter}
       onDragExit={handleDragExit}
       onDragOver={preventDefaultOnDrag}
+      onDragLeave={handleDragExit}
       onDrop={handleDrop}
     >
       <Show when={imageContent()}>
