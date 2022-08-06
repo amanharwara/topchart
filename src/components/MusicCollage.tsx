@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal, Show } from "solid-js";
+import { Component, createEffect, createSignal, For, Show } from "solid-js";
 import {
   selectedChart,
   setCharts,
@@ -124,11 +124,14 @@ export const MusicCollage: Component = () => {
         }, 10rem)`,
       }}
     >
-      {selectedChart()
-        .options["music-collage"].items.slice(0, totalNumberOfItems())
-        .map((item, index) => (
-          <CollageItem item={item} index={index} />
-        ))}
+      <For
+        each={selectedChart().options["music-collage"].items.slice(
+          0,
+          totalNumberOfItems()
+        )}
+      >
+        {(item, index) => <CollageItem item={item} index={index()} />}
+      </For>
     </div>
   );
 };
