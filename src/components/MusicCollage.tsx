@@ -18,6 +18,17 @@ const CollageItem: Component<{
   index: number;
 }> = (props) => {
   const [imageContent, setImageContent] = createSignal("");
+  const [isDragEntered, setIsDragEntered] = createSignal(false);
+
+  const handleDragEnter = (event: DragEvent) => {
+    if (event.dataTransfer.getData("text")) {
+      setIsDragEntered(true);
+    }
+  };
+
+  const handleDragExit = () => {
+    setIsDragEntered(false);
+  };
 
   const handleDrop = async (event: DragEvent) => {
     const dataTransferText = event.dataTransfer.getData("text");
@@ -54,6 +65,8 @@ const CollageItem: Component<{
         currentItem
       );
     }
+
+    setIsDragEntered(false);
   };
 
   createEffect(async () => {
@@ -67,14 +80,18 @@ const CollageItem: Component<{
 
   return (
     <div
-      class="bg-white"
+      class={classNames(
+        "bg-white",
+        isDragEntered() &&
+          "ring-2 ring-blue-900 ring-offset-2 ring-offset-slate-900"
+      )}
       draggable
       onDragStart={(event) => {
         event.dataTransfer.setData("text", `index:${props.index}`);
       }}
       onDrag={preventDefaultOnDrag}
-      onDragEnter={preventDefaultOnDrag}
-      onDragExit={preventDefaultOnDrag}
+      onDragEnter={handleDragEnter}
+      onDragExit={handleDragExit}
       onDragOver={preventDefaultOnDrag}
       onDrop={handleDrop}
     >
