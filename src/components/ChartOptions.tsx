@@ -29,6 +29,7 @@ import type { ChartType, MusicCollageSpacing } from "../chartStore";
 import { RadioButtonGroup } from "./RadioButtonGroup";
 import ImageIcon from "./icons/ImageIcon";
 import Input from "./Input";
+import ColorPickerButton from "./ColorPickerButton";
 
 const ChartTypeLabels: Record<ChartType, string> = {
   "music-collage": "Music Collage",
@@ -344,10 +345,12 @@ const ChartOptions: Component = () => {
                 );
               }}
             />
-            <IconButton
-              className="px-2.5"
-              icon={ColorPickerIcon}
-              label="Pick color"
+            <ColorPickerButton
+              value={selectedChart().options["music-collage"].background.color}
+              onChange={(value) => {
+                setMusicCollageBackground(selectedChart().id, "color", value);
+              }}
+              class="px-2.5"
             />
           </div>
         </Show>
