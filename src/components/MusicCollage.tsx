@@ -134,10 +134,16 @@ export const MusicCollage: Component = () => {
     }
   };
 
+  const currentBackground = () =>
+    selectedChart().options["music-collage"].backgroundType === "color"
+      ? selectedChart().options["music-collage"].background.color
+      : `url(${selectedChart().options["music-collage"].background.image})`;
+
   return (
     <div
-      class={classNames("grid w-min bg-black", gap(), padding())}
+      class={classNames("grid w-min", gap(), padding())}
       style={{
+        background: currentBackground(),
         "grid-template-columns": `repeat(${
           selectedChart().options["music-collage"].columns
         }, 10rem)`,

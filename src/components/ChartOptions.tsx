@@ -21,10 +21,14 @@ import {
   deleteChart,
   editChartTitle,
   selectedChart,
+  setMusicCollageBackground,
+  setMusicCollageBackgroundType,
   setSelectedChart,
 } from "../chartStore";
 import type { ChartType, MusicCollageSpacing } from "../chartStore";
 import { RadioButtonGroup } from "./RadioButtonGroup";
+import ImageIcon from "./icons/ImageIcon";
+import Input from "./Input";
 
 const ChartTypeLabels: Record<ChartType, string> = {
   "music-collage": "Music Collage",
@@ -117,7 +121,8 @@ const CurrentChartOption = () => {
 };
 
 const ChartOptions: Component = () => {
-  const [showBgColorInput, setShowBgColorInput] = createSignal(false);
+  const shouldUseColorForBg = () =>
+    selectedChart().options["music-collage"].backgroundType === "color";
   const [showAlbumTitles, setShowAlbumTitles] = createSignal(true);
 
   const onRowsInput: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (
@@ -285,32 +290,59 @@ const ChartOptions: Component = () => {
         </label>
       </div>
       <div class="flex flex-col gap-2.5">
-        <div class="text-lg font-semibold">Background:</div>
-        <label class="flex items-center gap-4">
-          <div>Image URL</div>
-          <Toggle
-            value={showBgColorInput()}
-            onChange={(checked) => setShowBgColorInput(checked)}
-            invertedColors
-            id="image-or-color-toggle"
-          />
-          <div>Color</div>
-        </label>
+        <div class="flex items-center justify-between">
+          <div class="text-lg font-semibold">
+            Background {shouldUseColorForBg() ? "Color" : "Image"}:
+          </div>
+          <Show
+            when={shouldUseColorForBg()}
+            fallback={
+              <IconButton
+                icon={ColorPickerIcon}
+                label={"Use color instead"}
+                onClick={() => {
+                  setMusicCollageBackgroundType(selectedChart().id, "color");
+                }}
+              />
+            }
+          >
+            <IconButton
+              icon={ImageIcon}
+              label={"Use image instead"}
+              onClick={() => {
+                setMusicCollageBackgroundType(selectedChart().id, "image");
+              }}
+            />
+          </Show>
+        </div>
         <Show
-          when={showBgColorInput()}
+          when={shouldUseColorForBg()}
           fallback={
             <InputWithIcon
               icon={LinkIcon}
               placeholder="Enter image URL..."
-              value="https://somewebsite.com/image.png"
+              value={selectedChart().options["music-collage"].background.image}
+              onChange={(event) => {
+                setMusicCollageBackground(
+                  selectedChart().id,
+                  "image",
+                  event.currentTarget.value
+                );
+              }}
             />
           }
         >
           <div class="flex flex-grow gap-1.5">
-            <InputWithIcon
-              icon={HashIcon}
+            <Input
               placeholder="Enter color..."
-              value="FFFFFF"
+              value={selectedChart().options["music-collage"].background.color}
+              onChange={(event) => {
+                setMusicCollageBackground(
+                  selectedChart().id,
+                  "color",
+                  event.currentTarget.value
+                );
+              }}
             />
             <IconButton
               className="px-2.5"
@@ -322,11 +354,7 @@ const ChartOptions: Component = () => {
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Font style:</div>
-        <input
-          class="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-          placeholder="Select font"
-          value="Inter"
-        />
+        <Input placeholder="Select font" value="Inter" />
         <div class="flex flex-grow gap-1.5">
           <InputWithIcon
             icon={HashIcon}

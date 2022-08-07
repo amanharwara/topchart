@@ -12,6 +12,8 @@ export type MusicCollageItem = {
   title: string;
 };
 
+type MusicCollageBackgroundType = "image" | "color";
+
 export type Chart = {
   id: string;
   title: string;
@@ -23,6 +25,8 @@ export type Chart = {
       gap: MusicCollageSpacing;
       padding: MusicCollageSpacing;
       items: MusicCollageItem[];
+      backgroundType: MusicCollageBackgroundType;
+      background: Record<MusicCollageBackgroundType, string>;
     };
   };
 };
@@ -41,6 +45,11 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
         title: "",
         image: null,
       })),
+      backgroundType: "color",
+      background: {
+        image: "",
+        color: "#000000",
+      },
     },
   },
 });
@@ -147,12 +156,40 @@ export const setMusicCollageItemImage = (
   image: string
 ) => {
   setCharts(
-    (charts) => charts.id === chartId,
+    (chart) => chart.id === chartId,
     "options",
     "music-collage",
     "items",
     index,
     "image",
     image
+  );
+};
+
+export const setMusicCollageBackgroundType = (
+  id: string,
+  type: MusicCollageBackgroundType
+) => {
+  setCharts(
+    (chart) => chart.id === id,
+    "options",
+    "music-collage",
+    "backgroundType",
+    type
+  );
+};
+
+export const setMusicCollageBackground = (
+  id: string,
+  type: MusicCollageBackgroundType,
+  value: string
+) => {
+  setCharts(
+    (chart) => chart.id === id,
+    "options",
+    "music-collage",
+    "background",
+    type,
+    value
   );
 };
