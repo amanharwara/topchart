@@ -26,6 +26,7 @@ const Button = (props: Props) => {
 
   return (
     <button
+      type="button"
       class={classNames(
         "flex items-center gap-1.5 rounded border border-solid border-slate-600 text-white hover:bg-slate-600",
         currentProps.hideLabelOnMobile
