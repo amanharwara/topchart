@@ -103,6 +103,16 @@ const CoverArtSearchTab: Component = () => {
 };
 
 const CoverArtLinkTab: Component = () => {
+  const [link, setLink] = createSignal("");
+  const [imageContent, setImageContent] = createSignal("");
+  const [databaseId, setDatabaseId] = createSignal("");
+
+  const reset = () => {
+    setLink("");
+    setImageContent("");
+    setDatabaseId("");
+  };
+
   return (
     <div class="flex flex-col gap-1.5">
       <div class="px-2.5 py-3">
@@ -111,13 +121,56 @@ const CoverArtLinkTab: Component = () => {
           <input
             class="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-1.5 text-xs placeholder:text-slate-400"
             placeholder="https://example.com"
+            value={link()}
+            onInput={(event) => setLink(event.currentTarget.value)}
           />
-          <IconButton icon={DownloadIcon} label="Search" />
+          <IconButton
+            icon={DownloadIcon}
+            label="Download image"
+            onClick={async () => {
+              const URL = link();
+
+              /** @TODO Add loading states */
+              const response = await fetch(URL);
+              const imageAsBlob = await response.blob();
+
+              const reader = new FileReader();
+              reader.onload = async (event) => {
+                const imageToStore = {
+                  id: URL,
+                  content: event.target.result.toString(),
+                };
+                const databaseId = await storeImageToDB(imageToStore);
+                setDatabaseId(databaseId);
+                setImageContent(imageToStore.content);
+              };
+              reader.readAsDataURL(imageAsBlob);
+            }}
+          />
+          <Show when={!!link()}>
+            <IconButton icon={CloseIcon} label="Clear search" onClick={reset} />
+          </Show>
         </div>
       </div>
       <div class="flex flex-col items-center gap-2 px-2.5 pb-5">
         <div class="text-sm">Preview:</div>
-        <div class="h-36 w-36 rounded bg-slate-600" />
+        <div class="h-36 w-36 rounded bg-slate-600">
+          <Show when={imageContent()}>
+            {(src) => (
+              <img
+                src={src}
+                onLoad={(event) => {
+                  console.log(event);
+                }}
+                draggable={!!databaseId()}
+                onDragStart={(event) => {
+                  event.dataTransfer.setData("text", `image:${databaseId()}`);
+                }}
+                class="h-36 w-36 rounded border-0"
+              />
+            )}
+          </Show>
+        </div>
       </div>
     </div>
   );
