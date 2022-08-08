@@ -86,8 +86,7 @@ const CollageItem: Component<{
     <div
       class={classNames(
         "select-none bg-white",
-        isDragEntered() &&
-          "ring-2 ring-blue-700 ring-offset-2 ring-offset-slate-900"
+        isDragEntered() && "ring-2 ring-blue-700"
       )}
       draggable={true}
       onDragStart={(event) => {
