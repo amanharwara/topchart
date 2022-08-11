@@ -24,7 +24,7 @@ export type Chart = {
       columns: number;
       gap: MusicCollageSpacing;
       padding: MusicCollageSpacing;
-      items: MusicCollageItem[];
+      items: MusicCollageItem[][];
       backgroundType: MusicCollageBackgroundType;
       background: Record<MusicCollageBackgroundType, string>;
     };
@@ -41,10 +41,12 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
       columns: 3,
       gap: "small",
       padding: "small",
-      items: new Array(10 * 10).fill(null).map(() => ({
-        title: "",
-        image: null,
-      })),
+      items: new Array(10).fill(
+        new Array(10).fill(null).map(() => ({
+          title: "",
+          image: null,
+        }))
+      ),
       backgroundType: "color",
       background: {
         image: "",
@@ -152,7 +154,8 @@ export const changeMusicCollagePadding = (
 
 export const setMusicCollageItemImage = (
   chartId: string,
-  index: number,
+  rowIndex: number,
+  itemIndex: number,
   image: string
 ) => {
   setCharts(
@@ -160,7 +163,8 @@ export const setMusicCollageItemImage = (
     "options",
     "music-collage",
     "items",
-    index,
+    rowIndex,
+    itemIndex,
     "image",
     image
   );

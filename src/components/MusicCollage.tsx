@@ -15,7 +15,8 @@ const preventDefaultOnDrag = (event: DragEvent) => {
 
 const CollageItem: Component<{
   item: MusicCollageItem;
-  index: number;
+  rowIndex: number;
+  itemIndex: number;
 }> = (props) => {
   const [imageContent, setImageContent] = createSignal("");
   const [isDragEntered, setIsDragEntered] = createSignal(false);
@@ -39,14 +40,24 @@ const CollageItem: Component<{
 
     if (dataTransferText.startsWith("image:")) {
       const parsedImageID = dataTransferText.replace("image:", "");
-      setMusicCollageItemImage(selectedChart().id, props.index, parsedImageID);
+      setMusicCollageItemImage(
+        selectedChart().id,
+        props.rowIndex,
+        props.itemIndex,
+        parsedImageID
+      );
     }
 
-    if (dataTransferText.startsWith("index:")) {
-      const parsedIndex = Number(dataTransferText.replace("index:", ""));
+    if (dataTransferText.startsWith(":")) {
+      const [parsedRowIndex, parsedColumnIndex] = dataTransferText
+        .split(":")
+        .filter((s) => !!s)
+        .map((s) => Number(s));
 
       const itemAtParsedIndex = {
-        ...selectedChart().options["music-collage"].items.at(parsedIndex),
+        ...selectedChart().options["music-collage"].items[parsedRowIndex][
+          parsedColumnIndex
+        ],
       };
 
       const currentItem = { ...props.item };
@@ -56,7 +67,8 @@ const CollageItem: Component<{
         "options",
         "music-collage",
         "items",
-        props.index,
+        props.rowIndex,
+        props.itemIndex,
         itemAtParsedIndex
       );
 
@@ -65,7 +77,8 @@ const CollageItem: Component<{
         "options",
         "music-collage",
         "items",
-        parsedIndex,
+        parsedRowIndex,
+        parsedColumnIndex,
         currentItem
       );
     }
@@ -90,7 +103,10 @@ const CollageItem: Component<{
       )}
       draggable={true}
       onDragStart={(event) => {
-        event.dataTransfer.setData("text", `index:${props.index}`);
+        event.dataTransfer.setData(
+          "text",
+          `:${props.rowIndex}:${props.itemIndex}`
+        );
       }}
       onDrag={preventDefaultOnDrag}
       onDragEnter={handleDragEnter}
@@ -107,10 +123,6 @@ const CollageItem: Component<{
 };
 
 export const MusicCollage: Component = () => {
-  const totalNumberOfItems = () =>
-    selectedChart().options["music-collage"].rows *
-    selectedChart().options["music-collage"].columns;
-
   const gap = () => {
     switch (selectedChart().options["music-collage"].gap) {
       case "small":
@@ -154,10 +166,25 @@ export const MusicCollage: Component = () => {
       <For
         each={selectedChart().options["music-collage"].items.slice(
           0,
-          totalNumberOfItems()
+          selectedChart().options["music-collage"].rows
         )}
       >
-        {(item, index) => <CollageItem item={item} index={index()} />}
+        {(row, rowIndex) => (
+          <For
+            each={row.slice(
+              0,
+              selectedChart().options["music-collage"].columns
+            )}
+          >
+            {(item, itemIndex) => (
+              <CollageItem
+                item={item}
+                rowIndex={rowIndex()}
+                itemIndex={itemIndex()}
+              />
+            )}
+          </For>
+        )}
       </For>
     </div>
   );
