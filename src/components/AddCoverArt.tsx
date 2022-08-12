@@ -114,6 +114,7 @@ const CoverArtLinkTab: Component = () => {
   };
 
   return (
+    /** @TODO Probably use <form> for this? */
     <div class="flex flex-col gap-1.5">
       <div class="px-2.5 py-3">
         <div class="mb-1.5 text-sm font-semibold">Paste image link:</div>
