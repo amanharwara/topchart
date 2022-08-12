@@ -27,6 +27,11 @@ export type Chart = {
       items: MusicCollageItem[][];
       backgroundType: MusicCollageBackgroundType;
       background: Record<MusicCollageBackgroundType, string>;
+      titles: {
+        show: boolean;
+        positionBelowCover: boolean;
+        allowEditing: boolean;
+      };
     };
   };
 };
@@ -51,6 +56,11 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
       background: {
         image: "",
         color: "#000000",
+      },
+      titles: {
+        show: false,
+        positionBelowCover: false,
+        allowEditing: false,
       },
     },
   },
@@ -167,6 +177,23 @@ export const setMusicCollageItemImage = (
     itemIndex,
     "image",
     image
+  );
+};
+
+export const setMusicCollageItem = (
+  chartId: string,
+  rowIndex: number,
+  itemIndex: number,
+  item: MusicCollageItem
+) => {
+  setCharts(
+    (chart) => chart.id === chartId,
+    "options",
+    "music-collage",
+    "items",
+    rowIndex,
+    itemIndex,
+    item
   );
 };
 

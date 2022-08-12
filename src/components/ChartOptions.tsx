@@ -21,6 +21,7 @@ import {
   deleteChart,
   editChartTitle,
   selectedChart,
+  setCharts,
   setMusicCollageBackground,
   setMusicCollageBackgroundType,
   setSelectedChart,
@@ -124,7 +125,6 @@ const CurrentChartOption = () => {
 const ChartOptions: Component = () => {
   const shouldUseColorForBg = () =>
     selectedChart().options["music-collage"].backgroundType === "color";
-  const [showAlbumTitles, setShowAlbumTitles] = createSignal(true);
 
   const onRowsInput: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (
     event
@@ -266,27 +266,66 @@ const ChartOptions: Component = () => {
         <div class="text-lg font-semibold">Album Titles:</div>
         <label class="flex items-center gap-3">
           <Toggle
-            value={showAlbumTitles()}
-            onChange={(checked) => setShowAlbumTitles(checked)}
+            value={selectedChart().options["music-collage"].titles.show}
+            onChange={(checked) => {
+              setCharts(
+                (chart) => chart.id === selectedChart().id,
+                "options",
+                "music-collage",
+                "titles",
+                "show",
+                checked
+              );
+            }}
           />
           Show album titles
         </label>
         <label
           class={classNames(
             "flex items-center gap-3",
-            !showAlbumTitles() && "cursor-not-allowed text-gray-500"
+            !selectedChart().options["music-collage"].titles.show &&
+              "cursor-not-allowed text-gray-500"
           )}
         >
-          <Toggle disabled={!showAlbumTitles()} />
+          <Toggle
+            disabled={!selectedChart().options["music-collage"].titles.show}
+            value={
+              selectedChart().options["music-collage"].titles.positionBelowCover
+            }
+            onChange={(checked) => {
+              setCharts(
+                (chart) => chart.id === selectedChart().id,
+                "options",
+                "music-collage",
+                "titles",
+                "positionBelowCover",
+                checked
+              );
+            }}
+          />
           Position album titles below cover
         </label>
         <label
           class={classNames(
             "flex items-center gap-3",
-            !showAlbumTitles() && "cursor-not-allowed text-gray-500"
+            !selectedChart().options["music-collage"].titles.show &&
+              "cursor-not-allowed text-gray-500"
           )}
         >
-          <Toggle disabled={!showAlbumTitles()} />
+          <Toggle
+            disabled={!selectedChart().options["music-collage"].titles.show}
+            value={selectedChart().options["music-collage"].titles.allowEditing}
+            onChange={(checked) => {
+              setCharts(
+                (chart) => chart.id === selectedChart().id,
+                "options",
+                "music-collage",
+                "titles",
+                "allowEditing",
+                checked
+              );
+            }}
+          />
           Allow editing titles
         </label>
       </div>

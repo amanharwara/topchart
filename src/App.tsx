@@ -1,9 +1,5 @@
 import { createSignal } from "solid-js";
-import {
-  selectedChart,
-  setCharts,
-  setMusicCollageItemImage,
-} from "./chartStore";
+import { selectedChart, setCharts, setMusicCollageItem } from "./chartStore";
 import AddCoverArt from "./components/AddCoverArt";
 import AddCoverArtModal from "./components/AddCoverArtModal";
 import Button from "./components/Button";
@@ -26,7 +22,10 @@ function App() {
             DevTools:
             <Button
               onClick={() => {
-                setMusicCollageItemImage(selectedChart().id, 0, 0, "eno.jpg");
+                setMusicCollageItem(selectedChart().id, 0, 0, {
+                  title: "Brian Eno",
+                  image: "eno.jpg",
+                });
               }}
             >
               Add image to first
@@ -40,15 +39,15 @@ function App() {
                   "items",
                   (rows) =>
                     rows.map((row) =>
-                      row.map((item) => ({
-                        ...item,
+                      row.map(() => ({
+                        title: "",
                         image: null,
                       }))
                     )
                 );
               }}
             >
-              Clear images
+              Clear items
             </Button>
             <Button
               onClick={() => {
