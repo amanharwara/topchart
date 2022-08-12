@@ -333,6 +333,7 @@ const ChartOptions: Component = () => {
             />
           }
         >
+          {/** @TODO Suggestion: List of 10 recently used colors */}
           <div class="flex flex-grow gap-1.5">
             <Input
               placeholder="Enter color..."
