@@ -108,7 +108,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
         <IconButton
           icon={TrashIcon}
           label="Delete item"
-          className="bg-slate-700 opacity-0 focus:opacity-100 group-hover:opacity-100"
+          className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
           onClick={() => {
             setCharts(
               (chart) => chart.id === selectedChart().id,
