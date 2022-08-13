@@ -35,7 +35,7 @@ function App() {
                 setCharts(
                   (chart) => selectedChart().id === chart.id,
                   "options",
-                  "music-collage",
+                  "musicCollage",
                   "items",
                   (rows) =>
                     rows.map((row) =>
@@ -54,7 +54,7 @@ function App() {
                 setCharts(
                   (chart) => selectedChart().id === chart.id,
                   "options",
-                  "music-collage",
+                  "musicCollage",
                   "items",
                   (items) => items.slice()
                 );

@@ -3,7 +3,7 @@ import { createEffect, createSignal } from "solid-js";
 import { addToast, dismissToast } from "./components/Toasts";
 import { createLocalStore } from "./utils";
 
-export type ChartType = "music-collage";
+export type ChartType = "musicCollage";
 
 export type MusicCollageSpacing = "none" | "small" | "medium" | "large";
 
@@ -19,7 +19,7 @@ export type Chart = {
   title: string;
   type: ChartType;
   options: {
-    "music-collage": {
+    musicCollage: {
       rows: number;
       columns: number;
       gap: MusicCollageSpacing;
@@ -27,6 +27,10 @@ export type Chart = {
       items: MusicCollageItem[][];
       backgroundType: MusicCollageBackgroundType;
       background: Record<MusicCollageBackgroundType, string>;
+      foreground: {
+        font: string;
+        color: string;
+      };
       titles: {
         show: boolean;
         positionBelowCover: boolean;
@@ -39,9 +43,9 @@ export type Chart = {
 const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
   id: id ?? nanoid(),
   title: title ?? "Untitled",
-  type: "music-collage",
+  type: "musicCollage",
   options: {
-    "music-collage": {
+    musicCollage: {
       rows: 3,
       columns: 3,
       gap: "small",
@@ -56,6 +60,10 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
       background: {
         image: "",
         color: "#000000",
+      },
+      foreground: {
+        font: "Inter",
+        color: "#FFFFFF",
       },
       titles: {
         show: false,
@@ -130,7 +138,7 @@ export const changeChartRowsOrColumns = (
   setCharts(
     (chart) => chart.id === id,
     "options",
-    "music-collage",
+    "musicCollage",
     selector,
     value
   );
@@ -143,7 +151,7 @@ export const changeMusicCollageGap = (
   setCharts(
     (charts) => charts.id === id,
     "options",
-    "music-collage",
+    "musicCollage",
     "gap",
     value
   );
@@ -156,7 +164,7 @@ export const changeMusicCollagePadding = (
   setCharts(
     (charts) => charts.id === id,
     "options",
-    "music-collage",
+    "musicCollage",
     "padding",
     value
   );
@@ -171,7 +179,7 @@ export const setMusicCollageItemImage = (
   setCharts(
     (chart) => chart.id === chartId,
     "options",
-    "music-collage",
+    "musicCollage",
     "items",
     rowIndex,
     itemIndex,
@@ -189,7 +197,7 @@ export const setMusicCollageItem = (
   setCharts(
     (chart) => chart.id === chartId,
     "options",
-    "music-collage",
+    "musicCollage",
     "items",
     rowIndex,
     itemIndex,
@@ -204,7 +212,7 @@ export const setMusicCollageBackgroundType = (
   setCharts(
     (chart) => chart.id === id,
     "options",
-    "music-collage",
+    "musicCollage",
     "backgroundType",
     type
   );
@@ -218,9 +226,31 @@ export const setMusicCollageBackground = (
   setCharts(
     (chart) => chart.id === id,
     "options",
-    "music-collage",
+    "musicCollage",
     "background",
     type,
+    value
+  );
+};
+
+export const setMusicCollageForegroundColor = (id: string, value: string) => {
+  setCharts(
+    (chart) => chart.id === id,
+    "options",
+    "musicCollage",
+    "foreground",
+    "color",
+    value
+  );
+};
+
+export const setMusicCollageFont = (id: string, value: string) => {
+  setCharts(
+    (chart) => chart.id === id,
+    "options",
+    "musicCollage",
+    "foreground",
+    "font",
     value
   );
 };

@@ -4,7 +4,6 @@ import IconButton from "./IconButton";
 import AddIcon from "./icons/AddIcon";
 import ColorPickerIcon from "./icons/ColorPickerIcon";
 import EditIcon from "./icons/EditIcon";
-import HashIcon from "./icons/HashIcon";
 import LinkIcon from "./icons/LinkIcon";
 import SaveIcon from "./icons/SaveIcon";
 import TrashIcon from "./icons/TrashIcon";
@@ -24,6 +23,8 @@ import {
   setCharts,
   setMusicCollageBackground,
   setMusicCollageBackgroundType,
+  setMusicCollageFont,
+  setMusicCollageForegroundColor,
   setSelectedChart,
 } from "../chartStore";
 import type { ChartType, MusicCollageSpacing } from "../chartStore";
@@ -33,7 +34,7 @@ import Input from "./Input";
 import ColorPickerButton from "./ColorPickerButton";
 
 const ChartTypeLabels: Record<ChartType, string> = {
-  "music-collage": "Music Collage",
+  musicCollage: "Music Collage",
 } as const;
 
 const CurrentChartOption = () => {
@@ -124,7 +125,7 @@ const CurrentChartOption = () => {
 
 const ChartOptions: Component = () => {
   const shouldUseColorForBg = () =>
-    selectedChart().options["music-collage"].backgroundType === "color";
+    selectedChart().options.musicCollage.backgroundType === "color";
 
   const onRowsInput: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (
     event
@@ -170,7 +171,7 @@ const ChartOptions: Component = () => {
           <input
             type="range"
             class="flex-grow "
-            value={selectedChart().options["music-collage"].rows}
+            value={selectedChart().options.musicCollage.rows}
             min={1}
             max={10}
             onInput={onRowsInput}
@@ -178,7 +179,7 @@ const ChartOptions: Component = () => {
           <input
             type="number"
             class="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={selectedChart().options["music-collage"].rows}
+            value={selectedChart().options.musicCollage.rows}
             min={1}
             max={10}
             onInput={onRowsInput}
@@ -191,7 +192,7 @@ const ChartOptions: Component = () => {
           <input
             type="range"
             class="flex-grow "
-            value={selectedChart().options["music-collage"].columns}
+            value={selectedChart().options.musicCollage.columns}
             min={1}
             max={10}
             onInput={onColumnsInput}
@@ -199,7 +200,7 @@ const ChartOptions: Component = () => {
           <input
             type="number"
             class="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={selectedChart().options["music-collage"].columns}
+            value={selectedChart().options.musicCollage.columns}
             min={1}
             max={10}
             onInput={onColumnsInput}
@@ -228,7 +229,7 @@ const ChartOptions: Component = () => {
               value: "large",
             },
           ]}
-          value={selectedChart().options["music-collage"].gap}
+          value={selectedChart().options.musicCollage.gap}
           onChange={(value: MusicCollageSpacing) => {
             changeMusicCollageGap(selectedChart().id, value);
           }}
@@ -256,7 +257,7 @@ const ChartOptions: Component = () => {
               value: "large",
             },
           ]}
-          value={selectedChart().options["music-collage"].padding}
+          value={selectedChart().options.musicCollage.padding}
           onChange={(value: MusicCollageSpacing) => {
             changeMusicCollagePadding(selectedChart().id, value);
           }}
@@ -266,12 +267,12 @@ const ChartOptions: Component = () => {
         <div class="text-lg font-semibold">Album Titles:</div>
         <label class="flex items-center gap-3">
           <Toggle
-            value={selectedChart().options["music-collage"].titles.show}
+            value={selectedChart().options.musicCollage.titles.show}
             onChange={(checked) => {
               setCharts(
                 (chart) => chart.id === selectedChart().id,
                 "options",
-                "music-collage",
+                "musicCollage",
                 "titles",
                 "show",
                 checked
@@ -283,20 +284,20 @@ const ChartOptions: Component = () => {
         <label
           class={classNames(
             "flex items-center gap-3",
-            !selectedChart().options["music-collage"].titles.show &&
+            !selectedChart().options.musicCollage.titles.show &&
               "cursor-not-allowed text-gray-500"
           )}
         >
           <Toggle
-            disabled={!selectedChart().options["music-collage"].titles.show}
+            disabled={!selectedChart().options.musicCollage.titles.show}
             value={
-              selectedChart().options["music-collage"].titles.positionBelowCover
+              selectedChart().options.musicCollage.titles.positionBelowCover
             }
             onChange={(checked) => {
               setCharts(
                 (chart) => chart.id === selectedChart().id,
                 "options",
-                "music-collage",
+                "musicCollage",
                 "titles",
                 "positionBelowCover",
                 checked
@@ -308,18 +309,18 @@ const ChartOptions: Component = () => {
         <label
           class={classNames(
             "flex items-center gap-3",
-            !selectedChart().options["music-collage"].titles.show &&
+            !selectedChart().options.musicCollage.titles.show &&
               "cursor-not-allowed text-gray-500"
           )}
         >
           <Toggle
-            disabled={!selectedChart().options["music-collage"].titles.show}
-            value={selectedChart().options["music-collage"].titles.allowEditing}
+            disabled={!selectedChart().options.musicCollage.titles.show}
+            value={selectedChart().options.musicCollage.titles.allowEditing}
             onChange={(checked) => {
               setCharts(
                 (chart) => chart.id === selectedChart().id,
                 "options",
-                "music-collage",
+                "musicCollage",
                 "titles",
                 "allowEditing",
                 checked
@@ -361,7 +362,7 @@ const ChartOptions: Component = () => {
             <InputWithIcon
               icon={LinkIcon}
               placeholder="Enter image URL..."
-              value={selectedChart().options["music-collage"].background.image}
+              value={selectedChart().options.musicCollage.background.image}
               onChange={(event) => {
                 setMusicCollageBackground(
                   selectedChart().id,
@@ -376,7 +377,7 @@ const ChartOptions: Component = () => {
           <div class="flex flex-grow gap-1.5">
             <Input
               placeholder="Enter color..."
-              value={selectedChart().options["music-collage"].background.color}
+              value={selectedChart().options.musicCollage.background.color}
               onChange={(event) => {
                 setMusicCollageBackground(
                   selectedChart().id,
@@ -386,7 +387,7 @@ const ChartOptions: Component = () => {
               }}
             />
             <ColorPickerButton
-              value={selectedChart().options["music-collage"].background.color}
+              value={selectedChart().options.musicCollage.background.color}
               onChange={(value) => {
                 setMusicCollageBackground(selectedChart().id, "color", value);
               }}
@@ -397,17 +398,30 @@ const ChartOptions: Component = () => {
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Font style:</div>
-        <Input placeholder="Select font" value="Inter" />
+        <Input
+          placeholder="Select font"
+          value={selectedChart().options.musicCollage.foreground.font}
+          onChange={(event) => {
+            setMusicCollageFont(selectedChart().id, event.currentTarget.value);
+          }}
+        />
         <div class="flex flex-grow gap-1.5">
-          <InputWithIcon
-            icon={HashIcon}
+          <Input
             placeholder="Enter color..."
-            value="FFFFFF"
+            value={selectedChart().options.musicCollage.foreground.color}
+            onChange={(event) => {
+              setMusicCollageForegroundColor(
+                selectedChart().id,
+                event.currentTarget.value
+              );
+            }}
           />
-          <IconButton
-            className="px-2.5"
-            icon={ColorPickerIcon}
-            label="Pick color"
+          <ColorPickerButton
+            value={selectedChart().options.musicCollage.foreground.color}
+            onChange={(value) => {
+              setMusicCollageForegroundColor(selectedChart().id, value);
+            }}
+            class="px-2.5"
           />
         </div>
       </div>

@@ -14,7 +14,7 @@ const preventDefaultOnDrag = (event: DragEvent) => {
 };
 
 const shouldPositionTitlesBelowCover = () =>
-  selectedChart().options["music-collage"].titles.positionBelowCover;
+  selectedChart().options.musicCollage.titles.positionBelowCover;
 
 type CollageItemProps = {
   item: MusicCollageItem;
@@ -60,7 +60,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
         .map((s) => Number(s));
 
       const itemAtParsedIndex = {
-        ...selectedChart().options["music-collage"].items[parsedRowIndex][
+        ...selectedChart().options.musicCollage.items[parsedRowIndex][
           parsedColumnIndex
         ],
       };
@@ -70,7 +70,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
       setCharts(
         (chart) => chart.id === selectedChart().id,
         "options",
-        "music-collage",
+        "musicCollage",
         "items",
         props.rowIndex,
         props.itemIndex,
@@ -80,7 +80,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
       setCharts(
         (chart) => chart.id === selectedChart().id,
         "options",
-        "music-collage",
+        "musicCollage",
         "items",
         parsedRowIndex,
         parsedColumnIndex,
@@ -126,7 +126,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
         </Show>
       </div>
       <Show when={shouldPositionTitlesBelowCover() && props.item.title}>
-        <div class="text-white">{props.item.title}</div>
+        <div>{props.item.title}</div>
       </Show>
     </div>
   );
@@ -134,7 +134,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
 
 export const MusicCollage: Component = () => {
   const gap = () => {
-    switch (selectedChart().options["music-collage"].gap) {
+    switch (selectedChart().options.musicCollage.gap) {
       case "small":
         return "gap-2";
       case "medium":
@@ -145,7 +145,7 @@ export const MusicCollage: Component = () => {
   };
 
   const padding = () => {
-    switch (selectedChart().options["music-collage"].padding) {
+    switch (selectedChart().options.musicCollage.padding) {
       case "small":
         return "p-2 gap-2";
       case "medium":
@@ -156,16 +156,16 @@ export const MusicCollage: Component = () => {
   };
 
   const currentBackground = () =>
-    selectedChart().options["music-collage"].backgroundType === "color"
-      ? selectedChart().options["music-collage"].background.color
-      : `url(${selectedChart().options["music-collage"].background.image})`;
+    selectedChart().options.musicCollage.backgroundType === "color"
+      ? selectedChart().options.musicCollage.background.color
+      : `url(${selectedChart().options.musicCollage.background.image})`;
 
-  const rows = () => selectedChart().options["music-collage"].rows;
-  const columns = () => selectedChart().options["music-collage"].columns;
+  const rows = () => selectedChart().options.musicCollage.rows;
+  const columns = () => selectedChart().options.musicCollage.columns;
 
   const hasAnyTitle = () =>
     selectedChart()
-      .options["music-collage"].items.flat()
+      .options.musicCollage.items.flat()
       .some((item) => !!item.title);
 
   return (
@@ -173,6 +173,10 @@ export const MusicCollage: Component = () => {
       class={classNames("flex w-max gap-4", padding())}
       style={{
         background: currentBackground(),
+        color: selectedChart().options.musicCollage.foreground.color,
+        "font-family": `"${
+          selectedChart().options.musicCollage.foreground.font
+        }", sans-serif`,
       }}
     >
       <div
@@ -182,9 +186,7 @@ export const MusicCollage: Component = () => {
           "grid-template-rows": `repeat(${rows()}, auto)`,
         }}
       >
-        <For
-          each={selectedChart().options["music-collage"].items.slice(0, rows())}
-        >
+        <For each={selectedChart().options.musicCollage.items.slice(0, rows())}>
           {(row, rowIndex) => (
             <For each={row.slice(0, columns())}>
               {(item, itemIndex) => (
@@ -200,17 +202,14 @@ export const MusicCollage: Component = () => {
       </div>
       <Show
         when={
-          selectedChart().options["music-collage"].titles.show &&
+          selectedChart().options.musicCollage.titles.show &&
           hasAnyTitle() &&
           !shouldPositionTitlesBelowCover()
         }
       >
-        <div class="flex flex-col gap-2 text-white">
+        <div class="flex flex-col gap-2">
           <For
-            each={selectedChart().options["music-collage"].items.slice(
-              0,
-              rows()
-            )}
+            each={selectedChart().options.musicCollage.items.slice(0, rows())}
           >
             {(row) => (
               <div>
