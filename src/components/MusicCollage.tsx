@@ -186,7 +186,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
   );
 };
 
-const EditTitleModal = () => {
+const EditTitleModal: Component = () => {
   let editTitleInputRef: HTMLInputElement | null;
 
   const saveTitle = (item: MusicCollageItem) => {
