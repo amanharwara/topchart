@@ -21,7 +21,7 @@ const IconButton = (props: Props) => {
         type="button"
         aria-aria-labelledby={`${id}-tooltip`}
         class={classNames(
-          "peer flex items-center gap-2 rounded border border-slate-600 p-1.5 hover:bg-slate-600",
+          "peer flex select-none items-center gap-2 rounded border border-slate-600 p-1.5 hover:bg-slate-600",
           props.className
         )}
         {...otherProps}
@@ -31,7 +31,7 @@ const IconButton = (props: Props) => {
       <div
         role="tooltip"
         class={classNames(
-          "absolute left-auto right-0 w-max rounded bg-slate-900 py-2 px-3 text-sm text-white",
+          "absolute left-auto right-0 w-max select-none rounded bg-slate-900 py-2 px-3 text-sm text-white",
           "hidden peer-hover:block peer-focus:block",
           "top-[110%] z-10"
         )}
