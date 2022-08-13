@@ -7,6 +7,8 @@ import {
 import type { MusicCollageItem } from "../chartStore";
 import { getImageFromDB } from "../imageDB";
 import classNames from "../utils/classNames";
+import IconButton from "./IconButton";
+import TrashIcon from "./icons/TrashIcon";
 
 const preventDefaultOnDrag = (event: DragEvent) => {
   event.preventDefault();
@@ -101,7 +103,28 @@ const CollageItem: Component<CollageItemProps> = (props) => {
   });
 
   return (
-    <div class="flex flex-col gap-1">
+    <div class="group relative flex flex-col gap-1">
+      <div class="absolute right-3 top-3">
+        <IconButton
+          icon={TrashIcon}
+          label="Delete item"
+          className="bg-slate-700 opacity-0 focus:opacity-100 group-hover:opacity-100"
+          onClick={() => {
+            setCharts(
+              (chart) => chart.id === selectedChart().id,
+              "options",
+              "musicCollage",
+              "items",
+              props.rowIndex,
+              props.itemIndex,
+              {
+                title: "",
+                image: "",
+              }
+            );
+          }}
+        />
+      </div>
       <div
         class={classNames(
           "h-40 w-40 select-none bg-white",
