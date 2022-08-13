@@ -31,7 +31,7 @@ const IconButton = (props: Props) => {
       <div
         role="tooltip"
         class={classNames(
-          "absolute left-auto right-0 w-max select-none rounded bg-slate-900 py-2 px-3 text-sm text-white",
+          "absolute left-auto right-0 w-max select-none rounded bg-slate-900 py-2 px-3 font-sans text-sm text-white",
           "hidden peer-hover:block peer-focus:block",
           "top-[110%] z-10"
         )}
