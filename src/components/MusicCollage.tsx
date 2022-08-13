@@ -9,6 +9,7 @@ import { getImageFromDB } from "../imageDB";
 import classNames from "../utils/classNames";
 import IconButton from "./IconButton";
 import TrashIcon from "./icons/TrashIcon";
+import EditIcon from "./icons/EditIcon";
 
 const preventDefaultOnDrag = (event: DragEvent) => {
   event.preventDefault();
@@ -104,7 +105,22 @@ const CollageItem: Component<CollageItemProps> = (props) => {
 
   return (
     <div class="group relative flex flex-col gap-1">
-      <div class="absolute right-3 top-3">
+      <div class="absolute right-3 top-3 flex items-center gap-2">
+        <Show
+          when={
+            selectedChart().options.musicCollage.titles.allowEditing &&
+            props.item.title
+          }
+        >
+          <IconButton
+            icon={EditIcon}
+            label="Edit title"
+            className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
+            onClick={() => {
+              //
+            }}
+          />
+        </Show>
         <IconButton
           icon={TrashIcon}
           label="Delete item"
