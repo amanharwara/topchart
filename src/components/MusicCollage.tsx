@@ -2,6 +2,7 @@ import { Component, createEffect, createSignal, For, Show } from "solid-js";
 import {
   selectedChart,
   setCharts,
+  setMusicCollageItem,
   setMusicCollageItemImage,
 } from "../chartStore";
 import type { MusicCollageItem } from "../chartStore";
@@ -10,6 +11,10 @@ import classNames from "../utils/classNames";
 import IconButton from "./IconButton";
 import TrashIcon from "./icons/TrashIcon";
 import EditIcon from "./icons/EditIcon";
+import Modal from "./Modal";
+import Input from "./Input";
+import Button from "./Button";
+import SaveIcon from "./icons/SaveIcon";
 
 const preventDefaultOnDrag = (event: DragEvent) => {
   event.preventDefault();
@@ -18,6 +23,10 @@ const preventDefaultOnDrag = (event: DragEvent) => {
 
 const shouldPositionTitlesBelowCover = () =>
   selectedChart().options.musicCollage.titles.positionBelowCover;
+
+const [editingTitleFor, setEditingTitleFor] = createSignal<
+  [number, number] | undefined
+>();
 
 type CollageItemProps = {
   item: MusicCollageItem;
@@ -117,7 +126,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
             label="Edit title"
             className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
             onClick={() => {
-              //
+              setEditingTitleFor([props.rowIndex, props.itemIndex]);
             }}
           />
         </Show>
@@ -207,6 +216,8 @@ export const MusicCollage: Component = () => {
       .options.musicCollage.items.flat()
       .some((item) => !!item.title);
 
+  let editTitleInputRef: HTMLInputElement | null;
+
   return (
     <div
       class={classNames("flex w-max gap-4", padding())}
@@ -263,6 +274,48 @@ export const MusicCollage: Component = () => {
             )}
           </For>
         </div>
+      </Show>
+      <Show
+        when={
+          selectedChart().options.musicCollage.items?.[
+            editingTitleFor()?.[0]
+          ]?.[editingTitleFor()?.[1]]
+        }
+      >
+        {(item) => (
+          <Modal
+            title="Edit title"
+            isOpen={true}
+            closeModal={() => {
+              setEditingTitleFor(undefined);
+            }}
+          >
+            <div class="flex flex-col items-start gap-2.5 px-2.5 py-3">
+              <Input
+                class="w-full"
+                value={item.title}
+                ref={editTitleInputRef}
+              />
+              <Button
+                icon={SaveIcon}
+                onClick={() => {
+                  setMusicCollageItem(
+                    selectedChart().id,
+                    editingTitleFor()[0],
+                    editingTitleFor()[1],
+                    {
+                      ...item,
+                      title: editTitleInputRef.value,
+                    }
+                  );
+                  setEditingTitleFor(undefined);
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </Modal>
+        )}
       </Show>
     </div>
   );
