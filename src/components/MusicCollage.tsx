@@ -63,6 +63,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
         props.itemIndex,
         parsedImageID
       );
+      setEditingTitleFor([props.rowIndex, props.itemIndex]);
     }
 
     if (dataTransferText.startsWith(":")) {
@@ -118,7 +119,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
         <Show
           when={
             selectedChart().options.musicCollage.titles.allowEditing &&
-            props.item.title
+            props.item.image
           }
         >
           <IconButton
@@ -287,6 +288,17 @@ export const MusicCollage: Component = () => {
             title="Edit title"
             isOpen={true}
             closeModal={() => {
+              if (!item.title) {
+                setMusicCollageItem(
+                  selectedChart().id,
+                  editingTitleFor()[0],
+                  editingTitleFor()[1],
+                  {
+                    ...item,
+                    title: editTitleInputRef.value,
+                  }
+                );
+              }
               setEditingTitleFor(undefined);
             }}
           >
@@ -295,6 +307,7 @@ export const MusicCollage: Component = () => {
                 class="w-full"
                 value={item.title}
                 ref={editTitleInputRef}
+                placeholder="Add title..."
               />
               <Button
                 icon={SaveIcon}
