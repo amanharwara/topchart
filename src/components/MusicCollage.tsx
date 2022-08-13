@@ -123,38 +123,35 @@ const CollageItem: Component<CollageItemProps> = (props) => {
   return (
     <div class="group relative flex flex-col gap-1">
       <div class="absolute right-3 top-3 flex items-center gap-2">
-        <Show
-          when={
-            selectedChart().options.musicCollage.titles.allowEditing &&
-            props.item.image
-          }
-        >
+        <Show when={props.item.image}>
+          <Show when={selectedChart().options.musicCollage.titles.allowEditing}>
+            <IconButton
+              icon={EditIcon}
+              label="Edit title"
+              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
+              onClick={editTitleForCurrentItem}
+            />
+          </Show>
           <IconButton
-            icon={EditIcon}
-            label="Edit title"
+            icon={TrashIcon}
+            label="Delete item"
             className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
-            onClick={editTitleForCurrentItem}
+            onClick={() => {
+              setCharts(
+                (chart) => chart.id === selectedChart().id,
+                "options",
+                "musicCollage",
+                "items",
+                props.rowIndex,
+                props.itemIndex,
+                {
+                  title: "",
+                  image: "",
+                }
+              );
+            }}
           />
         </Show>
-        <IconButton
-          icon={TrashIcon}
-          label="Delete item"
-          className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
-          onClick={() => {
-            setCharts(
-              (chart) => chart.id === selectedChart().id,
-              "options",
-              "musicCollage",
-              "items",
-              props.rowIndex,
-              props.itemIndex,
-              {
-                title: "",
-                image: "",
-              }
-            );
-          }}
-        />
       </div>
       <div
         class={classNames(
