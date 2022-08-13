@@ -25,7 +25,7 @@ const shouldPositionTitlesBelowCover = () =>
   selectedChart().options.musicCollage.titles.positionBelowCover;
 
 const [editingTitleFor, setEditingTitleFor] = createSignal<
-  [number, number] | undefined
+  { rowIndex: number; itemIndex: number } | undefined
 >();
 
 type CollageItemProps = {
@@ -37,6 +37,13 @@ type CollageItemProps = {
 const CollageItem: Component<CollageItemProps> = (props) => {
   const [imageContent, setImageContent] = createSignal("");
   const [isDragEntered, setIsDragEntered] = createSignal(false);
+
+  const editTitleForCurrentItem = () => {
+    setEditingTitleFor({
+      rowIndex: props.rowIndex,
+      itemIndex: props.itemIndex,
+    });
+  };
 
   const handleDragEnter = (event: DragEvent) => {
     event.preventDefault();
@@ -63,7 +70,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
         props.itemIndex,
         parsedImageID
       );
-      setEditingTitleFor([props.rowIndex, props.itemIndex]);
+      editTitleForCurrentItem();
     }
 
     if (dataTransferText.startsWith(":")) {
@@ -126,9 +133,7 @@ const CollageItem: Component<CollageItemProps> = (props) => {
             icon={EditIcon}
             label="Edit title"
             className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
-            onClick={() => {
-              setEditingTitleFor([props.rowIndex, props.itemIndex]);
-            }}
+            onClick={editTitleForCurrentItem}
           />
         </Show>
         <IconButton
@@ -181,6 +186,60 @@ const CollageItem: Component<CollageItemProps> = (props) => {
   );
 };
 
+const EditTitleModal = () => {
+  let editTitleInputRef: HTMLInputElement | null;
+
+  const saveTitle = (item: MusicCollageItem) => {
+    const { rowIndex, itemIndex } = editingTitleFor();
+
+    setMusicCollageItem(selectedChart().id, rowIndex, itemIndex, {
+      ...item,
+      title: editTitleInputRef.value,
+    });
+  };
+
+  return (
+    <Show
+      when={
+        selectedChart().options.musicCollage.items[
+          editingTitleFor()?.rowIndex
+        ]?.[editingTitleFor()?.itemIndex]
+      }
+    >
+      {(item) => (
+        <Modal
+          title="Edit title"
+          isOpen={true}
+          closeModal={() => {
+            if (!item.title) {
+              saveTitle(item);
+            }
+            setEditingTitleFor(undefined);
+          }}
+        >
+          <div class="flex flex-col items-start gap-2.5 px-2.5 py-3">
+            <Input
+              class="w-full"
+              value={item.title}
+              ref={editTitleInputRef}
+              placeholder="Add title..."
+            />
+            <Button
+              icon={SaveIcon}
+              onClick={() => {
+                saveTitle(item);
+                setEditingTitleFor(undefined);
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        </Modal>
+      )}
+    </Show>
+  );
+};
+
 export const MusicCollage: Component = () => {
   const gap = () => {
     switch (selectedChart().options.musicCollage.gap) {
@@ -216,8 +275,6 @@ export const MusicCollage: Component = () => {
     selectedChart()
       .options.musicCollage.items.flat()
       .some((item) => !!item.title);
-
-  let editTitleInputRef: HTMLInputElement | null;
 
   return (
     <div
@@ -276,60 +333,7 @@ export const MusicCollage: Component = () => {
           </For>
         </div>
       </Show>
-      <Show
-        when={
-          selectedChart().options.musicCollage.items?.[
-            editingTitleFor()?.[0]
-          ]?.[editingTitleFor()?.[1]]
-        }
-      >
-        {(item) => (
-          <Modal
-            title="Edit title"
-            isOpen={true}
-            closeModal={() => {
-              if (!item.title) {
-                setMusicCollageItem(
-                  selectedChart().id,
-                  editingTitleFor()[0],
-                  editingTitleFor()[1],
-                  {
-                    ...item,
-                    title: editTitleInputRef.value,
-                  }
-                );
-              }
-              setEditingTitleFor(undefined);
-            }}
-          >
-            <div class="flex flex-col items-start gap-2.5 px-2.5 py-3">
-              <Input
-                class="w-full"
-                value={item.title}
-                ref={editTitleInputRef}
-                placeholder="Add title..."
-              />
-              <Button
-                icon={SaveIcon}
-                onClick={() => {
-                  setMusicCollageItem(
-                    selectedChart().id,
-                    editingTitleFor()[0],
-                    editingTitleFor()[1],
-                    {
-                      ...item,
-                      title: editTitleInputRef.value,
-                    }
-                  );
-                  setEditingTitleFor(undefined);
-                }}
-              >
-                Save
-              </Button>
-            </div>
-          </Modal>
-        )}
-      </Show>
+      <EditTitleModal />
     </div>
   );
 };
