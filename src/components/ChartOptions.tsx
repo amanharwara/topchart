@@ -19,11 +19,13 @@ import {
   charts,
   deleteChart,
   editChartTitle,
+  MusicCollageFontStyle,
   selectedChart,
   setCharts,
   setMusicCollageBackground,
   setMusicCollageBackgroundType,
-  setMusicCollageFont,
+  setMusicCollageFontFamily,
+  setMusicCollageFontStyle,
   setMusicCollageForegroundColor,
   setSelectedChart,
 } from "../chartStore";
@@ -398,17 +400,49 @@ const ChartOptions: Component = () => {
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="text-lg font-semibold">Font style:</div>
-        <Input
-          placeholder="Select font"
-          value={selectedChart().options.musicCollage.foreground.font}
-          onChange={(event) => {
-            setMusicCollageFont(selectedChart().id, event.currentTarget.value);
+        <RadioButtonGroup
+          name="font-style"
+          items={[
+            {
+              label: "Sans-serif",
+              value: "sans",
+            },
+            {
+              label: "Serif",
+              value: "serif",
+            },
+            {
+              label: "Monospace",
+              value: "mono",
+            },
+            {
+              label: "Custom",
+              value: "custom",
+            },
+          ]}
+          value={selectedChart().options.musicCollage.fontStyle}
+          onChange={(value: MusicCollageFontStyle) => {
+            setMusicCollageFontStyle(selectedChart().id, value);
           }}
         />
+        <Show
+          when={selectedChart().options.musicCollage.fontStyle === "custom"}
+        >
+          <Input
+            placeholder="Select font"
+            value={selectedChart().options.musicCollage.fontFamily}
+            onChange={(event) => {
+              setMusicCollageFontFamily(
+                selectedChart().id,
+                event.currentTarget.value
+              );
+            }}
+          />
+        </Show>
         <div class="flex flex-grow gap-1.5">
           <Input
             placeholder="Enter color..."
-            value={selectedChart().options.musicCollage.foreground.color}
+            value={selectedChart().options.musicCollage.foregroundColor}
             onChange={(event) => {
               setMusicCollageForegroundColor(
                 selectedChart().id,
@@ -417,7 +451,7 @@ const ChartOptions: Component = () => {
             }}
           />
           <ColorPickerButton
-            value={selectedChart().options.musicCollage.foreground.color}
+            value={selectedChart().options.musicCollage.foregroundColor}
             onChange={(value) => {
               setMusicCollageForegroundColor(selectedChart().id, value);
             }}

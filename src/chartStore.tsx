@@ -14,6 +14,8 @@ export type MusicCollageItem = {
 
 type MusicCollageBackgroundType = "image" | "color";
 
+export type MusicCollageFontStyle = "sans" | "serif" | "mono" | "custom";
+
 export type Chart = {
   id: string;
   title: string;
@@ -27,10 +29,9 @@ export type Chart = {
       items: MusicCollageItem[][];
       backgroundType: MusicCollageBackgroundType;
       background: Record<MusicCollageBackgroundType, string>;
-      foreground: {
-        font: string;
-        color: string;
-      };
+      fontStyle: MusicCollageFontStyle;
+      fontFamily: string;
+      foregroundColor: string;
       titles: {
         show: boolean;
         positionBelowCover: boolean;
@@ -61,10 +62,9 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
         image: "",
         color: "#000000",
       },
-      foreground: {
-        font: "Inter",
-        color: "#FFFFFF",
-      },
+      fontStyle: "sans",
+      fontFamily: "Inter",
+      foregroundColor: "#FFFFFF",
       titles: {
         show: false,
         positionBelowCover: false,
@@ -238,19 +238,30 @@ export const setMusicCollageForegroundColor = (id: string, value: string) => {
     (chart) => chart.id === id,
     "options",
     "musicCollage",
-    "foreground",
-    "color",
+    "foregroundColor",
     value
   );
 };
 
-export const setMusicCollageFont = (id: string, value: string) => {
+export const setMusicCollageFontStyle = (
+  id: string,
+  value: MusicCollageFontStyle
+) => {
   setCharts(
     (chart) => chart.id === id,
     "options",
     "musicCollage",
-    "foreground",
-    "font",
+    "fontStyle",
+    value
+  );
+};
+
+export const setMusicCollageFontFamily = (id: string, value: string) => {
+  setCharts(
+    (chart) => chart.id === id,
+    "options",
+    "musicCollage",
+    "fontFamily",
     value
   );
 };

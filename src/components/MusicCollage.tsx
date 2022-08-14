@@ -1,7 +1,6 @@
 import { Component, createEffect, createSignal, For, Show } from "solid-js";
 import {
   selectedChart,
-  setCharts,
   setMusicCollageItem,
   setMusicCollageItemImage,
 } from "../chartStore";
@@ -87,21 +86,15 @@ const CollageItem: Component<CollageItemProps> = (props) => {
 
       const currentItem = { ...props.item };
 
-      setCharts(
-        (chart) => chart.id === selectedChart().id,
-        "options",
-        "musicCollage",
-        "items",
+      setMusicCollageItem(
+        selectedChart().id,
         props.rowIndex,
         props.itemIndex,
         itemAtParsedIndex
       );
 
-      setCharts(
-        (chart) => chart.id === selectedChart().id,
-        "options",
-        "musicCollage",
-        "items",
+      setMusicCollageItem(
+        selectedChart().id,
         parsedRowIndex,
         parsedColumnIndex,
         currentItem
@@ -137,11 +130,8 @@ const CollageItem: Component<CollageItemProps> = (props) => {
             label="Delete item"
             className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
             onClick={() => {
-              setCharts(
-                (chart) => chart.id === selectedChart().id,
-                "options",
-                "musicCollage",
-                "items",
+              setMusicCollageItem(
+                selectedChart().id,
                 props.rowIndex,
                 props.itemIndex,
                 {
@@ -260,6 +250,8 @@ export const MusicCollage: Component = () => {
     }
   };
 
+  const font = () => `font-${selectedChart().options.musicCollage.fontStyle}`;
+
   const currentBackground = () =>
     selectedChart().options.musicCollage.backgroundType === "color"
       ? selectedChart().options.musicCollage.background.color
@@ -275,13 +267,13 @@ export const MusicCollage: Component = () => {
 
   return (
     <div
-      class={classNames("flex w-max gap-4", padding())}
+      class={classNames("flex w-max gap-4", padding(), font())}
       style={{
         background: currentBackground(),
-        color: selectedChart().options.musicCollage.foreground.color,
-        "font-family": `"${
-          selectedChart().options.musicCollage.foreground.font
-        }", sans-serif`,
+        color: selectedChart().options.musicCollage.foregroundColor,
+        ...(selectedChart().options.musicCollage.fontStyle === "custom" && {
+          "font-family": selectedChart().options.musicCollage.fontFamily,
+        }),
       }}
     >
       <div
