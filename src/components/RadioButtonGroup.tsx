@@ -7,7 +7,7 @@ const RadioButton: Component<ComponentProps<"input">> = (props) => {
   return (
     <label
       class={classNames(
-        "focus-within-ring flex-grow py-1.5 text-center",
+        "focus-within-ring flex-grow select-none py-1.5 text-center",
         props.checked && "bg-slate-600"
       )}
     >
