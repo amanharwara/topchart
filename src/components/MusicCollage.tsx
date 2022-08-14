@@ -174,15 +174,25 @@ const CollageItem: Component<CollageItemProps> = (props) => {
 };
 
 const EditTitleModal: Component = () => {
-  let editTitleInputRef: HTMLInputElement | null;
+  let inputElementRef: HTMLInputElement | null;
+  const [title, setTitle] = createSignal("");
 
   const saveTitle = (item: MusicCollageItem) => {
+    const titleToSave = title();
+
+    if (!titleToSave) {
+      inputElementRef.focus();
+      return;
+    }
+
     const { rowIndex, itemIndex } = editingTitleFor();
 
     setMusicCollageItem(selectedChart().id, rowIndex, itemIndex, {
       ...item,
-      title: editTitleInputRef.value,
+      title: titleToSave,
     });
+
+    setEditingTitleFor(undefined);
   };
 
   return (
@@ -193,36 +203,49 @@ const EditTitleModal: Component = () => {
         ]?.[editingTitleFor()?.itemIndex]
       }
     >
-      {(item) => (
-        <Modal
-          title="Edit title"
-          isOpen={true}
-          closeModal={() => {
-            if (!item.title) {
-              saveTitle(item);
-            }
-            setEditingTitleFor(undefined);
-          }}
-        >
-          <div class="flex flex-col items-start gap-2.5 px-2.5 py-3">
-            <Input
-              class="w-full"
-              value={item.title}
-              ref={editTitleInputRef}
-              placeholder="Add title..."
-            />
-            <Button
-              icon={SaveIcon}
-              onClick={() => {
-                saveTitle(item);
+      {(item) => {
+        setTitle(item.title);
+
+        return (
+          <Modal
+            title="Edit title"
+            isOpen={true}
+            closeModal={() => {
+              if (title() && item.title) {
                 setEditingTitleFor(undefined);
+              } else {
+                inputElementRef.focus();
+              }
+            }}
+          >
+            <form
+              class="flex flex-col items-start gap-2.5 px-2.5 py-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                saveTitle(item);
               }}
             >
-              Save
-            </Button>
-          </div>
-        </Modal>
-      )}
+              <Input
+                class="w-full"
+                value={item.title}
+                onChange={(event) => {
+                  setTitle(event.currentTarget.value);
+                }}
+                ref={(el) => {
+                  inputElementRef = el;
+                  setTimeout(() => {
+                    el.focus();
+                  });
+                }}
+                placeholder="Add title..."
+              />
+              <Button type="submit" icon={SaveIcon}>
+                Save
+              </Button>
+            </form>
+          </Modal>
+        );
+      }}
     </Show>
   );
 };
