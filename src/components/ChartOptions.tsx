@@ -429,6 +429,7 @@ const ChartOptions: Component = () => {
           when={selectedChart().options.musicCollage.fontStyle === "custom"}
         >
           <Input
+            aria-label="Custom font"
             placeholder="Select font"
             value={selectedChart().options.musicCollage.fontFamily}
             onChange={(event) => {
@@ -439,6 +440,9 @@ const ChartOptions: Component = () => {
             }}
           />
         </Show>
+      </div>
+      <div class="flex flex-col gap-2.5">
+        <div class="text-lg font-semibold">Text color:</div>
         <div class="flex flex-grow gap-1.5">
           <Input
             placeholder="Enter color..."

@@ -19,7 +19,7 @@ const IconButton = (props: Props) => {
     <div class="relative flex">
       <button
         type="button"
-        aria-aria-labelledby={`${id}-tooltip`}
+        aria-labelledby={`${id}-tooltip`}
         class={classNames(
           "peer flex select-none items-center gap-2 rounded border border-slate-600 p-1.5 hover:bg-slate-600",
           props.className
