@@ -107,52 +107,64 @@ const CoverArtLinkTab: Component = () => {
   const [imageContent, setImageContent] = createSignal("");
   const [databaseId, setDatabaseId] = createSignal("");
 
+  let linkInputRef: HTMLInputElement | null;
+
   const reset = () => {
     setLink("");
     setImageContent("");
     setDatabaseId("");
+    linkInputRef.focus();
+  };
+
+  const linkInputId = `link-input-${Math.random()}`;
+
+  const onSubmit = async (event: Event) => {
+    event.preventDefault();
+
+    const URL = link();
+
+    /** @TODO Add loading states */
+    const response = await fetch(URL);
+    const imageAsBlob = await response.blob();
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const imageToStore = {
+        id: URL,
+        content: event.target.result.toString(),
+      };
+      const databaseId = await storeImageToDB(imageToStore);
+      setDatabaseId(databaseId);
+      setImageContent(imageToStore.content);
+    };
+    reader.readAsDataURL(imageAsBlob);
   };
 
   return (
-    /** @TODO Probably use <form> for this? */
     <div class="flex flex-col gap-1.5">
-      <div class="px-2.5 py-3">
-        <div class="mb-1.5 text-sm font-semibold">Paste image link:</div>
+      <form class="px-2.5 py-3" onSubmit={onSubmit}>
+        <label class="mb-1.5 block text-sm font-semibold" for={linkInputId}>
+          Image link:
+        </label>
         <div class="flex gap-2.5">
           <input
+            id={linkInputId}
             class="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-1.5 text-xs placeholder:text-slate-400"
             placeholder="https://example.com"
             value={link()}
             onInput={(event) => setLink(event.currentTarget.value)}
+            ref={linkInputRef}
           />
           <IconButton
+            type="submit"
             icon={DownloadIcon}
             label="Download image"
-            onClick={async () => {
-              const URL = link();
-
-              /** @TODO Add loading states */
-              const response = await fetch(URL);
-              const imageAsBlob = await response.blob();
-
-              const reader = new FileReader();
-              reader.onload = async (event) => {
-                const imageToStore = {
-                  id: URL,
-                  content: event.target.result.toString(),
-                };
-                const databaseId = await storeImageToDB(imageToStore);
-                setDatabaseId(databaseId);
-                setImageContent(imageToStore.content);
-              };
-              reader.readAsDataURL(imageAsBlob);
-            }}
           />
           <Show when={!!link()}>
             <IconButton icon={CloseIcon} label="Clear search" onClick={reset} />
           </Show>
         </div>
-      </div>
+      </form>
       <div class="flex flex-col items-center gap-2 px-2.5 pb-5">
         <div class="text-sm">Preview:</div>
         <div class="h-36 w-36 rounded bg-slate-600">
