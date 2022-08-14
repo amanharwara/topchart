@@ -51,7 +51,7 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
       columns: 3,
       gap: "small",
       padding: "small",
-      items: new Array(10).fill(
+      items: new Array(10).fill(null).map(() =>
         new Array(10).fill(null).map(() => ({
           title: "",
           image: null,
