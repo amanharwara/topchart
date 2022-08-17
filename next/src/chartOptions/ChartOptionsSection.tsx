@@ -5,6 +5,7 @@ import AddIcon from "../icons/AddIcon";
 import EditIcon from "../icons/EditIcon";
 import SaveIcon from "../icons/SaveIcon";
 import TrashIcon from "../icons/TrashIcon";
+import MusicCollageOptions from "./MusicCollageOptions";
 
 const CurrentChartOption = () => {
   const [selectedChart, setSelectedChart] = useState<string>();
@@ -117,6 +118,7 @@ const ChartOptionsSection = () => {
           />
         </div>
       </div>
+      <MusicCollageOptions />
     </section>
   );
 };
