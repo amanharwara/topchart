@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import ChartOptionsSection from "../chartOptions/ChartOptionsSection";
-import Header from "../components/Header";
+import Header from "../header/Header";
 
 const Home: NextPage = () => {
   return (

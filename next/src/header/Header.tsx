@@ -4,8 +4,8 @@ import HamburgerMenuIcon from "../icons/HamburgerMenuIcon";
 import ImportExportIcon from "../icons/ImportExportIcon";
 import SettingsIcon from "../icons/SettingsIcon";
 import SponsorIcon from "../icons/SponsorIcon";
-import Button from "./Button";
-import IconButton from "./IconButton";
+import Button from "../components/Button";
+import IconButton from "../components/IconButton";
 
 const Header = () => {
   return (
