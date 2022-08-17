@@ -1,4 +1,5 @@
 import { FormEventHandler, useState } from "react";
+import ColorPickerButton from "../components/ColorPickerButton";
 import IconButton from "../components/IconButton";
 import Input from "../components/Input";
 import RadioButtonGroup from "../components/RadioButtonGroup";
@@ -208,13 +209,13 @@ const MusicCollageOptions = () => {
                   setBackgroundColor(event.currentTarget.value);
                 }}
               />
-              {/* <ColorPickerButton
-                value={selectedChart().options.musicCollage.background.color}
+              <ColorPickerButton
+                value={backgroundColor}
                 onChange={(value) => {
-                  setMusicCollageBackground(selectedChart().id, "color", value);
+                  setBackgroundColor(value);
                 }}
                 className="px-2.5"
-              /> */}
+              />
             </div>
           </>
         ) : (
@@ -281,13 +282,13 @@ const MusicCollageOptions = () => {
               setForegroundColor(event.currentTarget.value);
             }}
           />
-          {/* <ColorPickerButton
-            value={selectedChart().options.musicCollage.foregroundColor}
+          <ColorPickerButton
+            value={foregroundColor}
             onChange={(value) => {
-              setMusicCollageForegroundColor(selectedChart().id, value);
+              setForegroundColor(value);
             }}
             className="px-2.5"
-          /> */}
+          />
         </div>
       </div>
     </>
