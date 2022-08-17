@@ -1,11 +1,14 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import IconButton from "../components/IconButton";
+import Select from "../components/Select";
 import AddIcon from "../icons/AddIcon";
 import EditIcon from "../icons/EditIcon";
 import SaveIcon from "../icons/SaveIcon";
 import TrashIcon from "../icons/TrashIcon";
 
 const CurrentChartOption = () => {
+  const [selectedChart, setSelectedChart] = useState<string>();
+
   const [isEditingChart, setIsEditingChart] = useState(false);
   const isSelectingChart = !isEditingChart;
 
@@ -15,16 +18,28 @@ const CurrentChartOption = () => {
       <div className="flex gap-2">
         {isSelectingChart && (
           <>
-            {/* <Select
-            value={selectedChart().id}
-            onChange={(id) =>
-              setSelectedChart(charts.find((chart) => chart.id === id))
-            }
-            options={charts.map(({ id, title }) => ({
-              value: id,
-              label: title,
-            }))}
-          /> */}
+            <Select
+              value={selectedChart}
+              setValue={setSelectedChart}
+              options={[
+                {
+                  label: "test",
+                  value: "test",
+                },
+                {
+                  label: "test2",
+                  value: "test2",
+                },
+                {
+                  label: "test3",
+                  value: "test3",
+                },
+                {
+                  label: "test4",
+                  value: "test4",
+                },
+              ]}
+            />
             <IconButton
               className="px-2.5"
               icon={AddIcon}
@@ -92,16 +107,14 @@ const ChartOptionsSection = () => {
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Chart type:</div>
         <div className="flex gap-3">
-          {/* <Select
-            value={selectedChart().type}
-            options={Object.entries(ChartTypeLabels).map(([value, label]) => ({
+          <Select
+            options={Object.entries({
+              musicCollage: "Music Collage",
+            }).map(([value, label]) => ({
               value,
               label,
             }))}
-            onChange={(type: ChartType) => {
-              changeChartType(selectedChart().id, type);
-            }}
-          /> */}
+          />
         </div>
       </div>
     </section>
