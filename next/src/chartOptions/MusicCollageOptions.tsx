@@ -1,6 +1,7 @@
 import { FormEventHandler, useState } from "react";
 import IconButton from "../components/IconButton";
 import RadioButtonGroup from "../components/RadioButtonGroup";
+import Toggle from "../components/Toggle";
 import ColorPickerIcon from "../icons/ColorPickerIcon";
 import ImageIcon from "../icons/ImageIcon";
 import LinkIcon from "../icons/LinkIcon";
@@ -14,6 +15,10 @@ const MusicCollageOptions = () => {
   const [gap, setGap] = useState<MusicCollageSpacing>("small");
   const [padding, setPadding] = useState<MusicCollageSpacing>("small");
   const [shouldUseColorForBg, setShouldUseColorForBg] = useState(true);
+  const [showAlbumTitles, setShowAlbumTitles] = useState(false);
+  const [positionTitlesBelowCover, setShouldPositionTitlesBelowCover] =
+    useState(false);
+  const [allowEditingTitles, setAllowEditingTitles] = useState(false);
 
   const onRowsInput: FormEventHandler<HTMLInputElement> = (event) => {
     setRows(parseInt(event.currentTarget.value));
@@ -123,68 +128,43 @@ const MusicCollageOptions = () => {
       </div>
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Album Titles:</div>
-        <label className="flex items-center gap-3">
-          {/* <Toggle
-            value={selectedChart().options.musicCollage.titles.show}
+        <label className="flex select-none items-center gap-3">
+          <Toggle
+            value={showAlbumTitles}
             onChange={(checked) => {
-              setCharts(
-                (chart) => chart.id === selectedChart().id,
-                "options",
-                "musicCollage",
-                "titles",
-                "show",
-                checked
-              );
+              setShowAlbumTitles(checked);
             }}
-          /> */}
+          />
           Show album titles
         </label>
         <label
           className={classNames(
-            "flex items-center gap-3"
-            // !selectedChart().options.musicCollage.titles.show &&
-            //   "cursor-not-allowed text-gray-500"
+            "flex items-center gap-3",
+            !showAlbumTitles && "cursor-not-allowed text-gray-500"
           )}
         >
-          {/* <Toggle
-            disabled={!selectedChart().options.musicCollage.titles.show}
-            value={
-              selectedChart().options.musicCollage.titles.positionBelowCover
-            }
+          <Toggle
+            disabled={!showAlbumTitles}
+            value={positionTitlesBelowCover}
             onChange={(checked) => {
-              setCharts(
-                (chart) => chart.id === selectedChart().id,
-                "options",
-                "musicCollage",
-                "titles",
-                "positionBelowCover",
-                checked
-              );
+              setShouldPositionTitlesBelowCover(checked);
             }}
-          /> */}
+          />
           Position album titles below cover
         </label>
         <label
           className={classNames(
-            "flex items-center gap-3"
-            // !selectedChart().options.musicCollage.titles.show &&
-            //   "cursor-not-allowed text-gray-500"
+            "flex items-center gap-3",
+            !showAlbumTitles && "cursor-not-allowed text-gray-500"
           )}
         >
-          {/* <Toggle
-            disabled={!selectedChart().options.musicCollage.titles.show}
-            value={selectedChart().options.musicCollage.titles.allowEditing}
+          <Toggle
+            disabled={!showAlbumTitles}
+            value={allowEditingTitles}
             onChange={(checked) => {
-              setCharts(
-                (chart) => chart.id === selectedChart().id,
-                "options",
-                "musicCollage",
-                "titles",
-                "allowEditing",
-                checked
-              );
+              setAllowEditingTitles(checked);
             }}
-          /> */}
+          />
           Allow editing titles
         </label>
       </div>
