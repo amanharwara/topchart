@@ -50,7 +50,7 @@ const Toggle = ({
       )}
     >
       <VisuallyHidden>
-        <Checkbox state={state} />
+        <Checkbox state={state} {...props} />
       </VisuallyHidden>
       <span
         aria-hidden
