@@ -1,5 +1,6 @@
 import { FormEventHandler, useState } from "react";
 import IconButton from "../components/IconButton";
+import Input from "../components/Input";
 import RadioButtonGroup from "../components/RadioButtonGroup";
 import Toggle from "../components/Toggle";
 import ColorPickerIcon from "../icons/ColorPickerIcon";
@@ -8,6 +9,7 @@ import LinkIcon from "../icons/LinkIcon";
 import classNames from "../utils/classNames";
 
 type MusicCollageSpacing = "none" | "small" | "medium" | "large";
+type MusicCollageFontStyle = "sans" | "serif" | "mono" | "custom";
 
 const MusicCollageOptions = () => {
   const [rows, setRows] = useState(3);
@@ -19,6 +21,10 @@ const MusicCollageOptions = () => {
   const [positionTitlesBelowCover, setShouldPositionTitlesBelowCover] =
     useState(false);
   const [allowEditingTitles, setAllowEditingTitles] = useState(false);
+  const [backgroundColor, setBackgroundColor] = useState("#000000");
+  const [foregroundColor, setForegroundColor] = useState("#FFFFFF");
+  const [fontStyle, setFontStyle] = useState<MusicCollageFontStyle>("sans");
+  const [fontFamily, setFontFamily] = useState("Inter");
 
   const onRowsInput: FormEventHandler<HTMLInputElement> = (event) => {
     setRows(parseInt(event.currentTarget.value));
@@ -195,18 +201,14 @@ const MusicCollageOptions = () => {
           <>
             {/** @TODO Suggestion: List of 10 recently used colors */}
             <div className="flex flex-grow gap-1.5">
-              {/* <Input
+              <Input
                 placeholder="Enter color..."
-                value={selectedChart().options.musicCollage.background.color}
+                value={backgroundColor}
                 onChange={(event) => {
-                  setMusicCollageBackground(
-                    selectedChart().id,
-                    "color",
-                    event.currentTarget.value
-                  );
+                  setBackgroundColor(event.currentTarget.value);
                 }}
               />
-              <ColorPickerButton
+              {/* <ColorPickerButton
                 value={selectedChart().options.musicCollage.background.color}
                 onChange={(value) => {
                   setMusicCollageBackground(selectedChart().id, "color", value);
@@ -234,8 +236,7 @@ const MusicCollageOptions = () => {
       </div>
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Font style:</div>
-        {/* <RadioButtonGroup
-          name="font-style"
+        <RadioButtonGroup
           items={[
             {
               label: "Sans-serif",
@@ -254,39 +255,33 @@ const MusicCollageOptions = () => {
               value: "custom",
             },
           ]}
-          value={selectedChart().options.musicCollage.fontStyle}
-          onChange={(value: MusicCollageFontStyle) => {
-            setMusicCollageFontStyle(selectedChart().id, value);
+          value={fontStyle}
+          onChange={(value) => {
+            setFontStyle(value as MusicCollageFontStyle);
           }}
-        /> */}
-        {/* selectedChart().options.musicCollage.fontStyle === "custom" && (
+        />
+        {fontStyle === "custom" && (
           <Input
             aria-label="Custom font"
             placeholder="Select font"
-            value={selectedChart().options.musicCollage.fontFamily}
+            value={fontFamily}
             onChange={(event) => {
-              setMusicCollageFontFamily(
-                selectedChart().id,
-                event.currentTarget.value
-              );
+              setFontFamily(event.currentTarget.value);
             }}
           />
-        ) */}
+        )}
       </div>
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Text color:</div>
         <div className="flex flex-grow gap-1.5">
-          {/* <Input
+          <Input
             placeholder="Enter color..."
-            value={selectedChart().options.musicCollage.foregroundColor}
+            value={foregroundColor}
             onChange={(event) => {
-              setMusicCollageForegroundColor(
-                selectedChart().id,
-                event.currentTarget.value
-              );
+              setForegroundColor(event.currentTarget.value);
             }}
           />
-          <ColorPickerButton
+          {/* <ColorPickerButton
             value={selectedChart().options.musicCollage.foregroundColor}
             onChange={(value) => {
               setMusicCollageForegroundColor(selectedChart().id, value);
