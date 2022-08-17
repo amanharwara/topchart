@@ -2,6 +2,7 @@ import { FormEventHandler, useState } from "react";
 import ColorPickerButton from "../components/ColorPickerButton";
 import IconButton from "../components/IconButton";
 import Input from "../components/Input";
+import InputWithIcon from "../components/InputWithIcon";
 import RadioButtonGroup from "../components/RadioButtonGroup";
 import Toggle from "../components/Toggle";
 import ColorPickerIcon from "../icons/ColorPickerIcon";
@@ -22,6 +23,7 @@ const MusicCollageOptions = () => {
   const [positionTitlesBelowCover, setShouldPositionTitlesBelowCover] =
     useState(false);
   const [allowEditingTitles, setAllowEditingTitles] = useState(false);
+  const [backgroundImage, setBackgroundImage] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#000000");
   const [foregroundColor, setForegroundColor] = useState("#FFFFFF");
   const [fontStyle, setFontStyle] = useState<MusicCollageFontStyle>("sans");
@@ -219,20 +221,14 @@ const MusicCollageOptions = () => {
             </div>
           </>
         ) : (
-          <>
-            {/* <InputWithIcon
-              icon={LinkIcon}
-              placeholder="Enter image URL..."
-              value={selectedChart().options.musicCollage.background.image}
-              onChange={(event) => {
-                setMusicCollageBackground(
-                  selectedChart().id,
-                  "image",
-                  event.currentTarget.value
-                );
-              }}
-            /> */}
-          </>
+          <InputWithIcon
+            icon={LinkIcon}
+            placeholder="Enter image URL..."
+            value={backgroundImage}
+            onChange={(event) => {
+              setBackgroundImage(event.currentTarget.value);
+            }}
+          />
         )}
       </div>
       <div className="flex flex-col gap-2.5">
