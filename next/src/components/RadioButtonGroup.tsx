@@ -28,6 +28,7 @@ const RadioButtonGroup = ({ value, items, onChange }: Props) => {
             "focus-within-ring flex-grow select-none py-1.5 text-center",
             itemValue === value && "bg-slate-600"
           )}
+          key={itemValue}
         >
           <VisuallyHidden>
             <Radio value={itemValue} />
