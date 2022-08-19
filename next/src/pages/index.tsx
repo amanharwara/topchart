@@ -1,9 +1,19 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import AddCoverArt from "../addCoverArt/AddCoverArt";
 import ChartOptionsSection from "../chartOptions/ChartOptionsSection";
 import Header from "../header/Header";
+import Button from "../components/Button";
+import { useAddMusicCollageItem } from "../stores/charts";
+import dynamic from "next/dynamic";
+
+const MusicCollage = dynamic(() => import("../musicCollage/MusicCollage"), {
+  ssr: false,
+});
 
 const Home: NextPage = () => {
+  const addMusicCollageItem = useAddMusicCollageItem();
+
   return (
     <>
       <Head>
@@ -17,7 +27,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex flex-col overflow-hidden">
         <Header />
         <div className="grid min-h-0 flex-grow md:grid-cols-[1fr_2.5fr_1fr]">
           <ChartOptionsSection />
@@ -25,12 +35,12 @@ const Home: NextPage = () => {
             <div className="mb-4 text-white">
               TODO: Rip out everything and start again with mobile-first markup
             </div>
-            {/* <MusicCollage /> */}
+            <MusicCollage />
             <div className="mt-5 flex items-center gap-4 text-white">
               DevTools:
-              {/* <Button
+              <Button
                 onClick={() => {
-                  setMusicCollageItem(selectedChart().id, 0, 0, {
+                  addMusicCollageItem(0, 0, {
                     title: "Brian Eno",
                     image: "eno.jpg",
                   });
@@ -38,6 +48,7 @@ const Home: NextPage = () => {
               >
                 Add image to first
               </Button>
+              {/* 
               <Button
                 onClick={() => {
                   setCharts(
@@ -73,7 +84,7 @@ const Home: NextPage = () => {
             </div>
           </main>
           <section className="flex min-h-0 flex-col bg-gray-800">
-            {/* <AddCoverArt /> */}
+            <AddCoverArt />
           </section>
         </div>
         {/* <AddCoverArtModal

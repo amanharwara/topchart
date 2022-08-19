@@ -1,0 +1,276 @@
+import classNames from "../utils/classNames";
+import IconButton from "../components/IconButton";
+import TrashIcon from "../icons/TrashIcon";
+import EditIcon from "../icons/EditIcon";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import SaveIcon from "../icons/SaveIcon";
+import { DragEventHandler, Fragment, useEffect, useState } from "react";
+import EditTitleModal from "./EditTitleModal";
+import { getImageFromDB } from "../stores/imageDB";
+import { useSelectedChart } from "../stores/charts";
+
+export type MusicCollageItem = {
+  image: string | null;
+  title: string;
+};
+
+const preventDefaultOnDrag: DragEventHandler = (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
+
+/* const [editingTitleFor, setEditingTitleFor] = createSignal<
+{ rowIndex: number; itemIndex: number } | undefined
+>(); */
+
+type CollageItemProps = {
+  item: MusicCollageItem;
+  rowIndex: number;
+  itemIndex: number;
+  shouldPositionTitlesBelowCover: boolean;
+};
+
+const CollageItem = ({
+  item,
+  rowIndex,
+  itemIndex,
+  shouldPositionTitlesBelowCover,
+}: CollageItemProps) => {
+  const [imageContent, setImageContent] = useState("");
+  const [isDragEntered, setIsDragEntered] = useState(false);
+
+  const editTitleForCurrentItem = () => {
+    /* setEditingTitleFor({
+      rowIndex: props.rowIndex,
+      itemIndex: props.itemIndex,
+    }); */
+  };
+
+  const handleDragEnter: DragEventHandler = (event) => {
+    event.preventDefault();
+    if (!event.dataTransfer) return;
+    if (event.dataTransfer.types.includes("text/plain")) {
+      setIsDragEntered(true);
+    }
+  };
+
+  const handleDragExit: DragEventHandler = (event) => {
+    event.preventDefault();
+    setIsDragEntered(false);
+  };
+
+  const handleDrop: DragEventHandler = async (event) => {
+    event.preventDefault();
+    if (!event.dataTransfer) return;
+
+    const dataTransferText = event.dataTransfer.getData("text");
+
+    if (dataTransferText.startsWith("image:")) {
+      const parsedImageID = dataTransferText.replace("image:", "");
+      // setMusicCollageItemImage(
+      //   selectedChart.id,
+      //   props.rowIndex,
+      //   props.itemIndex,
+      //   parsedImageID
+      // );
+      editTitleForCurrentItem();
+    }
+
+    if (dataTransferText.startsWith(":")) {
+      const [parsedRowIndex, parsedColumnIndex] = dataTransferText
+        .split(":")
+        .filter((s) => !!s)
+        .map((s) => Number(s));
+
+      // const itemAtParsedIndex = {
+      //   ...selectedChart.options.musicCollage.items[parsedRowIndex][
+      //     parsedColumnIndex
+      //   ],
+      // };
+
+      const currentItem = { ...item };
+
+      // setMusicCollageItem(
+      //   selectedChart.id,
+      //   props.rowIndex,
+      //   props.itemIndex,
+      //   itemAtParsedIndex
+      // );
+
+      // setMusicCollageItem(
+      //   selectedChart.id,
+      //   parsedRowIndex,
+      //   parsedColumnIndex,
+      //   currentItem
+      // );
+    }
+
+    setIsDragEntered(false);
+  };
+
+  useEffect(() => {
+    const getImage = async () => {
+      if (!item.image) {
+        setImageContent("");
+        return;
+      }
+      const imageFromDB = await getImageFromDB(item.image);
+      if (imageFromDB) setImageContent(imageFromDB);
+    };
+    getImage();
+  }, []);
+
+  return (
+    <div className="group relative flex flex-col gap-1">
+      <div className="absolute right-3 top-3 flex items-center gap-2">
+        {item.image && (
+          <>
+            <IconButton
+              icon={EditIcon}
+              label="Edit title"
+              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
+              onClick={editTitleForCurrentItem}
+            />
+            <IconButton
+              icon={TrashIcon}
+              label="Delete item"
+              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
+              onClick={() => {
+                // setMusicCollageItem(
+                //   selectedChart.id,
+                //   props.rowIndex,
+                //   props.itemIndex,
+                //   {
+                //     title: "",
+                //     image: "",
+                //   }
+                // );
+              }}
+            />
+          </>
+        )}
+      </div>
+      <div
+        className={classNames(
+          "h-40 w-40 select-none bg-white",
+          isDragEntered && "ring-2 ring-blue-700"
+        )}
+        draggable={true}
+        onDragStart={(event) => {
+          event.dataTransfer.setData("text", `:${rowIndex}:${itemIndex}`);
+        }}
+        onDrag={preventDefaultOnDrag}
+        onDragEnter={handleDragEnter}
+        onDragExit={handleDragExit}
+        onDragOver={preventDefaultOnDrag}
+        onDragLeave={handleDragExit}
+        onDrop={handleDrop}
+      >
+        {imageContent && <img src={imageContent} className="h-full w-full" />}
+      </div>
+      {shouldPositionTitlesBelowCover && item.title && <div>{item.title}</div>}
+    </div>
+  );
+};
+
+const MusicCollage = () => {
+  const selectedChart = useSelectedChart();
+
+  if (!selectedChart) return null;
+
+  const gap = () => {
+    switch (selectedChart.options.musicCollage.gap) {
+      case "small":
+        return "gap-2";
+      case "medium":
+        return "gap-4";
+      case "large":
+        return "gap-6";
+    }
+  };
+
+  const padding = () => {
+    switch (selectedChart.options.musicCollage.padding) {
+      case "small":
+        return "p-2 gap-2";
+      case "medium":
+        return "p-4 gap-4";
+      case "large":
+        return "p-6 gap-6";
+    }
+  };
+
+  const font = `font-${selectedChart.options.musicCollage.fontStyle}`;
+
+  const currentBackground =
+    selectedChart.options.musicCollage.backgroundType === "color"
+      ? selectedChart.options.musicCollage.background.color
+      : `url(${selectedChart.options.musicCollage.background.image})`;
+
+  const rows = selectedChart.options.musicCollage.rows;
+  const columns = selectedChart.options.musicCollage.columns;
+
+  const hasAnyTitle = () =>
+    selectedChart.options.musicCollage.items
+      .flat()
+      .some((item: MusicCollageItem) => !!item.title);
+
+  const shouldPositionTitlesBelowCover =
+    selectedChart.options.musicCollage.titles.positionBelowCover;
+
+  return (
+    <div
+      className={classNames("flex w-max gap-4", padding(), font)}
+      style={{
+        background: currentBackground,
+        color: selectedChart.options.musicCollage.foregroundColor,
+        ...(selectedChart.options.musicCollage.fontStyle === "custom" && {
+          "font-family": selectedChart.options.musicCollage.fontFamily,
+        }),
+      }}
+    >
+      <div
+        className={classNames("grid w-min", gap())}
+        style={{
+          gridTemplateColumns: `repeat(${columns}, auto)`,
+          gridTemplateRows: `repeat(${rows}, auto)`,
+        }}
+      >
+        {selectedChart.options.musicCollage.items
+          .slice(0, rows)
+          .map((row, rowIndex) => (
+            <Fragment key={rowIndex}>
+              {row.slice(0, columns).map((item, itemIndex) => (
+                <CollageItem
+                  item={item}
+                  key={itemIndex}
+                  rowIndex={rowIndex}
+                  itemIndex={itemIndex}
+                  shouldPositionTitlesBelowCover={
+                    shouldPositionTitlesBelowCover
+                  }
+                />
+              ))}
+            </Fragment>
+          ))}
+      </div>
+      {selectedChart.options.musicCollage.titles.show &&
+      hasAnyTitle() &&
+      shouldPositionTitlesBelowCover ? (
+        <div className="flex flex-col gap-2">
+          {selectedChart.options.musicCollage.items
+            .slice(0, rows)
+            .map((row) => (
+              <div>
+                {row.map((item) => item.title && <div>{item.title}</div>)}
+              </div>
+            ))}
+        </div>
+      ) : null}
+      {/* <EditTitleModal /> */}
+    </div>
+  );
+};
+
+export default MusicCollage;
