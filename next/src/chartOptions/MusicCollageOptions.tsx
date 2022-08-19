@@ -8,13 +8,46 @@ import Toggle from "../components/Toggle";
 import ColorPickerIcon from "../icons/ColorPickerIcon";
 import ImageIcon from "../icons/ImageIcon";
 import LinkIcon from "../icons/LinkIcon";
+import {
+  MusicCollageFontStyle,
+  MusicCollageSpacing,
+  useSelectedChartRows,
+} from "../stores/charts";
 import classNames from "../utils/classNames";
 
-type MusicCollageSpacing = "none" | "small" | "medium" | "large";
-type MusicCollageFontStyle = "sans" | "serif" | "mono" | "custom";
+const MusicCollageRowsOption = () => {
+  const [rows, setRows] = useSelectedChartRows();
+
+  const onRowsInput: FormEventHandler<HTMLInputElement> = (event) => {
+    setRows(parseInt(event.currentTarget.value));
+  };
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Rows:</div>
+      <div className="flex gap-3">
+        <input
+          type="range"
+          className="flex-grow "
+          value={rows}
+          min={1}
+          max={10}
+          onInput={onRowsInput}
+        />
+        <input
+          type="number"
+          className="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
+          value={rows}
+          min={1}
+          max={10}
+          onInput={onRowsInput}
+        />
+      </div>
+    </div>
+  );
+};
 
 const MusicCollageOptions = () => {
-  const [rows, setRows] = useState(3);
   const [columns, setColumns] = useState(3);
   const [gap, setGap] = useState<MusicCollageSpacing>("small");
   const [padding, setPadding] = useState<MusicCollageSpacing>("small");
@@ -29,37 +62,13 @@ const MusicCollageOptions = () => {
   const [fontStyle, setFontStyle] = useState<MusicCollageFontStyle>("sans");
   const [fontFamily, setFontFamily] = useState("Inter");
 
-  const onRowsInput: FormEventHandler<HTMLInputElement> = (event) => {
-    setRows(parseInt(event.currentTarget.value));
-  };
-
   const onColumnsInput: FormEventHandler<HTMLInputElement> = (event) => {
     setColumns(parseInt(event.currentTarget.value));
   };
 
   return (
     <>
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Rows:</div>
-        <div className="flex gap-3">
-          <input
-            type="range"
-            className="flex-grow "
-            value={rows}
-            min={1}
-            max={10}
-            onInput={onRowsInput}
-          />
-          <input
-            type="number"
-            className="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={rows}
-            min={1}
-            max={10}
-            onInput={onRowsInput}
-          />
-        </div>
-      </div>
+      <MusicCollageRowsOption />
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Columns:</div>
         <div className="flex gap-3">

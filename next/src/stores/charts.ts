@@ -44,11 +44,12 @@ interface ChartStore {
   selectedChartId: Chart["id"];
   charts: Chart[];
   addNewChart: (chart: Chart) => void;
-  addMusicCollageItem: (
+  setMusicCollageItem: (
     rowIndex: number,
     columnIndex: number,
     item: MusicCollageItem
   ) => void;
+  setMusicCollageRows: (rows: number) => void;
 }
 
 const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
@@ -96,7 +97,7 @@ const useChartStore = create<ChartStore>()(
         }));
       },
 
-      addMusicCollageItem: (
+      setMusicCollageItem: (
         rowIndex: number,
         columnIndex: number,
         item: MusicCollageItem
@@ -125,6 +126,24 @@ const useChartStore = create<ChartStore>()(
           ),
         }));
       },
+
+      setMusicCollageRows: (rows: number) =>
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      rows,
+                    },
+                  },
+                }
+              : chart
+          ),
+        })),
     }),
     {
       name: "charts",
@@ -135,7 +154,23 @@ const useChartStore = create<ChartStore>()(
 export const useSelectedChart = () =>
   useChartStore((s) => s.charts.find((c) => c.id === s.selectedChartId));
 
+export const useSelectedChartRows = (): [
+  number | undefined,
+  (rows: number) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)?.options.musicCollage.rows,
+    s.setMusicCollageRows,
+  ]);
+
 export const useAddChart = () => useChartStore((s) => s.addNewChart);
 
-export const useAddMusicCollageItem = () =>
-  useChartStore((s) => s.addMusicCollageItem);
+export const useSetMusicCollageItem = () =>
+  useChartStore((s) => s.setMusicCollageItem);
+
+export const getMusicCollageItem = (rowIndex: number, columnIndex: number) => {
+  const state = useChartStore.getState();
+
+  return state.charts.find((c) => c.id === state.selectedChartId)?.options
+    .musicCollage.items[rowIndex]?.[columnIndex];
+};

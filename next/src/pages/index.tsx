@@ -4,7 +4,7 @@ import AddCoverArt from "../addCoverArt/AddCoverArt";
 import ChartOptionsSection from "../chartOptions/ChartOptionsSection";
 import Header from "../header/Header";
 import Button from "../components/Button";
-import { useAddMusicCollageItem } from "../stores/charts";
+import { useSetMusicCollageItem } from "../stores/charts";
 import dynamic from "next/dynamic";
 
 const MusicCollage = dynamic(() => import("../musicCollage/MusicCollage"), {
@@ -12,7 +12,7 @@ const MusicCollage = dynamic(() => import("../musicCollage/MusicCollage"), {
 });
 
 const Home: NextPage = () => {
-  const addMusicCollageItem = useAddMusicCollageItem();
+  const setMusicCollageItem = useSetMusicCollageItem();
 
   return (
     <>
@@ -40,7 +40,7 @@ const Home: NextPage = () => {
               DevTools:
               <Button
                 onClick={() => {
-                  addMusicCollageItem(0, 0, {
+                  setMusicCollageItem(0, 0, {
                     title: "Brian Eno",
                     image: "eno.jpg",
                   });

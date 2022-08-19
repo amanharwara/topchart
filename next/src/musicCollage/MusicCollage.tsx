@@ -8,7 +8,11 @@ import SaveIcon from "../icons/SaveIcon";
 import { DragEventHandler, Fragment, useEffect, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
-import { useSelectedChart } from "../stores/charts";
+import {
+  getMusicCollageItem,
+  useSelectedChart,
+  useSetMusicCollageItem,
+} from "../stores/charts";
 
 export type MusicCollageItem = {
   image: string | null;
@@ -39,6 +43,7 @@ const CollageItem = ({
 }: CollageItemProps) => {
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
+  const setMusicCollageItem = useSetMusicCollageItem();
 
   const editTitleForCurrentItem = () => {
     /* setEditingTitleFor({
@@ -68,12 +73,10 @@ const CollageItem = ({
 
     if (dataTransferText.startsWith("image:")) {
       const parsedImageID = dataTransferText.replace("image:", "");
-      // setMusicCollageItemImage(
-      //   selectedChart.id,
-      //   props.rowIndex,
-      //   props.itemIndex,
-      //   parsedImageID
-      // );
+      setMusicCollageItem(rowIndex, itemIndex, {
+        title: item.title,
+        image: parsedImageID,
+      });
       editTitleForCurrentItem();
     }
 
@@ -83,27 +86,25 @@ const CollageItem = ({
         .filter((s) => !!s)
         .map((s) => Number(s));
 
-      // const itemAtParsedIndex = {
-      //   ...selectedChart.options.musicCollage.items[parsedRowIndex][
-      //     parsedColumnIndex
-      //   ],
-      // };
+      if (
+        typeof parsedRowIndex === "undefined" ||
+        typeof parsedColumnIndex === "undefined"
+      ) {
+        return;
+      }
+
+      const itemAtParsedIndex = getMusicCollageItem(
+        parsedRowIndex,
+        parsedColumnIndex
+      );
+
+      if (!itemAtParsedIndex) return;
 
       const currentItem = { ...item };
 
-      // setMusicCollageItem(
-      //   selectedChart.id,
-      //   props.rowIndex,
-      //   props.itemIndex,
-      //   itemAtParsedIndex
-      // );
+      setMusicCollageItem(rowIndex, itemIndex, itemAtParsedIndex);
 
-      // setMusicCollageItem(
-      //   selectedChart.id,
-      //   parsedRowIndex,
-      //   parsedColumnIndex,
-      //   currentItem
-      // );
+      setMusicCollageItem(parsedRowIndex, parsedColumnIndex, currentItem);
     }
 
     setIsDragEntered(false);
@@ -119,7 +120,7 @@ const CollageItem = ({
       if (imageFromDB) setImageContent(imageFromDB);
     };
     getImage();
-  }, []);
+  }, [item.image]);
 
   return (
     <div className="group relative flex flex-col gap-1">
@@ -137,15 +138,10 @@ const CollageItem = ({
               label="Delete item"
               className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
               onClick={() => {
-                // setMusicCollageItem(
-                //   selectedChart.id,
-                //   props.rowIndex,
-                //   props.itemIndex,
-                //   {
-                //     title: "",
-                //     image: "",
-                //   }
-                // );
+                setMusicCollageItem(rowIndex, itemIndex, {
+                  title: "",
+                  image: "",
+                });
               }}
             />
           </>
