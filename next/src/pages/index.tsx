@@ -40,7 +40,7 @@ const Home: NextPage = () => {
               DevTools:
               <Button
                 onClick={() => {
-                  setMusicCollageItem(0, 0, {
+                  setMusicCollageItem(0, {
                     title: "Brian Eno",
                     image: "eno.jpg",
                   });

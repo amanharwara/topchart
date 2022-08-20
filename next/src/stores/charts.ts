@@ -25,7 +25,7 @@ export type Chart = {
       columns: number;
       gap: MusicCollageSpacing;
       padding: MusicCollageSpacing;
-      items: MusicCollageItem[][];
+      items: MusicCollageItem[];
       backgroundType: MusicCollageBackgroundType;
       background: Record<MusicCollageBackgroundType, string>;
       fontStyle: MusicCollageFontStyle;
@@ -44,12 +44,10 @@ interface ChartStore {
   selectedChartId: Chart["id"];
   charts: Chart[];
   addNewChart: (chart: Chart) => void;
-  setMusicCollageItem: (
-    rowIndex: number,
-    columnIndex: number,
-    item: MusicCollageItem
-  ) => void;
+  setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
   setMusicCollageRows: (rows: number) => void;
+  setMusicCollageColumns: (columns: number) => void;
+  setShowMusicCollageAlbumTitles: (show: boolean) => void;
 }
 
 const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
@@ -62,12 +60,10 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
       columns: 3,
       gap: "small",
       padding: "small",
-      items: new Array(10).fill(null).map(() =>
-        new Array(10).fill(null).map(() => ({
-          title: "",
-          image: null,
-        }))
-      ),
+      items: new Array(10).fill(null).map(() => ({
+        title: "",
+        image: null,
+      })),
       backgroundType: "color",
       background: {
         image: "",
@@ -97,11 +93,7 @@ const useChartStore = create<ChartStore>()(
         }));
       },
 
-      setMusicCollageItem: (
-        rowIndex: number,
-        columnIndex: number,
-        item: MusicCollageItem
-      ) => {
+      setMusicCollageItem: (index: number, item: MusicCollageItem) => {
         set((state) => ({
           charts: state.charts.map((chart) =>
             chart.id === state.selectedChartId
@@ -112,12 +104,8 @@ const useChartStore = create<ChartStore>()(
                     musicCollage: {
                       ...chart.options.musicCollage,
                       items: chart.options.musicCollage.items.map(
-                        (row, rIndex) =>
-                          rIndex === rowIndex
-                            ? row.map((currentItem, itemIndex) =>
-                                itemIndex === columnIndex ? item : currentItem
-                              )
-                            : row
+                        (currentItem, itemIndex) =>
+                          itemIndex === index ? item : currentItem
                       ),
                     },
                   },
@@ -144,6 +132,46 @@ const useChartStore = create<ChartStore>()(
               : chart
           ),
         })),
+
+      setMusicCollageColumns: (columns: number) =>
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      columns,
+                    },
+                  },
+                }
+              : chart
+          ),
+        })),
+
+      setShowMusicCollageAlbumTitles: (show: boolean) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      titles: {
+                        ...chart.options.musicCollage.titles,
+                        show,
+                      },
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
     }),
     {
       name: "charts",
@@ -163,14 +191,34 @@ export const useSelectedChartRows = (): [
     s.setMusicCollageRows,
   ]);
 
+export const useSelectedChartColumns = (): [
+  number | undefined,
+  (columns: number) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)?.options.musicCollage
+      .columns,
+    s.setMusicCollageColumns,
+  ]);
+
+export const useSelectedChartShowAlbumTitles = (): [
+  boolean | undefined,
+  (show: boolean) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)?.options.musicCollage
+      .titles.show,
+    s.setShowMusicCollageAlbumTitles,
+  ]);
+
 export const useAddChart = () => useChartStore((s) => s.addNewChart);
 
 export const useSetMusicCollageItem = () =>
   useChartStore((s) => s.setMusicCollageItem);
 
-export const getMusicCollageItem = (rowIndex: number, columnIndex: number) => {
+export const getMusicCollageItem = (index: number) => {
   const state = useChartStore.getState();
 
   return state.charts.find((c) => c.id === state.selectedChartId)?.options
-    .musicCollage.items[rowIndex]?.[columnIndex];
+    .musicCollage.items[index];
 };

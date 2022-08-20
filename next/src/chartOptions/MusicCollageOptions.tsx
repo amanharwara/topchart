@@ -11,7 +11,9 @@ import LinkIcon from "../icons/LinkIcon";
 import {
   MusicCollageFontStyle,
   MusicCollageSpacing,
+  useSelectedChartColumns,
   useSelectedChartRows,
+  useSelectedChartShowAlbumTitles,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
 
@@ -47,49 +49,106 @@ const MusicCollageRowsOption = () => {
   );
 };
 
-const MusicCollageOptions = () => {
-  const [columns, setColumns] = useState(3);
-  const [gap, setGap] = useState<MusicCollageSpacing>("small");
-  const [padding, setPadding] = useState<MusicCollageSpacing>("small");
-  const [shouldUseColorForBg, setShouldUseColorForBg] = useState(true);
-  const [showAlbumTitles, setShowAlbumTitles] = useState(false);
-  const [positionTitlesBelowCover, setShouldPositionTitlesBelowCover] =
-    useState(false);
-  const [allowEditingTitles, setAllowEditingTitles] = useState(false);
-  const [backgroundImage, setBackgroundImage] = useState("");
-  const [backgroundColor, setBackgroundColor] = useState("#000000");
-  const [foregroundColor, setForegroundColor] = useState("#FFFFFF");
-  const [fontStyle, setFontStyle] = useState<MusicCollageFontStyle>("sans");
-  const [fontFamily, setFontFamily] = useState("Inter");
+const MusicCollageColumnsOption = () => {
+  const [columns, setColumns] = useSelectedChartColumns();
 
   const onColumnsInput: FormEventHandler<HTMLInputElement> = (event) => {
     setColumns(parseInt(event.currentTarget.value));
   };
 
   return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Columns:</div>
+      <div className="flex gap-3">
+        <input
+          type="range"
+          className="flex-grow "
+          value={columns}
+          min={1}
+          max={10}
+          onInput={onColumnsInput}
+        />
+        <input
+          type="number"
+          className="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
+          value={columns}
+          min={1}
+          max={10}
+          onInput={onColumnsInput}
+        />
+      </div>
+    </div>
+  );
+};
+
+export const AlbumTitlesOption = () => {
+  const [showAlbumTitles, setShowAlbumTitles] = useSelectedChartShowAlbumTitles();
+  const [positionTitlesBelowCover, setShouldPositionTitlesBelowCover] =
+    useState(false);
+  const [allowEditingTitles, setAllowEditingTitles] = useState(false);
+
+  if (typeof showAlbumTitles === "undefined") return null;
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Album Titles:</div>
+      <label className="flex select-none items-center gap-3">
+        <Toggle
+          value={showAlbumTitles}
+          onChange={(checked) => {
+            setShowAlbumTitles(checked);
+          }}
+        />
+        Show album titles
+      </label>
+      <label
+        className={classNames(
+          "flex items-center gap-3",
+          !showAlbumTitles && "cursor-not-allowed text-gray-500"
+        )}
+      >
+        <Toggle
+          disabled={!showAlbumTitles}
+          value={positionTitlesBelowCover}
+          onChange={(checked) => {
+            setShouldPositionTitlesBelowCover(checked);
+          }}
+        />
+        Position album titles below cover
+      </label>
+      <label
+        className={classNames(
+          "flex items-center gap-3",
+          !showAlbumTitles && "cursor-not-allowed text-gray-500"
+        )}
+      >
+        <Toggle
+          disabled={!showAlbumTitles}
+          value={allowEditingTitles}
+          onChange={(checked) => {
+            setAllowEditingTitles(checked);
+          }}
+        />
+        Allow editing titles
+      </label>
+    </div>
+  );
+};
+
+const MusicCollageOptions = () => {
+  const [gap, setGap] = useState<MusicCollageSpacing>("small");
+  const [padding, setPadding] = useState<MusicCollageSpacing>("small");
+  const [shouldUseColorForBg, setShouldUseColorForBg] = useState(true);
+  const [backgroundImage, setBackgroundImage] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#000000");
+  const [foregroundColor, setForegroundColor] = useState("#FFFFFF");
+  const [fontStyle, setFontStyle] = useState<MusicCollageFontStyle>("sans");
+  const [fontFamily, setFontFamily] = useState("Inter");
+
+  return (
     <>
       <MusicCollageRowsOption />
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Columns:</div>
-        <div className="flex gap-3">
-          <input
-            type="range"
-            className="flex-grow "
-            value={columns}
-            min={1}
-            max={10}
-            onInput={onColumnsInput}
-          />
-          <input
-            type="number"
-            className="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={columns}
-            min={1}
-            max={10}
-            onInput={onColumnsInput}
-          />
-        </div>
-      </div>
+      <MusicCollageColumnsOption />
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Gap Between Items:</div>
         <RadioButtonGroup
@@ -144,48 +203,7 @@ const MusicCollageOptions = () => {
           }}
         />
       </div>
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Album Titles:</div>
-        <label className="flex select-none items-center gap-3">
-          <Toggle
-            value={showAlbumTitles}
-            onChange={(checked) => {
-              setShowAlbumTitles(checked);
-            }}
-          />
-          Show album titles
-        </label>
-        <label
-          className={classNames(
-            "flex items-center gap-3",
-            !showAlbumTitles && "cursor-not-allowed text-gray-500"
-          )}
-        >
-          <Toggle
-            disabled={!showAlbumTitles}
-            value={positionTitlesBelowCover}
-            onChange={(checked) => {
-              setShouldPositionTitlesBelowCover(checked);
-            }}
-          />
-          Position album titles below cover
-        </label>
-        <label
-          className={classNames(
-            "flex items-center gap-3",
-            !showAlbumTitles && "cursor-not-allowed text-gray-500"
-          )}
-        >
-          <Toggle
-            disabled={!showAlbumTitles}
-            value={allowEditingTitles}
-            onChange={(checked) => {
-              setAllowEditingTitles(checked);
-            }}
-          />
-          Allow editing titles
-        </label>
-      </div>
+      <AlbumTitlesOption />
       <div className="flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
           <div className="text-lg font-semibold">

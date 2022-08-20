@@ -30,15 +30,13 @@ const preventDefaultOnDrag: DragEventHandler = (event) => {
 
 type CollageItemProps = {
   item: MusicCollageItem;
-  rowIndex: number;
-  itemIndex: number;
+  index: number;
   shouldPositionTitlesBelowCover: boolean;
 };
 
 const CollageItem = ({
   item,
-  rowIndex,
-  itemIndex,
+  index,
   shouldPositionTitlesBelowCover,
 }: CollageItemProps) => {
   const [imageContent, setImageContent] = useState("");
@@ -48,7 +46,7 @@ const CollageItem = ({
   const editTitleForCurrentItem = () => {
     /* setEditingTitleFor({
       rowIndex: props.rowIndex,
-      itemIndex: props.itemIndex,
+      index: props.itemIndex,
     }); */
   };
 
@@ -73,7 +71,7 @@ const CollageItem = ({
 
     if (dataTransferText.startsWith("image:")) {
       const parsedImageID = dataTransferText.replace("image:", "");
-      setMusicCollageItem(rowIndex, itemIndex, {
+      setMusicCollageItem(index, {
         title: item.title,
         image: parsedImageID,
       });
@@ -81,30 +79,24 @@ const CollageItem = ({
     }
 
     if (dataTransferText.startsWith(":")) {
-      const [parsedRowIndex, parsedColumnIndex] = dataTransferText
+      const [parsedIndex] = dataTransferText
         .split(":")
         .filter((s) => !!s)
         .map((s) => Number(s));
 
-      if (
-        typeof parsedRowIndex === "undefined" ||
-        typeof parsedColumnIndex === "undefined"
-      ) {
+      if (typeof parsedIndex === "undefined") {
         return;
       }
 
-      const itemAtParsedIndex = getMusicCollageItem(
-        parsedRowIndex,
-        parsedColumnIndex
-      );
+      const itemAtParsedIndex = getMusicCollageItem(parsedIndex);
 
       if (!itemAtParsedIndex) return;
 
       const currentItem = { ...item };
 
-      setMusicCollageItem(rowIndex, itemIndex, itemAtParsedIndex);
+      setMusicCollageItem(index, itemAtParsedIndex);
 
-      setMusicCollageItem(parsedRowIndex, parsedColumnIndex, currentItem);
+      setMusicCollageItem(parsedIndex, currentItem);
     }
 
     setIsDragEntered(false);
@@ -138,7 +130,7 @@ const CollageItem = ({
               label="Delete item"
               className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
               onClick={() => {
-                setMusicCollageItem(rowIndex, itemIndex, {
+                setMusicCollageItem(index, {
                   title: "",
                   image: "",
                 });
@@ -154,7 +146,7 @@ const CollageItem = ({
         )}
         draggable={true}
         onDragStart={(event) => {
-          event.dataTransfer.setData("text", `:${rowIndex}:${itemIndex}`);
+          event.dataTransfer.setData("text", `:${index}`);
         }}
         onDrag={preventDefaultOnDrag}
         onDragEnter={handleDragEnter}
@@ -234,21 +226,14 @@ const MusicCollage = () => {
         }}
       >
         {selectedChart.options.musicCollage.items
-          .slice(0, rows)
-          .map((row, rowIndex) => (
-            <Fragment key={rowIndex}>
-              {row.slice(0, columns).map((item, itemIndex) => (
-                <CollageItem
-                  item={item}
-                  key={itemIndex}
-                  rowIndex={rowIndex}
-                  itemIndex={itemIndex}
-                  shouldPositionTitlesBelowCover={
-                    shouldPositionTitlesBelowCover
-                  }
-                />
-              ))}
-            </Fragment>
+          .slice(0, rows * columns)
+          .map((item, index) => (
+            <CollageItem
+              item={item}
+              key={index}
+              index={index}
+              shouldPositionTitlesBelowCover={shouldPositionTitlesBelowCover}
+            />
           ))}
       </div>
       {selectedChart.options.musicCollage.titles.show &&
@@ -256,11 +241,9 @@ const MusicCollage = () => {
       shouldPositionTitlesBelowCover ? (
         <div className="flex flex-col gap-2">
           {selectedChart.options.musicCollage.items
-            .slice(0, rows)
-            .map((row) => (
-              <div>
-                {row.map((item) => item.title && <div>{item.title}</div>)}
-              </div>
+            .slice(0, rows * columns)
+            .map((item) => (
+              <div>{item.title && <div>{item.title}</div>}</div>
             ))}
         </div>
       ) : null}
