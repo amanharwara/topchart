@@ -52,6 +52,7 @@ interface ChartStore {
   setSelectedChartType: (type: ChartType) => void;
 
   setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
+  moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
   setMusicCollageRows: (rows: number) => void;
   setMusicCollageColumns: (columns: number) => void;
   setMusicCollageGap: (gap: MusicCollageSpacing) => void;
@@ -166,6 +167,27 @@ const useChartStore = create<ChartStore>()(
             state.charts[selectedChartIndex]!.options.musicCollage.items[
               index
             ] = item;
+          })
+        );
+      },
+
+      moveMusicCollageItem: (oldIndex: number, newIndex: number) => {
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            const items =
+              state.charts[selectedChartIndex]!.options.musicCollage.items;
+            if (
+              oldIndex < 0 ||
+              newIndex < 0 ||
+              newIndex >= items.length ||
+              oldIndex >= items.length
+            ) {
+              throw new Error("Index(s) are out of bounds.");
+            }
+            items.splice(newIndex, 0, items.splice(oldIndex, 1)[0]!);
           })
         );
       },
@@ -504,6 +526,9 @@ export const useAddChart = () => useChartStore((s) => s.addNewChart);
 
 export const useSetMusicCollageItem = () =>
   useChartStore((s) => s.setMusicCollageItem);
+
+export const useMoveMusicCollageItem = () =>
+  useChartStore((s) => s.moveMusicCollageItem);
 
 export const getMusicCollageItem = (index: number) => {
   const state = useChartStore.getState();

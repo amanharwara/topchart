@@ -10,6 +10,7 @@ import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
   getMusicCollageItem,
+  useMoveMusicCollageItem,
   useSelectedChart,
   useSelectedMusicCollageAllowEditingTitles,
   useSelectedMusicCollageEditingTitleFor,
@@ -45,8 +46,10 @@ const CollageItem = ({
     useSelectedMusicCollageEditingTitleFor();
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
-  const setMusicCollageItem = useSetMusicCollageItem();
   const [allowEditingTitles] = useSelectedMusicCollageAllowEditingTitles();
+
+  const setMusicCollageItem = useSetMusicCollageItem();
+  const moveMusicCollageItem = useMoveMusicCollageItem();
 
   const editTitleForCurrentItem = () => {
     setEditingTitleFor(index);
@@ -90,15 +93,7 @@ const CollageItem = ({
         return;
       }
 
-      const itemAtParsedIndex = getMusicCollageItem(parsedIndex);
-
-      if (!itemAtParsedIndex) return;
-
-      const currentItem = { ...item };
-
-      setMusicCollageItem(index, itemAtParsedIndex);
-
-      setMusicCollageItem(parsedIndex, currentItem);
+      moveMusicCollageItem(parsedIndex, index);
     }
 
     setIsDragEntered(false);
