@@ -64,6 +64,9 @@ interface ChartStore {
   setMusicCollageFontStyle: (fontStyle: MusicCollageFontStyle) => void;
   setMusicCollageFontFamily: (fontFamily: string) => void;
   setMusicCollageForegroundColor: (color: string) => void;
+
+  musicCollageEditingTitleFor: number;
+  setMusicCollageEditingTitleFor: (itemIndex: number) => void;
 }
 
 const MaxNumberOfRows = 10;
@@ -389,9 +392,22 @@ const useChartStore = create<ChartStore>()(
           ),
         }));
       },
+
+      musicCollageEditingTitleFor: -1,
+      setMusicCollageEditingTitleFor(itemIndex) {
+        set(() => ({
+          musicCollageEditingTitleFor: itemIndex,
+        }));
+      },
     }),
     {
       name: "charts",
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(
+            ([key]) => !["musicCollageEditingTitleFor"].includes(key)
+          )
+        ),
     }
   )
 );
@@ -525,6 +541,15 @@ export const useSelectedMusicCollageForegroundColor = (): [
     s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
       .foregroundColor,
     s.setMusicCollageForegroundColor,
+  ]);
+
+export const useSelectedMusicCollageEditingTitleFor = (): [
+  number,
+  (itemIndex: number) => void
+] =>
+  useChartStore((s) => [
+    s.musicCollageEditingTitleFor,
+    s.setMusicCollageEditingTitleFor,
   ]);
 
 export const useAddChart = () => useChartStore((s) => s.addNewChart);

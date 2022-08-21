@@ -12,6 +12,7 @@ import {
   getMusicCollageItem,
   useSelectedChart,
   useSelectedMusicCollageAllowEditingTitles,
+  useSelectedMusicCollageEditingTitleFor,
   useSetMusicCollageItem,
 } from "../stores/charts";
 
@@ -40,16 +41,15 @@ const CollageItem = ({
   index,
   shouldPositionTitlesBelowCover,
 }: CollageItemProps) => {
+  const [editingTitleFor, setEditingTitleFor] =
+    useSelectedMusicCollageEditingTitleFor();
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
   const setMusicCollageItem = useSetMusicCollageItem();
   const [allowEditingTitles] = useSelectedMusicCollageAllowEditingTitles();
 
   const editTitleForCurrentItem = () => {
-    /* setEditingTitleFor({
-      rowIndex: props.rowIndex,
-      index: props.itemIndex,
-    }); */
+    setEditingTitleFor(index);
   };
 
   const handleDragEnter: DragEventHandler = (event) => {
@@ -251,7 +251,7 @@ const MusicCollage = () => {
             )}
         </div>
       ) : null}
-      {/* <EditTitleModal /> */}
+      <EditTitleModal />
     </div>
   );
 };

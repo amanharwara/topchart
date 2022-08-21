@@ -1,11 +1,27 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Button from "../components/Button";
 import Input from "../components/Input";
+import Modal from "../components/Modal";
 import SaveIcon from "../icons/SaveIcon";
+import {
+  getMusicCollageItem,
+  useSelectedMusicCollageEditingTitleFor,
+  useSetMusicCollageItem,
+} from "../stores/charts";
 import { MusicCollageItem } from "./MusicCollage";
 
 const EditTitleModal = () => {
+  const setMusicCollageItem = useSetMusicCollageItem();
+  const [editingTitleFor, setEditingTitleFor] =
+    useSelectedMusicCollageEditingTitleFor();
+  const itemToEdit = getMusicCollageItem(editingTitleFor);
+
   const inputElementRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    setTitle(itemToEdit?.title ?? "");
+  }, [itemToEdit]);
 
   const saveTitle = (item: MusicCollageItem) => {
     const titleToSave = title;
@@ -15,69 +31,48 @@ const EditTitleModal = () => {
       return;
     }
 
-    // const { rowIndex, itemIndex } = editingTitleFor();
+    setMusicCollageItem(editingTitleFor, {
+      ...item,
+      title: titleToSave,
+    });
 
-    // setMusicCollageItem(selectedChart().id, rowIndex, itemIndex, {
-    //   ...item,
-    //   title: titleToSave,
-    // });
-
-    // setEditingTitleFor(undefined);
+    setEditingTitleFor(-1);
   };
 
-  return {
-    /* <Show
-      when={
-        selectedChart().options.musicCollage.items[
-          editingTitleFor()?.rowIndex
-        ]?.[editingTitleFor()?.itemIndex]
-      }
-    >
-      {(item) => {
-        setTitle(item.title);
-
-        return (
-          <Modal
-            title="Edit title"
-            isOpen={true}
-            closeModal={() => {
-              if (title() && item.title) {
-                setEditingTitleFor(undefined);
-              } else {
-                inputElementRef.focus();
-              }
-            }}
-          >
-            <form
-              class="flex flex-col items-start gap-2.5 px-2.5 py-3"
-              onSubmit={(event) => {
-                event.preventDefault();
-                saveTitle(item);
-              }}
-            >
-              <Input
-                class="w-full"
-                value={item.title}
-                onChange={(event) => {
-                  setTitle(event.currentTarget.value);
-                }}
-                ref={(el) => {
-                  inputElementRef = el;
-                  setTimeout(() => {
-                    el.focus();
-                  });
-                }}
-                placeholder="Add title..."
-              />
-              <Button type="submit" icon={SaveIcon}>
-                Save
-              </Button>
-            </form>
-          </Modal>
-        );
+  return itemToEdit ? (
+    <Modal
+      title="Edit title"
+      isOpen={true}
+      close={() => {
+        if (title && itemToEdit.title) {
+          setEditingTitleFor(-1);
+        } else {
+          inputElementRef.current?.focus();
+        }
       }}
-    </Show> */
-  };
+    >
+      <form
+        className="flex flex-col items-start gap-2.5 px-2.5 py-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          saveTitle(itemToEdit);
+        }}
+      >
+        <Input
+          className="w-full"
+          value={title}
+          onChange={(event) => {
+            setTitle(event.currentTarget.value);
+          }}
+          // ref={inputElementRef}
+          placeholder="Add title..."
+        />
+        <Button type="submit" icon={SaveIcon}>
+          Save
+        </Button>
+      </form>
+    </Modal>
+  ) : null;
 };
 
 export default EditTitleModal;
