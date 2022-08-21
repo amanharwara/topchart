@@ -16,3 +16,7 @@ body {
 .focus-within-ring:focus-within {
   @apply shadow-none outline-none ring-2 ring-blue-500 ring-offset-1 ring-offset-slate-900;
 }
+
+[data-backdrop] {
+  @apply bg-gray-900/75;
+}
