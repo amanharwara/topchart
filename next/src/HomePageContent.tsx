@@ -1,6 +1,6 @@
-import { Button } from "ariakit";
 import AddCoverArt from "./addCoverArt/AddCoverArt";
 import ChartOptionsSection from "./chartOptions/ChartOptionsSection";
+import Button from "./components/Button";
 import Header from "./header/Header";
 import MusicCollage from "./musicCollage/MusicCollage";
 import { useSetMusicCollageItem } from "./stores/charts";
