@@ -1,6 +1,7 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
+import produce from "immer";
 
 export type ChartType = "musicCollage";
 
@@ -43,8 +44,12 @@ export type Chart = {
 
 interface ChartStore {
   selectedChartId: Chart["id"];
+  setSelectedChartId: (id: string) => void;
+
   charts: Chart[];
-  addNewChart: () => void;
+  addNewChart: () => string;
+  setSelectedChartTitle: (title: string) => void;
+  setSelectedChartType: (type: ChartType) => void;
 
   setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
   setMusicCollageRows: (rows: number) => void;
@@ -72,7 +77,13 @@ interface ChartStore {
 const MaxNumberOfRows = 10;
 const MaxNumberOfColumns = 10;
 
-const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
+const getNewChartWithDefaults = ({
+  id,
+  title,
+}: {
+  id?: string;
+  title?: string;
+}): Chart => ({
   id: id ?? nanoid(),
   title: title ?? "Untitled",
   type: "musicCollage",
@@ -105,299 +116,225 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
 
 const useChartStore = create<ChartStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       selectedChartId: "initial",
+      setSelectedChartId: (id: string) => {
+        set({
+          selectedChartId: id,
+        });
+      },
 
-      charts: [getNewChartWithDefaults("initial")],
+      charts: [getNewChartWithDefaults({ id: "initial" })],
       addNewChart: () => {
+        const newChart = getNewChartWithDefaults({
+          title: `Untitled ${get().charts.length + 1}`,
+        });
         set((state) => ({
-          charts: [...state.charts, getNewChartWithDefaults()],
+          charts: [...state.charts, newChart],
         }));
+        return newChart.id;
+      },
+
+      setSelectedChartTitle: (title: string) => {
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.title = title;
+          })
+        );
+      },
+
+      setSelectedChartType: (type: ChartType) => {
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.type = type;
+          })
+        );
       },
 
       setMusicCollageItem: (index: number, item: MusicCollageItem) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      items: chart.options.musicCollage.items.map(
-                        (currentItem, itemIndex) =>
-                          itemIndex === index ? item : currentItem
-                      ),
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.items[
+              index
+            ] = item;
+          })
+        );
       },
 
       setMusicCollageRows: (rows: number) =>
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      rows,
-                    },
-                  },
-                }
-              : chart
-          ),
-        })),
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.rows = rows;
+          })
+        ),
 
       setMusicCollageColumns: (columns: number) =>
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      columns,
-                    },
-                  },
-                }
-              : chart
-          ),
-        })),
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.columns =
+              columns;
+          })
+        ),
 
       setMusicCollageGap: (gap: MusicCollageSpacing) =>
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      gap,
-                    },
-                  },
-                }
-              : chart
-          ),
-        })),
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.gap = gap;
+          })
+        ),
 
       setMusicCollagePadding: (padding: MusicCollageSpacing) =>
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      padding,
-                    },
-                  },
-                }
-              : chart
-          ),
-        })),
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.padding =
+              padding;
+          })
+        ),
 
       setShowMusicCollageAlbumTitles: (show: boolean) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      titles: {
-                        ...chart.options.musicCollage.titles,
-                        show,
-                      },
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.titles.show =
+              show;
+          })
+        );
       },
 
       setPositionMusicCollageTitlesBelowCover: (
         positionBelowCover: boolean
       ) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      titles: {
-                        ...chart.options.musicCollage.titles,
-                        positionBelowCover,
-                      },
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[
+              selectedChartIndex
+            ]!.options.musicCollage.titles.positionBelowCover = positionBelowCover;
+          })
+        );
       },
 
       setAllowEditingMusicCollageTitles: (allowEditing: boolean) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      titles: {
-                        ...chart.options.musicCollage.titles,
-                        allowEditing,
-                      },
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[
+              selectedChartIndex
+            ]!.options.musicCollage.titles.allowEditing = allowEditing;
+          })
+        );
       },
 
       setMusicCollageBackgroundType: (
         backgroundType: MusicCollageBackgroundType
       ) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      backgroundType,
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[
+              selectedChartIndex
+            ]!.options.musicCollage.backgroundType = backgroundType;
+          })
+        );
       },
 
       setMusicCollageBackgroundColor: (backgroundColor: string) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      backgroundColor,
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[
+              selectedChartIndex
+            ]!.options.musicCollage.backgroundColor = backgroundColor;
+          })
+        );
       },
 
       setMusicCollageBackgroundImage: (backgroundImage: string) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      backgroundImage,
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[
+              selectedChartIndex
+            ]!.options.musicCollage.backgroundImage = backgroundImage;
+          })
+        );
       },
 
       setMusicCollageFontStyle: (fontStyle: MusicCollageFontStyle) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      fontStyle,
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.fontStyle =
+              fontStyle;
+          })
+        );
       },
 
       setMusicCollageFontFamily: (fontFamily: string) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      fontFamily,
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[selectedChartIndex]!.options.musicCollage.fontFamily =
+              fontFamily;
+          })
+        );
       },
 
       setMusicCollageForegroundColor: (foregroundColor: string) => {
-        set((state) => ({
-          charts: state.charts.map((chart) =>
-            chart.id === state.selectedChartId
-              ? {
-                  ...chart,
-                  options: {
-                    ...chart.options,
-                    musicCollage: {
-                      ...chart.options.musicCollage,
-                      foregroundColor,
-                    },
-                  },
-                }
-              : chart
-          ),
-        }));
+        set(
+          produce((state: ChartStore) => {
+            const selectedChartIndex = state.charts.findIndex(
+              (chart) => chart.id === state.selectedChartId
+            );
+            state.charts[
+              selectedChartIndex
+            ]!.options.musicCollage.foregroundColor = foregroundColor;
+          })
+        );
       },
 
       musicCollageEditingTitleFor: -1,
       setMusicCollageEditingTitleFor(itemIndex) {
-        set(() => ({
+        set({
           musicCollageEditingTitleFor: itemIndex,
-        }));
+        });
       },
     }),
     {
@@ -412,8 +349,19 @@ const useChartStore = create<ChartStore>()(
   )
 );
 
+export const useChartsList = () => useChartStore((s) => s.charts);
+
 export const useSelectedChart = () =>
   useChartStore((s) => s.charts.find((c) => c.id === s.selectedChartId));
+
+export const useSetSelectedChartId = () =>
+  useChartStore((s) => s.setSelectedChartId);
+
+export const useSetSelectedChartTitle = () =>
+  useChartStore((s) => s.setSelectedChartTitle);
+
+export const useSetSelectedChartType = () =>
+  useChartStore((s) => s.setSelectedChartType);
 
 export const useSelectedMusicCollageRows = (): [
   number,

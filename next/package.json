@@ -12,6 +12,7 @@
   "dependencies": {
     "ariakit": "^2.0.0-next.39",
     "idb": "^7.0.2",
+    "immer": "^9.0.15",
     "nanoid": "^4.0.0",
     "next": "12.2.5",
     "react": "18.2.0",
