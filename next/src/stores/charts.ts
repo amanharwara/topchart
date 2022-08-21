@@ -43,12 +43,22 @@ export type Chart = {
 interface ChartStore {
   selectedChartId: Chart["id"];
   charts: Chart[];
-  addNewChart: (chart: Chart) => void;
+  addNewChart: () => void;
+
   setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
   setMusicCollageRows: (rows: number) => void;
   setMusicCollageColumns: (columns: number) => void;
+  setMusicCollageGap: (gap: MusicCollageSpacing) => void;
+  setMusicCollagePadding: (gap: MusicCollageSpacing) => void;
   setShowMusicCollageAlbumTitles: (show: boolean) => void;
+  setPositionMusicCollageTitlesBelowCover: (
+    positionBelowCover: boolean
+  ) => void;
+  setAllowEditingMusicCollageTitles: (allowEditing: boolean) => void;
 }
+
+const MaxNumberOfRows = 10;
+const MaxNumberOfColumns = 10;
 
 const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
   id: id ?? nanoid(),
@@ -60,10 +70,12 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
       columns: 3,
       gap: "small",
       padding: "small",
-      items: new Array(10).fill(null).map(() => ({
-        title: "",
-        image: null,
-      })),
+      items: new Array(MaxNumberOfRows * MaxNumberOfColumns)
+        .fill(null)
+        .map(() => ({
+          title: "",
+          image: null,
+        })),
       backgroundType: "color",
       background: {
         image: "",
@@ -151,6 +163,42 @@ const useChartStore = create<ChartStore>()(
           ),
         })),
 
+      setMusicCollageGap: (gap: MusicCollageSpacing) =>
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      gap,
+                    },
+                  },
+                }
+              : chart
+          ),
+        })),
+
+      setMusicCollagePadding: (padding: MusicCollageSpacing) =>
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      padding,
+                    },
+                  },
+                }
+              : chart
+          ),
+        })),
+
       setShowMusicCollageAlbumTitles: (show: boolean) => {
         set((state) => ({
           charts: state.charts.map((chart) =>
@@ -172,6 +220,52 @@ const useChartStore = create<ChartStore>()(
           ),
         }));
       },
+
+      setPositionMusicCollageTitlesBelowCover: (
+        positionBelowCover: boolean
+      ) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      titles: {
+                        ...chart.options.musicCollage.titles,
+                        positionBelowCover,
+                      },
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
+
+      setAllowEditingMusicCollageTitles: (allowEditing: boolean) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      titles: {
+                        ...chart.options.musicCollage.titles,
+                        allowEditing,
+                      },
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
     }),
     {
       name: "charts",
@@ -182,33 +276,72 @@ const useChartStore = create<ChartStore>()(
 export const useSelectedChart = () =>
   useChartStore((s) => s.charts.find((c) => c.id === s.selectedChartId));
 
-export const useSelectedChartRows = (): [
-  number | undefined,
+export const useSelectedMusicCollageRows = (): [
+  number,
   (rows: number) => void
 ] =>
   useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)?.options.musicCollage.rows,
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage.rows,
     s.setMusicCollageRows,
   ]);
 
-export const useSelectedChartColumns = (): [
-  number | undefined,
+export const useSelectedMusicCollageColumns = (): [
+  number,
   (columns: number) => void
 ] =>
   useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)?.options.musicCollage
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
       .columns,
     s.setMusicCollageColumns,
   ]);
 
-export const useSelectedChartShowAlbumTitles = (): [
-  boolean | undefined,
+export const useSelectedMusicCollageGap = (): [
+  MusicCollageSpacing,
+  (gap: MusicCollageSpacing) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage.gap,
+    s.setMusicCollageGap,
+  ]);
+
+export const useSelectedMusicCollagePadding = (): [
+  MusicCollageSpacing,
+  (padding: MusicCollageSpacing) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .padding,
+    s.setMusicCollagePadding,
+  ]);
+
+export const useSelectedMusicCollageShowAlbumTitles = (): [
+  boolean,
   (show: boolean) => void
 ] =>
   useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)?.options.musicCollage
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
       .titles.show,
     s.setShowMusicCollageAlbumTitles,
+  ]);
+
+export const useSelectedMusicCollageAlbumTitlesPosition = (): [
+  boolean,
+  (positionBelowCover: boolean) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .titles.positionBelowCover,
+    s.setPositionMusicCollageTitlesBelowCover,
+  ]);
+
+export const useSelectedMusicCollageAllowEditingTitles = (): [
+  boolean,
+  (allowEditing: boolean) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .titles.allowEditing,
+    s.setAllowEditingMusicCollageTitles,
   ]);
 
 export const useAddChart = () => useChartStore((s) => s.addNewChart);

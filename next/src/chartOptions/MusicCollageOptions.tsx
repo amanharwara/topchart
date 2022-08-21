@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { FormEventHandler, useState } from "react";
 import ColorPickerButton from "../components/ColorPickerButton";
 import IconButton from "../components/IconButton";
@@ -11,14 +12,18 @@ import LinkIcon from "../icons/LinkIcon";
 import {
   MusicCollageFontStyle,
   MusicCollageSpacing,
-  useSelectedChartColumns,
-  useSelectedChartRows,
-  useSelectedChartShowAlbumTitles,
+  useSelectedMusicCollageAlbumTitlesPosition,
+  useSelectedMusicCollageAllowEditingTitles,
+  useSelectedMusicCollageColumns,
+  useSelectedMusicCollageGap,
+  useSelectedMusicCollagePadding,
+  useSelectedMusicCollageRows,
+  useSelectedMusicCollageShowAlbumTitles,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
 
-const MusicCollageRowsOption = () => {
-  const [rows, setRows] = useSelectedChartRows();
+const RowsOption = () => {
+  const [rows, setRows] = useSelectedMusicCollageRows();
 
   const onRowsInput: FormEventHandler<HTMLInputElement> = (event) => {
     setRows(parseInt(event.currentTarget.value));
@@ -49,8 +54,8 @@ const MusicCollageRowsOption = () => {
   );
 };
 
-const MusicCollageColumnsOption = () => {
-  const [columns, setColumns] = useSelectedChartColumns();
+const ColumnsOption = () => {
+  const [columns, setColumns] = useSelectedMusicCollageColumns();
 
   const onColumnsInput: FormEventHandler<HTMLInputElement> = (event) => {
     setColumns(parseInt(event.currentTarget.value));
@@ -82,12 +87,12 @@ const MusicCollageColumnsOption = () => {
 };
 
 export const AlbumTitlesOption = () => {
-  const [showAlbumTitles, setShowAlbumTitles] = useSelectedChartShowAlbumTitles();
+  const [showAlbumTitles, setShowAlbumTitles] =
+    useSelectedMusicCollageShowAlbumTitles();
   const [positionTitlesBelowCover, setShouldPositionTitlesBelowCover] =
-    useState(false);
-  const [allowEditingTitles, setAllowEditingTitles] = useState(false);
-
-  if (typeof showAlbumTitles === "undefined") return null;
+    useSelectedMusicCollageAlbumTitlesPosition();
+  const [allowEditingTitles, setAllowEditingTitles] =
+    useSelectedMusicCollageAllowEditingTitles();
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -135,9 +140,75 @@ export const AlbumTitlesOption = () => {
   );
 };
 
+const GapOption = () => {
+  const [gap, setGap] = useSelectedMusicCollageGap();
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Gap Between Items:</div>
+      <RadioButtonGroup
+        items={[
+          {
+            label: "None",
+            value: "none",
+          },
+          {
+            label: "Small",
+            value: "small",
+          },
+          {
+            label: "Medium",
+            value: "medium",
+          },
+          {
+            label: "Large",
+            value: "large",
+          },
+        ]}
+        value={gap}
+        onChange={(value) => {
+          setGap(value as MusicCollageSpacing);
+        }}
+      />
+    </div>
+  );
+};
+
+const PaddingOption = () => {
+  const [padding, setPadding] = useSelectedMusicCollagePadding();
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Padding:</div>
+      <RadioButtonGroup
+        items={[
+          {
+            label: "None",
+            value: "none",
+          },
+          {
+            label: "Small",
+            value: "small",
+          },
+          {
+            label: "Medium",
+            value: "medium",
+          },
+          {
+            label: "Large",
+            value: "large",
+          },
+        ]}
+        value={padding}
+        onChange={(value) => {
+          setPadding(value as MusicCollageSpacing);
+        }}
+      />
+    </div>
+  );
+};
+
 const MusicCollageOptions = () => {
-  const [gap, setGap] = useState<MusicCollageSpacing>("small");
-  const [padding, setPadding] = useState<MusicCollageSpacing>("small");
   const [shouldUseColorForBg, setShouldUseColorForBg] = useState(true);
   const [backgroundImage, setBackgroundImage] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#000000");
@@ -147,62 +218,10 @@ const MusicCollageOptions = () => {
 
   return (
     <>
-      <MusicCollageRowsOption />
-      <MusicCollageColumnsOption />
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Gap Between Items:</div>
-        <RadioButtonGroup
-          items={[
-            {
-              label: "None",
-              value: "none",
-            },
-            {
-              label: "Small",
-              value: "small",
-            },
-            {
-              label: "Medium",
-              value: "medium",
-            },
-            {
-              label: "Large",
-              value: "large",
-            },
-          ]}
-          value={gap}
-          onChange={(value) => {
-            setGap(value as MusicCollageSpacing);
-          }}
-        />
-      </div>
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Padding:</div>
-        <RadioButtonGroup
-          items={[
-            {
-              label: "None",
-              value: "none",
-            },
-            {
-              label: "Small",
-              value: "small",
-            },
-            {
-              label: "Medium",
-              value: "medium",
-            },
-            {
-              label: "Large",
-              value: "large",
-            },
-          ]}
-          value={padding}
-          onChange={(value) => {
-            setPadding(value as MusicCollageSpacing);
-          }}
-        />
-      </div>
+      <RowsOption />
+      <ColumnsOption />
+      <GapOption />
+      <PaddingOption />
       <AlbumTitlesOption />
       <div className="flex flex-col gap-2.5">
         <div className="flex items-center justify-between">

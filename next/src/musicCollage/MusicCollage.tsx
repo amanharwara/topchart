@@ -11,6 +11,7 @@ import { getImageFromDB } from "../stores/imageDB";
 import {
   getMusicCollageItem,
   useSelectedChart,
+  useSelectedMusicCollageAllowEditingTitles,
   useSetMusicCollageItem,
 } from "../stores/charts";
 
@@ -42,6 +43,7 @@ const CollageItem = ({
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
   const setMusicCollageItem = useSetMusicCollageItem();
+  const [allowEditingTitles] = useSelectedMusicCollageAllowEditingTitles();
 
   const editTitleForCurrentItem = () => {
     /* setEditingTitleFor({
@@ -119,12 +121,14 @@ const CollageItem = ({
       <div className="absolute right-3 top-3 flex items-center gap-2">
         {item.image && (
           <>
-            <IconButton
-              icon={EditIcon}
-              label="Edit title"
-              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
-              onClick={editTitleForCurrentItem}
-            />
+            {allowEditingTitles && (
+              <IconButton
+                icon={EditIcon}
+                label="Edit title"
+                className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
+                onClick={editTitleForCurrentItem}
+              />
+            )}
             <IconButton
               icon={TrashIcon}
               label="Delete item"
@@ -200,16 +204,16 @@ const MusicCollage = () => {
   const columns = selectedChart.options.musicCollage.columns;
 
   const hasAnyTitle = () =>
-    selectedChart.options.musicCollage.items
-      .flat()
-      .some((item: MusicCollageItem) => !!item.title);
+    selectedChart.options.musicCollage.items.some(
+      (item: MusicCollageItem) => !!item.title
+    );
 
   const shouldPositionTitlesBelowCover =
     selectedChart.options.musicCollage.titles.positionBelowCover;
 
   return (
     <div
-      className={classNames("flex w-max gap-4", padding(), font)}
+      className={classNames("flex w-max", padding(), font)}
       style={{
         background: currentBackground,
         color: selectedChart.options.musicCollage.foregroundColor,
@@ -238,13 +242,13 @@ const MusicCollage = () => {
       </div>
       {selectedChart.options.musicCollage.titles.show &&
       hasAnyTitle() &&
-      shouldPositionTitlesBelowCover ? (
+      !shouldPositionTitlesBelowCover ? (
         <div className="flex flex-col gap-2">
           {selectedChart.options.musicCollage.items
             .slice(0, rows * columns)
-            .map((item) => (
-              <div>{item.title && <div>{item.title}</div>}</div>
-            ))}
+            .map((item, index) =>
+              item.title ? <div key={index}>{item.title}</div> : null
+            )}
         </div>
       ) : null}
       {/* <EditTitleModal /> */}
