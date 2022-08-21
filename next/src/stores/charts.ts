@@ -27,7 +27,8 @@ export type Chart = {
       padding: MusicCollageSpacing;
       items: MusicCollageItem[];
       backgroundType: MusicCollageBackgroundType;
-      background: Record<MusicCollageBackgroundType, string>;
+      backgroundColor: string;
+      backgroundImage: string;
       fontStyle: MusicCollageFontStyle;
       fontFamily: string;
       foregroundColor: string;
@@ -55,6 +56,14 @@ interface ChartStore {
     positionBelowCover: boolean
   ) => void;
   setAllowEditingMusicCollageTitles: (allowEditing: boolean) => void;
+  setMusicCollageBackgroundType: (
+    backgroundType: MusicCollageBackgroundType
+  ) => void;
+  setMusicCollageBackgroundImage: (image: string) => void;
+  setMusicCollageBackgroundColor: (color: string) => void;
+  setMusicCollageFontStyle: (fontStyle: MusicCollageFontStyle) => void;
+  setMusicCollageFontFamily: (fontFamily: string) => void;
+  setMusicCollageForegroundColor: (color: string) => void;
 }
 
 const MaxNumberOfRows = 10;
@@ -77,10 +86,8 @@ const getNewChartWithDefaults = (id?: string, title?: string): Chart => ({
           image: null,
         })),
       backgroundType: "color",
-      background: {
-        image: "",
-        color: "#000000",
-      },
+      backgroundColor: "#000000",
+      backgroundImage: "",
       fontStyle: "sans",
       fontFamily: "Inter",
       foregroundColor: "#FFFFFF",
@@ -266,6 +273,122 @@ const useChartStore = create<ChartStore>()(
           ),
         }));
       },
+
+      setMusicCollageBackgroundType: (
+        backgroundType: MusicCollageBackgroundType
+      ) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      backgroundType,
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
+
+      setMusicCollageBackgroundColor: (backgroundColor: string) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      backgroundColor,
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
+
+      setMusicCollageBackgroundImage: (backgroundImage: string) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      backgroundImage,
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
+
+      setMusicCollageFontStyle: (fontStyle: MusicCollageFontStyle) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      fontStyle,
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
+
+      setMusicCollageFontFamily: (fontFamily: string) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      fontFamily,
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
+
+      setMusicCollageForegroundColor: (foregroundColor: string) => {
+        set((state) => ({
+          charts: state.charts.map((chart) =>
+            chart.id === state.selectedChartId
+              ? {
+                  ...chart,
+                  options: {
+                    ...chart.options,
+                    musicCollage: {
+                      ...chart.options.musicCollage,
+                      foregroundColor,
+                    },
+                  },
+                }
+              : chart
+          ),
+        }));
+      },
     }),
     {
       name: "charts",
@@ -342,6 +465,66 @@ export const useSelectedMusicCollageAllowEditingTitles = (): [
     s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
       .titles.allowEditing,
     s.setAllowEditingMusicCollageTitles,
+  ]);
+
+export const useSelectedMusicCollageBackgroundType = (): [
+  MusicCollageBackgroundType,
+  (backgroundType: MusicCollageBackgroundType) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .backgroundType,
+    s.setMusicCollageBackgroundType,
+  ]);
+
+export const useSelectedMusicCollageBackgroundColor = (): [
+  string,
+  (backgroundColor: string) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .backgroundColor,
+    s.setMusicCollageBackgroundColor,
+  ]);
+
+export const useSelectedMusicCollageBackgroundImage = (): [
+  string,
+  (backgroundImage: string) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .backgroundImage,
+    s.setMusicCollageBackgroundImage,
+  ]);
+
+export const useSelectedMusicCollageFontStyle = (): [
+  MusicCollageFontStyle,
+  (fontStyle: MusicCollageFontStyle) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .fontStyle,
+    s.setMusicCollageFontStyle,
+  ]);
+
+export const useSelectedMusicCollageFontFamily = (): [
+  string,
+  (fontFamily: string) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .fontFamily,
+    s.setMusicCollageFontFamily,
+  ]);
+
+export const useSelectedMusicCollageForegroundColor = (): [
+  string,
+  (foregroundColor: string) => void
+] =>
+  useChartStore((s) => [
+    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
+      .foregroundColor,
+    s.setMusicCollageForegroundColor,
   ]);
 
 export const useAddChart = () => useChartStore((s) => s.addNewChart);

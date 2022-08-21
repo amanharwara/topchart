@@ -32,4 +32,5 @@ module.exports = {
     },
   },
   plugins: [],
+  safelist: ["font-sans", "font-serif", "font-mono"],
 };

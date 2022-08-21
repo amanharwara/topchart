@@ -197,8 +197,8 @@ const MusicCollage = () => {
 
   const currentBackground =
     selectedChart.options.musicCollage.backgroundType === "color"
-      ? selectedChart.options.musicCollage.background.color
-      : `url(${selectedChart.options.musicCollage.background.image})`;
+      ? selectedChart.options.musicCollage.backgroundColor
+      : `url(${selectedChart.options.musicCollage.backgroundImage})`;
 
   const rows = selectedChart.options.musicCollage.rows;
   const columns = selectedChart.options.musicCollage.columns;

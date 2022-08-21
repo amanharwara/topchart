@@ -14,7 +14,13 @@ import {
   MusicCollageSpacing,
   useSelectedMusicCollageAlbumTitlesPosition,
   useSelectedMusicCollageAllowEditingTitles,
+  useSelectedMusicCollageBackgroundColor,
+  useSelectedMusicCollageBackgroundImage,
+  useSelectedMusicCollageBackgroundType,
   useSelectedMusicCollageColumns,
+  useSelectedMusicCollageFontFamily,
+  useSelectedMusicCollageFontStyle,
+  useSelectedMusicCollageForegroundColor,
   useSelectedMusicCollageGap,
   useSelectedMusicCollagePadding,
   useSelectedMusicCollageRows,
@@ -208,14 +214,147 @@ const PaddingOption = () => {
   );
 };
 
-const MusicCollageOptions = () => {
-  const [shouldUseColorForBg, setShouldUseColorForBg] = useState(true);
-  const [backgroundImage, setBackgroundImage] = useState("");
-  const [backgroundColor, setBackgroundColor] = useState("#000000");
-  const [foregroundColor, setForegroundColor] = useState("#FFFFFF");
-  const [fontStyle, setFontStyle] = useState<MusicCollageFontStyle>("sans");
-  const [fontFamily, setFontFamily] = useState("Inter");
+const BackgroundOption = () => {
+  const [backgroundType, setBackgroundType] =
+    useSelectedMusicCollageBackgroundType();
+  const [backgroundImage, setBackgroundImage] =
+    useSelectedMusicCollageBackgroundImage();
+  const [backgroundColor, setBackgroundColor] =
+    useSelectedMusicCollageBackgroundColor();
 
+  const shouldUseColorForBg = backgroundType === "color";
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="flex items-center justify-between">
+        <div className="text-lg font-semibold">
+          Background {shouldUseColorForBg ? "Color" : "Image"}:
+        </div>
+        {shouldUseColorForBg ? (
+          <IconButton
+            icon={ImageIcon}
+            label={"Use image instead"}
+            onClick={() => {
+              setBackgroundType("image");
+            }}
+          />
+        ) : (
+          <IconButton
+            icon={ColorPickerIcon}
+            label={"Use color instead"}
+            onClick={() => {
+              setBackgroundType("color");
+            }}
+          />
+        )}
+      </div>
+      {shouldUseColorForBg ? (
+        <>
+          {/** @TODO Suggestion: List of 10 recently used colors */}
+          <div className="flex flex-grow gap-1.5">
+            <Input
+              placeholder="Enter color..."
+              value={backgroundColor}
+              onChange={(event) => {
+                setBackgroundColor(event.currentTarget.value);
+              }}
+            />
+            <ColorPickerButton
+              value={backgroundColor}
+              onChange={(value) => {
+                setBackgroundColor(value);
+              }}
+              className="px-2.5"
+            />
+          </div>
+        </>
+      ) : (
+        <InputWithIcon
+          icon={LinkIcon}
+          placeholder="Enter image URL..."
+          value={backgroundImage}
+          onChange={(event) => {
+            setBackgroundImage(event.currentTarget.value);
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+const FontOption = () => {
+  const [fontStyle, setFontStyle] = useSelectedMusicCollageFontStyle();
+  const [fontFamily, setFontFamily] = useSelectedMusicCollageFontFamily();
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Font style:</div>
+      <RadioButtonGroup
+        items={[
+          {
+            label: "Sans-serif",
+            value: "sans",
+          },
+          {
+            label: "Serif",
+            value: "serif",
+          },
+          {
+            label: "Monospace",
+            value: "mono",
+          },
+          {
+            label: "Custom",
+            value: "custom",
+          },
+        ]}
+        value={fontStyle}
+        onChange={(value) => {
+          setFontStyle(value as MusicCollageFontStyle);
+        }}
+      />
+      {fontStyle === "custom" && (
+        <Input
+          aria-label="Custom font"
+          placeholder="Select font"
+          value={fontFamily}
+          onChange={(event) => {
+            setFontFamily(event.currentTarget.value);
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+const TextColorOption = () => {
+  const [foregroundColor, setForegroundColor] =
+    useSelectedMusicCollageForegroundColor();
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Text color:</div>
+      <div className="flex flex-grow gap-1.5">
+        <Input
+          placeholder="Enter color..."
+          value={foregroundColor}
+          onChange={(event) => {
+            setForegroundColor(event.currentTarget.value);
+          }}
+        />
+        <ColorPickerButton
+          value={foregroundColor}
+          onChange={(value) => {
+            setForegroundColor(value);
+          }}
+          className="px-2.5"
+        />
+      </div>
+    </div>
+  );
+};
+
+const MusicCollageOptions = () => {
   return (
     <>
       <RowsOption />
@@ -223,116 +362,9 @@ const MusicCollageOptions = () => {
       <GapOption />
       <PaddingOption />
       <AlbumTitlesOption />
-      <div className="flex flex-col gap-2.5">
-        <div className="flex items-center justify-between">
-          <div className="text-lg font-semibold">
-            Background {shouldUseColorForBg ? "Color" : "Image"}:
-          </div>
-          {shouldUseColorForBg ? (
-            <IconButton
-              icon={ImageIcon}
-              label={"Use image instead"}
-              onClick={() => {
-                setShouldUseColorForBg(false);
-              }}
-            />
-          ) : (
-            <IconButton
-              icon={ColorPickerIcon}
-              label={"Use color instead"}
-              onClick={() => {
-                setShouldUseColorForBg(true);
-              }}
-            />
-          )}
-        </div>
-        {shouldUseColorForBg ? (
-          <>
-            {/** @TODO Suggestion: List of 10 recently used colors */}
-            <div className="flex flex-grow gap-1.5">
-              <Input
-                placeholder="Enter color..."
-                value={backgroundColor}
-                onChange={(event) => {
-                  setBackgroundColor(event.currentTarget.value);
-                }}
-              />
-              <ColorPickerButton
-                value={backgroundColor}
-                onChange={(value) => {
-                  setBackgroundColor(value);
-                }}
-                className="px-2.5"
-              />
-            </div>
-          </>
-        ) : (
-          <InputWithIcon
-            icon={LinkIcon}
-            placeholder="Enter image URL..."
-            value={backgroundImage}
-            onChange={(event) => {
-              setBackgroundImage(event.currentTarget.value);
-            }}
-          />
-        )}
-      </div>
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Font style:</div>
-        <RadioButtonGroup
-          items={[
-            {
-              label: "Sans-serif",
-              value: "sans",
-            },
-            {
-              label: "Serif",
-              value: "serif",
-            },
-            {
-              label: "Monospace",
-              value: "mono",
-            },
-            {
-              label: "Custom",
-              value: "custom",
-            },
-          ]}
-          value={fontStyle}
-          onChange={(value) => {
-            setFontStyle(value as MusicCollageFontStyle);
-          }}
-        />
-        {fontStyle === "custom" && (
-          <Input
-            aria-label="Custom font"
-            placeholder="Select font"
-            value={fontFamily}
-            onChange={(event) => {
-              setFontFamily(event.currentTarget.value);
-            }}
-          />
-        )}
-      </div>
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Text color:</div>
-        <div className="flex flex-grow gap-1.5">
-          <Input
-            placeholder="Enter color..."
-            value={foregroundColor}
-            onChange={(event) => {
-              setForegroundColor(event.currentTarget.value);
-            }}
-          />
-          <ColorPickerButton
-            value={foregroundColor}
-            onChange={(value) => {
-              setForegroundColor(value);
-            }}
-            className="px-2.5"
-          />
-        </div>
-      </div>
+      <BackgroundOption />
+      <FontOption />
+      <TextColorOption />
     </>
   );
 };
