@@ -243,7 +243,7 @@ const MusicCollage = () => {
       {selectedChart.options.musicCollage.titles.show &&
       hasAnyTitle() &&
       !shouldPositionTitlesBelowCover ? (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           {selectedChart.options.musicCollage.items
             .slice(0, rows * columns)
             .map((item, index) =>
