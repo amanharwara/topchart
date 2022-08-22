@@ -1,68 +1,37 @@
-import {
-  Component,
-  createEffect,
-  JSX,
-  onCleanup,
-  onMount,
-  Show,
-} from "solid-js";
-import { Portal } from "solid-js/web";
-import CloseIcon from "./icons/CloseIcon";
+import { Dialog, DialogDismiss, DialogHeading, useDialogState } from "ariakit";
+import { ReactNode } from "react";
+import CloseIcon from "../icons/CloseIcon";
 
 type Props = {
-  children: JSX.Element;
-  title?: string;
+  title: string;
   isOpen: boolean;
-  closeModal: () => void;
+  close: () => void;
+  children: ReactNode;
 };
 
-const Modal: Component<Props> = (props) => {
-  let closeButtonRef: HTMLButtonElement | undefined;
-
-  const closeOnEscape = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      props.closeModal();
-    }
-  };
-
-  createEffect(() => {
-    if (props.isOpen) {
-      closeButtonRef?.focus();
-    }
-  });
-
-  onMount(() => {
-    document.addEventListener("keydown", closeOnEscape);
-  });
-
-  onCleanup(() => {
-    document.removeEventListener("keydown", closeOnEscape);
+const Modal = ({ title, isOpen, close, children }: Props) => {
+  const state = useDialogState({
+    open: isOpen,
   });
 
   return (
-    <Show when={props.isOpen}>
-      <Portal>
-        <div
-          class="absolute top-0 left-0 h-full w-full bg-gray-900 opacity-60"
-          onClick={props.closeModal}
-        />
-        <div class="absolute top-1/2 left-1/2 flex max-h-[95vh] min-w-full -translate-y-1/2 -translate-x-1/2 flex-col rounded-sm bg-slate-700 text-white shadow sm:min-w-96">
-          <div class="flex w-full items-center border-b border-slate-600">
-            <div class="flex-grow px-3 text-sm font-semibold">
-              {props.title}
-            </div>
-            <button
-              class="flex items-center border-l border-slate-600 p-2.5 hover:bg-slate-600"
-              onClick={props.closeModal}
-              ref={closeButtonRef}
-            >
-              <CloseIcon class="h-4 w-4 text-white" />
-            </button>
-          </div>
-          {props.children}
-        </div>
-      </Portal>
-    </Show>
+    <Dialog
+      state={state}
+      className="absolute top-1/2 left-1/2 flex max-h-[95vh] min-w-full -translate-y-1/2 -translate-x-1/2 flex-col rounded-sm bg-slate-700 text-white shadow sm:min-w-96"
+    >
+      <div className="flex w-full items-center border-b border-slate-600">
+        <DialogHeading className="flex-grow px-3 text-sm font-semibold">
+          {title}
+        </DialogHeading>
+        <DialogDismiss
+          className="flex items-center border-l border-slate-600 p-2.5 hover:bg-slate-600"
+          onClick={close}
+        >
+          <CloseIcon className="h-4 w-4 text-white" />
+        </DialogDismiss>
+      </div>
+      {children}
+    </Dialog>
   );
 };
 

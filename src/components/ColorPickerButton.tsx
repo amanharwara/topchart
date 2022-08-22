@@ -1,30 +1,32 @@
-import { Component } from "solid-js";
+import { useRef } from "react";
+import ColorPickerIcon from "../icons/ColorPickerIcon";
 import IconButton from "./IconButton";
-import ColorPickerIcon from "./icons/ColorPickerIcon";
 
-const ColorPickerButton: Component<{
+type Props = {
   value: string;
   onChange: (value: string) => void;
-  class?: string;
-}> = (props) => {
-  let inputElementRef: HTMLInputElement | null;
+  className?: string;
+};
+
+const ColorPickerButton = ({ value, onChange, className }: Props) => {
+  const inputElementRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div class="relative flex">
+    <div className="relative flex">
       <input
-        class="pointer-events-none absolute top-0 left-0 h-full w-full opacity-0"
+        className="pointer-events-none absolute top-0 left-0 h-full w-full opacity-0"
         type="color"
-        value={props.value}
+        value={value}
         onChange={(event) => {
-          props.onChange(event.currentTarget.value);
+          onChange(event.currentTarget.value);
         }}
         ref={inputElementRef}
       />
       <IconButton
-        className={props.class}
+        className={className}
         icon={ColorPickerIcon}
         label="Pick color"
-        onClick={() => inputElementRef.click()}
+        onClick={() => inputElementRef.current?.click()}
       />
     </div>
   );

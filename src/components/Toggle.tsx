@@ -1,26 +1,25 @@
-import { Component, ComponentProps, createSignal, splitProps } from "solid-js";
+import { Checkbox, useCheckboxState, VisuallyHidden } from "ariakit";
+import { ComponentPropsWithoutRef } from "react";
 import classNames from "../utils/classNames";
 
 type Props = {
-  defaultValue?: boolean;
-  value?: boolean;
-  onChange?: (checked: boolean) => void;
+  value: boolean;
+  onChange: (checked: boolean) => void;
   invertedColors?: boolean;
-  disabled?: boolean;
-} & Omit<ComponentProps<"input">, "value" | "onChange" | "disabled">;
+} & Omit<ComponentPropsWithoutRef<"input">, "value" | "onChange">;
 
-const Toggle: Component<Props> = (props) => {
-  const [, checkboxProps] = splitProps(props, [
-    "defaultValue",
-    "value",
-    "onChange",
-    "invertedColors",
-  ]);
-
-  const [checked, setChecked] = createSignal(props.defaultValue ?? false);
-  const isChecked = () =>
-    typeof props.value !== "undefined" ? props.value : checked();
-  const invertedColors = props.invertedColors ?? false;
+const Toggle = ({
+  value,
+  onChange,
+  invertedColors = false,
+  ...props
+}: Props) => {
+  const state = useCheckboxState<boolean>({
+    value,
+    setValue(value) {
+      onChange(value);
+    },
+  });
 
   const colors = {
     container: {
@@ -44,33 +43,21 @@ const Toggle: Component<Props> = (props) => {
 
   return (
     <div
-      class={classNames(
+      className={classNames(
         "focus-within-ring relative min-h-5 min-w-10 rounded-xl border transition-colors duration-150 ease-out",
-        isChecked() ? colors.container.checked : colors.container.unchecked,
+        value ? colors.container.checked : colors.container.unchecked,
         props.disabled && colors.container.disabled
       )}
     >
-      <input
-        type="checkbox"
-        class={classNames(
-          "absolute top-0 left-0 z-[1] m-0 h-full w-full p-0 opacity-0 shadow-none outline-none",
-          props.disabled ? "cursor-not-allowed" : "cursor-pointer"
-        )}
-        disabled={props.disabled}
-        onChange={() => {
-          const currentValue = isChecked();
-
-          setChecked(!currentValue);
-          props.onChange?.(!currentValue);
-        }}
-        {...checkboxProps}
-      />
+      <VisuallyHidden>
+        <Checkbox state={state} {...props} />
+      </VisuallyHidden>
       <span
         aria-hidden
-        class={classNames(
+        className={classNames(
           "absolute top-1/2 block -translate-y-1/2 rounded-full transition-transform duration-150 ease-out",
           colors.indicator.common,
-          isChecked() ? colors.indicator.checked : colors.indicator.unchecked,
+          value ? colors.indicator.checked : colors.indicator.unchecked,
           props.disabled && colors.indicator.disabled
         )}
       />

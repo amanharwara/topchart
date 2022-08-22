@@ -1,51 +1,30 @@
+import { ComponentPropsWithoutRef, ComponentType } from "react";
 import classNames from "../utils/classNames";
-import {
-  Component,
-  ComponentProps,
-  JSX,
-  mergeProps,
-  splitProps,
-} from "solid-js";
 
 type Props = {
   hideLabelOnMobile?: boolean;
-  icon?: Component<JSX.IntrinsicElements["svg"]>;
-} & ComponentProps<"button">;
+  icon?: ComponentType<ComponentPropsWithoutRef<"svg">>;
+} & ComponentPropsWithoutRef<"button">;
 
-const Button = (props: Props) => {
-  const propsWithDefaults = mergeProps(
-    {
-      hideLabelOnMobile: true,
-    },
-    props
-  );
-  const [currentProps, otherProps] = splitProps(propsWithDefaults, [
-    "hideLabelOnMobile",
-    "icon",
-  ]);
-
-  return (
-    <button
-      type="button"
-      class={classNames(
-        "flex items-center gap-1.5 rounded border border-solid border-slate-600 text-white hover:bg-slate-600",
-        currentProps.hideLabelOnMobile
-          ? "p-1.5 md:px-2 md:py-1.5"
-          : "px-2 py-1.5"
+const Button = ({ hideLabelOnMobile, icon: Icon, ...props }: Props) => (
+  <button
+    type="button"
+    className={classNames(
+      "flex items-center gap-1.5 rounded border border-solid border-slate-600 text-white hover:bg-slate-600",
+      hideLabelOnMobile ? "p-1.5 md:px-2 md:py-1.5" : "px-2 py-1.5"
+    )}
+    {...props}
+  >
+    {Icon ? <Icon className="h-4 w-4" /> : null}
+    <span
+      className={classNames(
+        "text-xs font-semibold",
+        hideLabelOnMobile && "hidden md:inline"
       )}
-      {...otherProps}
     >
-      {props.icon ? <props.icon class="h-4 w-4" /> : null}
-      <span
-        class={classNames(
-          "text-xs font-semibold",
-          currentProps.hideLabelOnMobile && "hidden md:inline"
-        )}
-      >
-        {otherProps.children}
-      </span>
-    </button>
-  );
-};
+      {props.children}
+    </span>
+  </button>
+);
 
 export default Button;

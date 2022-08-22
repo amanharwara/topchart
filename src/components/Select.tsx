@@ -1,54 +1,48 @@
 import {
-  Component,
-  ComponentProps,
-  createSignal,
-  For,
-  splitProps,
-} from "solid-js";
-import CaretDownIcon from "./icons/CaretDownIcon";
+  Select as AriaKitSelect,
+  SelectArrow,
+  SelectItem,
+  SelectPopover,
+  SelectState,
+  useSelectState,
+} from "ariakit/select";
 
-type SelectProps = Omit<ComponentProps<"select">, "value" | "onChange">;
-
-type Props = SelectProps & {
+type Props = {
   value?: string;
-  initialValue?: string;
-  onChange?: (value: string) => void;
-  options: {
-    value: string;
-    label: string;
-  }[];
+  setValue?: (value: string) => void;
+  options: { value: string; label: string }[];
 };
 
-const Select: Component<Props> = (props) => {
-  const [, selectProps] = splitProps(props, [
-    "value",
-    "initialValue",
-    "onChange",
-    "options",
-  ]);
-
-  const [value, setValue] = createSignal<string>(
-    props.initialValue ?? props.options[0].value
-  );
-
-  const currentValue = () => (!props.value ? value() : props.value);
+const Select = ({ value, setValue, options }: Props) => {
+  const state = useSelectState({
+    defaultValue: value ? value : options[0]?.value,
+    value,
+    setValue,
+  });
 
   return (
-    <div class="relative flex flex-grow">
-      <select
-        class="flex-grow appearance-none rounded border border-slate-600 bg-gray-800 px-2.5 py-2 text-sm text-white"
-        value={currentValue()}
-        onChange={(event) => {
-          setValue(event.currentTarget.value);
-          props.onChange?.(event.currentTarget.value);
-        }}
-        {...selectProps}
+    <div className="flex flex-grow">
+      <AriaKitSelect
+        state={state}
+        className="flex flex-grow appearance-none items-center justify-between rounded border border-slate-600 bg-gray-800 px-2.5 py-2 text-sm text-white"
       >
-        <For each={props.options}>
-          {(option) => <option value={option.value}>{option.label}</option>}
-        </For>
-      </select>
-      <CaretDownIcon class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-white" />
+        {options.find((option) => option.value === state.value)?.label}
+        <SelectArrow />
+      </AriaKitSelect>
+      <SelectPopover
+        state={state}
+        className="w-[var(--popover-anchor-width)] rounded border border-slate-600 bg-gray-800 p-1"
+      >
+        {options.map(({ value, label }) => (
+          <SelectItem
+            value={value}
+            key={value}
+            className="[data-active-item]:bg-gray-700 cursor-pointer rounded px-2.5 py-1.5 hover:bg-gray-700 [&[data-active-item]]:bg-gray-700"
+          >
+            {label}
+          </SelectItem>
+        ))}
+      </SelectPopover>
     </div>
   );
 };

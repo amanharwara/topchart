@@ -1,51 +1,43 @@
-import { Component, ComponentProps, For, splitProps } from "solid-js";
+import { VisuallyHidden } from "ariakit/visually-hidden";
+import { Radio, RadioGroup, useRadioState } from "ariakit/radio";
 import classNames from "../utils/classNames";
-
-const RadioButton: Component<ComponentProps<"input">> = (props) => {
-  const [labelProps, inputProps] = splitProps(props, ["children"]);
-
-  return (
-    <label
-      class={classNames(
-        "focus-within-ring flex-grow select-none py-1.5 text-center",
-        props.checked && "bg-slate-600"
-      )}
-    >
-      <input
-        type="radio"
-        class="m-0 appearance-none focus:ring-0 focus:ring-offset-0"
-        {...inputProps}
-      />
-      {labelProps.children}
-    </label>
-  );
-};
 
 type Props = {
   items: { label: string; value: string }[];
-  name: string;
   value: string;
   onChange: (value: string) => void;
 };
 
-export const RadioButtonGroup: Component<Props> = (props) => {
+const RadioButtonGroup = ({ value, items, onChange }: Props) => {
+  const radio = useRadioState({
+    value,
+    orientation: "horizontal",
+    setValue(value) {
+      onChange(value as string);
+    },
+  });
+
   return (
-    <div class="flex divide-x divide-slate-600 rounded border border-slate-600">
-      <For each={props.items}>
-        {(item) => (
-          <RadioButton
-            name={props.name}
-            checked={item.value === props.value}
-            onChange={(event) => {
-              if (event.currentTarget.checked) {
-                props.onChange(item.value);
-              }
-            }}
-          >
-            {item.label}
-          </RadioButton>
-        )}
-      </For>
-    </div>
+    <RadioGroup
+      state={radio}
+      className="flex divide-x divide-slate-600 rounded border border-slate-600"
+    >
+      {items.map(({ label, value: itemValue }) => (
+        <label
+          className={classNames(
+            "focus-within-ring flex-grow select-none py-1.5 text-center",
+            itemValue === value && "bg-slate-600"
+          )}
+          key={itemValue}
+        >
+          <VisuallyHidden>
+            <Radio value={itemValue} />
+          </VisuallyHidden>
+          {label}
+        </label>
+      ))}
+    </RadioGroup>
   );
 };
+
+export default RadioButtonGroup;
