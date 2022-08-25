@@ -7,18 +7,28 @@ type Props = {
   className?: string;
 } & ComponentPropsWithoutRef<"button">;
 
-const IconButton = ({ icon: Icon, label, className, ...props }: Props) => {
+const IconButton = ({
+  icon: Icon,
+  label,
+  className,
+  disabled,
+  ...props
+}: Props) => {
   return (
     <button
       type="button"
       aria-label={label}
       className={classNames(
-        "peer flex select-none items-center gap-2 rounded border border-slate-600 p-1.5 hover:bg-slate-600",
+        "peer flex select-none items-center gap-2 rounded border p-1.5",
+        disabled
+          ? "cursor-not-allowed border-gray-500 text-gray-400"
+          : "border-slate-600 hover:bg-slate-600 text-white",
         className
       )}
+      disabled={disabled}
       {...props}
     >
-      {<Icon className="h-4 w-4 text-white" />}
+      {<Icon className="h-4 w-4" />}
     </button>
   );
 };
