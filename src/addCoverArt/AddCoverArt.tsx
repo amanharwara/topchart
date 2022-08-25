@@ -1,4 +1,5 @@
-// import { Image, storeImageToDB } from "../imageDB";
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import CloseIcon from "../icons/CloseIcon";
@@ -14,6 +15,8 @@ import {
   useState,
 } from "react";
 import { Image, storeImageToDB } from "../stores/imageDB";
+import ErrorIcon from "../icons/ErrorIcon";
+import Spinner from "../components/Spinner";
 
 type Tab = "Search" | "Link" | "Upload";
 
@@ -67,14 +70,14 @@ const CoverArtSearchTab = () => {
               Search for any album, artist or song to add cover art
             </div>
             <div className="text-xs text-slate-200">
-              Example: "
+              Example: &quot;
               <span
                 className="cursor-pointer border-b border-dotted border-slate-300 font-semibold"
                 onClick={() => setSearchQuery("It's Almost Dry by Pusha T")}
               >
-                It's Almost Dry by Pusha T
+                It&apos;s Almost Dry by Pusha T
               </span>
-              "
+              &quot;
             </div>
           </>
         )}
@@ -88,21 +91,21 @@ const CoverArtSearchTab = () => {
             </div>
             <div className="max-w-[40ch] text-center text-xs text-slate-200">
               Check your search for typos, or try a different search. For
-              example, "
+              example, &quot;
               <span
                 className="cursor-pointer border-b border-dotted border-slate-300 font-semibold"
                 onClick={() => setSearchQuery("Brian Eno")}
               >
                 Brian Eno
               </span>
-              "
+              &quot;
             </div>
           </>
         )}
         {searchQuery === "Brian Eno" && (
           <div className="grid w-full max-w-sm grid-cols-3 gap-2">
-            {results.map(() => (
-              <div className="h-28 rounded bg-slate-600" />
+            {results.map((_, index) => (
+              <div className="h-28 rounded bg-slate-600" key={index} />
             ))}
           </div>
         )}
@@ -112,16 +115,21 @@ const CoverArtSearchTab = () => {
 };
 
 const CoverArtLinkTab = () => {
+  const linkInputRef = useRef<HTMLInputElement>(null);
+
   const [link, setLink] = useState("");
+
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState<Error>();
+
   const [imageContent, setImageContent] = useState("");
   const [databaseId, setDatabaseId] = useState("");
-
-  const linkInputRef = useRef<HTMLInputElement>(null);
 
   const reset = () => {
     setLink("");
     setImageContent("");
     setDatabaseId("");
+    setError(undefined);
     linkInputRef.current?.focus();
   };
 
@@ -130,24 +138,42 @@ const CoverArtLinkTab = () => {
   const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
 
-    const URL = link;
+    setIsFetching(true);
+    setError(undefined);
 
-    /** @TODO Add loading states */
-    const response = await fetch(URL);
-    const imageAsBlob = await response.blob();
+    try {
+      const response = await fetch(link);
+      const imageAsBlob = await response.blob();
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      if (!event.target || !event.target.result) return;
-      const imageToStore = {
-        id: URL,
-        content: event.target.result.toString(),
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        if (!event.target || !event.target.result) return;
+
+        const content = event.target.result.toString();
+
+        if (!content.startsWith("data:image")) {
+          setError(new Error("Provided link is not an image."));
+          return;
+        }
+
+        const imageToStore = {
+          id: link,
+          content,
+        };
+
+        const databaseId = await storeImageToDB(imageToStore);
+
+        setDatabaseId(databaseId);
+        setImageContent(imageToStore.content);
       };
-      const databaseId = await storeImageToDB(imageToStore);
-      setDatabaseId(databaseId);
-      setImageContent(imageToStore.content);
-    };
-    reader.readAsDataURL(imageAsBlob);
+      reader.readAsDataURL(imageAsBlob);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error);
+      }
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   return (
@@ -172,21 +198,31 @@ const CoverArtLinkTab = () => {
             type="submit"
             icon={DownloadIcon}
             label="Download image"
+            disabled={isFetching}
           />
           {!!link && (
-            <IconButton icon={CloseIcon} label="Clear search" onClick={reset} />
+            <IconButton
+              icon={CloseIcon}
+              label="Clear search"
+              onClick={reset}
+              disabled={isFetching}
+            />
           )}
         </div>
+        {!!error && (
+          <div className="flex items-center gap-2.5 mt-2.5 text-red-500 text-sm">
+            <ErrorIcon className="w-5 h-5" />
+            {error.message}
+          </div>
+        )}
       </form>
       <div className="flex flex-col items-center gap-2 px-2.5 pb-5">
         <div className="text-sm">Preview:</div>
-        <div className="h-36 w-36 rounded bg-slate-600">
+        <div className="flex items-center justify-center h-36 w-36 rounded bg-slate-600">
+          {isFetching && <Spinner className="w-10 h-10" />}
           {imageContent && (
             <img
               src={imageContent}
-              onLoad={(event) => {
-                console.log(event);
-              }}
               draggable={!!databaseId}
               onDragStart={(event) => {
                 event.dataTransfer.setData("text", `image:${databaseId}`);
