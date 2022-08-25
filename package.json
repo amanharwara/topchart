@@ -10,6 +10,7 @@
     "prettify": "prettier --write src/"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.2.1",
     "ariakit": "^2.0.0-next.39",
     "idb": "^7.0.2",
     "immer": "^9.0.15",
@@ -17,7 +18,6 @@
     "next": "12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "swr": "^1.3.0",
     "zod": "^3.18.0",
     "zustand": "^4.0.0"
   },

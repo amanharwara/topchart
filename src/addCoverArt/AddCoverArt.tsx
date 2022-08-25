@@ -7,16 +7,13 @@ import DownloadIcon from "../icons/DownloadIcon";
 import ImageIcon from "../icons/ImageIcon";
 import MusicIcon from "../icons/MusicIcon";
 import SearchIcon from "../icons/SearchIcon";
-import {
-  DragEventHandler,
-  FormEventHandler,
-  ReactNode,
-  useRef,
-  useState,
-} from "react";
+import { DragEventHandler, ReactNode, useRef, useState } from "react";
 import { Image, storeImageToDB } from "../stores/imageDB";
 import ErrorIcon from "../icons/ErrorIcon";
 import Spinner from "../components/Spinner";
+import { useQuery } from "@tanstack/react-query";
+import { blobToDataURL } from "../utils/blobToDataURL";
+import Input from "../components/Input";
 
 type Tab = "Search" | "Link" | "Upload";
 
@@ -119,66 +116,67 @@ const CoverArtLinkTab = () => {
 
   const [link, setLink] = useState("");
 
-  const [isFetching, setIsFetching] = useState(false);
-  const [error, setError] = useState<Error>();
-
-  const [imageContent, setImageContent] = useState("");
-  const [databaseId, setDatabaseId] = useState("");
-
-  const reset = () => {
-    setLink("");
-    setImageContent("");
-    setDatabaseId("");
-    setError(undefined);
-    linkInputRef.current?.focus();
-  };
-
-  const linkInputId = `link-input-${Math.random()}`;
-
-  const onSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
-
-    setIsFetching(true);
-    setError(undefined);
-
-    try {
+  const {
+    isFetching,
+    data: image,
+    error,
+    refetch,
+  } = useQuery(
+    [link],
+    async () => {
       const response = await fetch(link);
       const imageAsBlob = await response.blob();
 
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        if (!event.target || !event.target.result) return;
+      const imageContent = await blobToDataURL(imageAsBlob);
 
-        const content = event.target.result.toString();
-
-        if (!content.startsWith("data:image")) {
-          setError(new Error("Provided link is not an image."));
-          return;
-        }
-
-        const imageToStore = {
-          id: link,
-          content,
-        };
-
-        const databaseId = await storeImageToDB(imageToStore);
-
-        setDatabaseId(databaseId);
-        setImageContent(imageToStore.content);
-      };
-      reader.readAsDataURL(imageAsBlob);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error);
+      if (!imageContent) {
+        throw new Error("Could not parse retrieved data");
       }
-    } finally {
-      setIsFetching(false);
+
+      const content = imageContent.toString();
+
+      if (!content.startsWith("data:image")) {
+        throw new Error("Provided link is not an image");
+      }
+
+      const imageToStore: Image = {
+        id: link,
+        content,
+      };
+
+      try {
+        await storeImageToDB(imageToStore);
+        return imageToStore;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        } else {
+          throw new Error("Could not store image to database");
+        }
+      }
+    },
+    {
+      enabled: false,
+      retry: 1,
     }
+  );
+
+  const reset = () => {
+    setLink("");
+    linkInputRef.current?.focus();
   };
+
+  const linkInputId = `link-input-${Date.now()}`;
 
   return (
     <div className="flex flex-col gap-1.5">
-      <form className="px-2.5 py-3" onSubmit={onSubmit}>
+      <form
+        className="px-2.5 py-3"
+        onSubmit={async (event) => {
+          event.preventDefault();
+          refetch();
+        }}
+      >
         <label
           className="mb-1.5 block text-sm font-semibold"
           htmlFor={linkInputId}
@@ -186,13 +184,14 @@ const CoverArtLinkTab = () => {
           Image link:
         </label>
         <div className="flex gap-2.5">
-          <input
+          <Input
             id={linkInputId}
-            className="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-1.5 text-xs placeholder:text-slate-400"
+            className="text-xs py-1.5"
             placeholder="https://example.com"
             value={link}
             onInput={(event) => setLink(event.currentTarget.value)}
             ref={linkInputRef}
+            disabled={isFetching}
           />
           <IconButton
             type="submit"
@@ -209,7 +208,7 @@ const CoverArtLinkTab = () => {
             />
           )}
         </div>
-        {!!error && (
+        {error instanceof Error && (
           <div className="flex items-center gap-2.5 mt-2.5 text-red-500 text-sm">
             <ErrorIcon className="w-5 h-5" />
             {error.message}
@@ -220,12 +219,12 @@ const CoverArtLinkTab = () => {
         <div className="text-sm">Preview:</div>
         <div className="flex items-center justify-center h-36 w-36 rounded bg-slate-600">
           {isFetching && <Spinner className="w-10 h-10" />}
-          {imageContent && (
+          {image && (
             <img
-              src={imageContent}
-              draggable={!!databaseId}
+              src={image.content}
+              draggable={true}
               onDragStart={(event) => {
-                event.dataTransfer.setData("text", `image:${databaseId}`);
+                event.dataTransfer.setData("text", `image:${image.id}`);
               }}
               className="h-36 w-36 rounded border-0"
             />

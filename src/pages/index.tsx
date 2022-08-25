@@ -1,11 +1,13 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { SWRConfig } from "swr";
 
 const DynamicContent = dynamic(() => import("../HomePageContent"), {
   ssr: false,
 });
+
+const queryClient = new QueryClient();
 
 const Home: NextPage = () => {
   return (
@@ -22,14 +24,9 @@ const Home: NextPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <div className="flex flex-col overflow-hidden">
-        <SWRConfig
-          value={{
-            revalidateOnFocus: false,
-            errorRetryCount: 1,
-          }}
-        >
+        <QueryClientProvider client={queryClient}>
           <DynamicContent />
-        </SWRConfig>
+        </QueryClientProvider>
       </div>
     </>
   );
