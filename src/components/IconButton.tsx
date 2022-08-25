@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, ComponentType, useMemo } from "react";
+import { ComponentPropsWithoutRef, ComponentType } from "react";
 import classNames from "../utils/classNames";
 
 type Props = {
