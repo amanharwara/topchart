@@ -33,6 +33,22 @@ const TabButton = (props: {
   </button>
 );
 
+const getImageOnlyDataURL = async (blob: Blob) => {
+  const imageContent = await blobToDataURL(blob);
+
+  if (!imageContent) {
+    throw new Error("Could not parse retrieved data");
+  }
+
+  const content = imageContent.toString();
+
+  if (!content.startsWith("data:image")) {
+    throw new Error("Provided link is not an image");
+  }
+
+  return content;
+};
+
 const CoverArtSearchTab = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const results = new Array(23).fill(0);
@@ -127,17 +143,7 @@ const CoverArtLinkTab = () => {
       const response = await fetch(link);
       const imageAsBlob = await response.blob();
 
-      const imageContent = await blobToDataURL(imageAsBlob);
-
-      if (!imageContent) {
-        throw new Error("Could not parse retrieved data");
-      }
-
-      const content = imageContent.toString();
-
-      if (!content.startsWith("data:image")) {
-        throw new Error("Provided link is not an image");
-      }
+      const content = await getImageOnlyDataURL(imageAsBlob);
 
       const imageToStore: Image = {
         id: link,
@@ -276,20 +282,22 @@ const CoverArtUploadTab = () => {
     return files.filter((file) => file.type.startsWith("image/"))[0];
   };
 
-  const handleFileInput = (files: File[]) => {
+  const handleFileInput = async (files: File[]) => {
     const image = getFirstImageFile(files);
     if (image) {
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        if (!event.target || !event.target.result) return;
+      try {
+        const content = await getImageOnlyDataURL(image);
+
         const imageToStore = {
           id: image.name,
-          content: event.target.result.toString(),
+          content,
         };
+
         storeImageToDB(imageToStore);
         setCurrentImage(imageToStore);
-      };
-      reader.readAsDataURL(image);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
