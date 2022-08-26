@@ -12,7 +12,6 @@ import { Image, storeImageToDB } from "../stores/imageDB";
 import ErrorIcon from "../icons/ErrorIcon";
 import Spinner from "../components/Spinner";
 import { useQuery } from "@tanstack/react-query";
-import { blobToDataURL } from "../utils/blobToDataURL";
 import Input from "../components/Input";
 
 type Tab = "Search" | "Link" | "Upload";
@@ -33,20 +32,35 @@ const TabButton = (props: {
   </button>
 );
 
-const getImageOnlyDataURL = async (blob: Blob) => {
-  const imageContent = await blobToDataURL(blob);
+const blobToDataURL = (blob: Blob) => {
+  return new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (!reader.result) {
+        throw new Error("Could not parse retrieved data");
+      }
+      resolve(reader.result.toString());
+    };
+    reader.readAsDataURL(blob);
+  });
+};
 
-  if (!imageContent) {
-    throw new Error("Could not parse retrieved data");
+const fetchLinkBlobWithCorsBackup = async (link: string) => {
+  try {
+    const response = await fetch(link);
+    return await response.blob();
+  } catch {
+    const corsBackupResponse = await fetch("/api/image-link", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        link,
+      }),
+    });
+    return await corsBackupResponse.blob();
   }
-
-  const content = imageContent.toString();
-
-  if (!content.startsWith("data:image")) {
-    throw new Error("Provided link is not an image");
-  }
-
-  return content;
 };
 
 const CoverArtSearchTab = () => {
@@ -140,10 +154,8 @@ const CoverArtLinkTab = () => {
   } = useQuery(
     [link],
     async () => {
-      const response = await fetch(link);
-      const imageAsBlob = await response.blob();
-
-      const content = await getImageOnlyDataURL(imageAsBlob);
+      const imageBlob = await fetchLinkBlobWithCorsBackup(link);
+      const content = await blobToDataURL(imageBlob);
 
       const imageToStore: Image = {
         id: link,
@@ -163,7 +175,7 @@ const CoverArtLinkTab = () => {
     },
     {
       enabled: false,
-      retry: 1,
+      retry: 0,
     }
   );
 
@@ -286,7 +298,7 @@ const CoverArtUploadTab = () => {
     const image = getFirstImageFile(files);
     if (image) {
       try {
-        const content = await getImageOnlyDataURL(image);
+        const content = await blobToDataURL(image);
 
         const imageToStore = {
           id: image.name,
