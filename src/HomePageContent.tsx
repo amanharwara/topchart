@@ -30,39 +30,6 @@ const HomePageContent = () => {
             >
               Add image to first
             </Button>
-            {/* 
-        <Button
-          onClick={() => {
-            setCharts(
-              (chart) => selectedChart().id === chart.id,
-              "options",
-              "musicCollage",
-              "items",
-              (rows) =>
-                rows.map((row) =>
-                  row.map(() => ({
-                    title: "",
-                    image: null,
-                  }))
-                )
-            );
-          }}
-        >
-          Clear items
-        </Button>
-        <Button
-          onClick={() => {
-            setCharts(
-              (chart) => selectedChart().id === chart.id,
-              "options",
-              "musicCollage",
-              "items",
-              (items) => items.slice()
-            );
-          }}
-        >
-          Force refresh chart
-        </Button> */}
           </div>
         </main>
         <section className="flex min-h-0 flex-col bg-gray-800">
