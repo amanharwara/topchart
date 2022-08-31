@@ -50,7 +50,7 @@ const fetchLinkBlobWithCorsBackup = async (link: string) => {
     const response = await fetch(link);
     return await response.blob();
   } catch {
-    const corsBackupResponse = await fetch("/api/image-link", {
+    const corsBackupResponse = await fetch("/api/cors-proxy", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
