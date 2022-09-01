@@ -14,9 +14,6 @@ const HomePageContent = () => {
       <div className="grid min-h-0 flex-grow md:grid-cols-[1fr_2.5fr_1fr]">
         <ChartOptionsSection />
         <main className="overflow-auto p-4">
-          <div className="mb-4 text-white">
-            TODO: Rip out everything and start again with mobile-first markup
-          </div>
           <MusicCollage />
           <div className="mt-5 flex items-center gap-4 text-white">
             DevTools:

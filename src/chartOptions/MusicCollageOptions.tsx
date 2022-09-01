@@ -1,5 +1,4 @@
-import dynamic from "next/dynamic";
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler } from "react";
 import ColorPickerButton from "../components/ColorPickerButton";
 import IconButton from "../components/IconButton";
 import Input from "../components/Input";
@@ -249,25 +248,22 @@ const BackgroundOption = () => {
         )}
       </div>
       {shouldUseColorForBg ? (
-        <>
-          {/** @TODO Suggestion: List of 10 recently used colors */}
-          <div className="flex flex-grow gap-1.5">
-            <Input
-              placeholder="Enter color..."
-              value={backgroundColor}
-              onChange={(event) => {
-                setBackgroundColor(event.currentTarget.value);
-              }}
-            />
-            <ColorPickerButton
-              value={backgroundColor}
-              onChange={(value) => {
-                setBackgroundColor(value);
-              }}
-              className="px-2.5"
-            />
-          </div>
-        </>
+        <div className="flex flex-grow gap-1.5">
+          <Input
+            placeholder="Enter color..."
+            value={backgroundColor}
+            onChange={(event) => {
+              setBackgroundColor(event.currentTarget.value);
+            }}
+          />
+          <ColorPickerButton
+            value={backgroundColor}
+            onChange={(value) => {
+              setBackgroundColor(value);
+            }}
+            className="px-2.5"
+          />
+        </div>
       ) : (
         <InputWithIcon
           icon={LinkIcon}

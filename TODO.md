@@ -1,0 +1,2 @@
+- Rip out everything and start again with mobile-first markup
+- List 10 recently used colors for background/foreground color
