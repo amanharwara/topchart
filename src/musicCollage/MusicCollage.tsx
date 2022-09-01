@@ -1,21 +1,21 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
+
 import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import SaveIcon from "../icons/SaveIcon";
 import { DragEventHandler, Fragment, useEffect, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
-  getMusicCollageItem,
   useMoveMusicCollageItem,
   useSelectedChart,
   useSelectedMusicCollageAllowEditingTitles,
   useSelectedMusicCollageEditingTitleFor,
   useSetMusicCollageItem,
 } from "../stores/charts";
+import { z } from "zod";
 
 export type MusicCollageItem = {
   image: string | null;
@@ -27,23 +27,28 @@ const preventDefaultOnDrag: DragEventHandler = (event) => {
   event.stopPropagation();
 };
 
-/* const [editingTitleFor, setEditingTitleFor] = createSignal<
-{ rowIndex: number; itemIndex: number } | undefined
->(); */
-
 type CollageItemProps = {
   item: MusicCollageItem;
   index: number;
   shouldPositionTitlesBelowCover: boolean;
 };
 
+const DragDataTransferObject = z.union([
+  z.object({
+    image: z.string(),
+    title: z.string().optional(),
+  }),
+  z.object({
+    index: z.number(),
+  }),
+]);
+
 const CollageItem = ({
   item,
   index,
   shouldPositionTitlesBelowCover,
 }: CollageItemProps) => {
-  const [editingTitleFor, setEditingTitleFor] =
-    useSelectedMusicCollageEditingTitleFor();
+  const [, setEditingTitleFor] = useSelectedMusicCollageEditingTitleFor();
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
   const [allowEditingTitles] = useSelectedMusicCollageAllowEditingTitles();
@@ -70,30 +75,27 @@ const CollageItem = ({
 
   const handleDrop: DragEventHandler = async (event) => {
     event.preventDefault();
-    if (!event.dataTransfer) return;
+    if (!event.dataTransfer || !event.dataTransfer.getData("text")) return;
 
-    const dataTransferText = event.dataTransfer.getData("text");
+    const parsedDataTransferText = JSON.parse(
+      event.dataTransfer.getData("text")
+    );
 
-    if (dataTransferText.startsWith("image:")) {
-      const parsedImageID = dataTransferText.replace("image:", "");
+    const dataTransferObject = DragDataTransferObject.parse(
+      parsedDataTransferText
+    );
+
+    if ("image" in dataTransferObject) {
+      const title = dataTransferObject.title ?? item.title;
       setMusicCollageItem(index, {
-        title: item.title,
-        image: parsedImageID,
+        title,
+        image: dataTransferObject.image,
       });
-      editTitleForCurrentItem();
+      if (!title) editTitleForCurrentItem();
     }
 
-    if (dataTransferText.startsWith(":")) {
-      const [parsedIndex] = dataTransferText
-        .split(":")
-        .filter((s) => !!s)
-        .map((s) => Number(s));
-
-      if (typeof parsedIndex === "undefined") {
-        return;
-      }
-
-      moveMusicCollageItem(parsedIndex, index);
+    if ("index" in dataTransferObject) {
+      moveMusicCollageItem(dataTransferObject.index, index);
     }
 
     setIsDragEntered(false);
@@ -145,7 +147,7 @@ const CollageItem = ({
         )}
         draggable={true}
         onDragStart={(event) => {
-          event.dataTransfer.setData("text", `:${index}`);
+          event.dataTransfer.setData("text", JSON.stringify({ index }));
         }}
         onDrag={preventDefaultOnDrag}
         onDragEnter={handleDragEnter}

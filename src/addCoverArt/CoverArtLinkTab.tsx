@@ -106,7 +106,10 @@ export const CoverArtLinkTab = () => {
               src={image.content}
               draggable={true}
               onDragStart={(event) => {
-                event.dataTransfer.setData("text", `image:${image.id}`);
+                event.dataTransfer.setData(
+                  "text",
+                  JSON.stringify({ image: image.id })
+                );
               }}
               className="h-36 w-36 rounded border-0"
             />

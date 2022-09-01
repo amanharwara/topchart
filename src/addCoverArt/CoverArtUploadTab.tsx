@@ -124,7 +124,12 @@ export const CoverArtUploadTab = () => {
           <img
             draggable={true}
             onDragStart={(event) => {
-              event.dataTransfer.setData("text", `image:${currentImage.id}`);
+              event.dataTransfer.setData(
+                "text",
+                JSON.stringify({
+                  image: currentImage.id,
+                })
+              );
             }}
             className="h-36 w-36 rounded border-0"
             src={currentImage.content}

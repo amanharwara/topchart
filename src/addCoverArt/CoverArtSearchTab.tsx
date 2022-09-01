@@ -74,7 +74,13 @@ const SearchResult = ({ alt, link }: { alt: string; link: string }) => {
       draggable={!!image}
       onDragStart={(event) => {
         if (!image) return;
-        event.dataTransfer.setData("text", `url:${image.id}`);
+        event.dataTransfer.setData(
+          "text",
+          JSON.stringify({
+            title: alt,
+            image: image.id,
+          })
+        );
       }}
     >
       {isFetching && <Spinner className="w-7 h-7" />}
