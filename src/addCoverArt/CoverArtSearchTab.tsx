@@ -219,7 +219,10 @@ export const CoverArtSearchTab = () => {
               example, &quot;
               <span
                 className="cursor-pointer border-b border-dotted border-slate-300 font-semibold"
-                onClick={() => setSearchQuery("Brian Eno")}
+                onClick={() => {
+                  setSearchQuery("Brian Eno");
+                  searchInputRef.current?.focus();
+                }}
               >
                 Brian Eno
               </span>
