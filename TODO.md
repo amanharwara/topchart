@@ -1,6 +1,8 @@
 ## High Priority
 
 - Rip out everything and start again with mobile-first markup
+- Implement download
+- Implement backup/restore
 
 ## Medium Priority
 
