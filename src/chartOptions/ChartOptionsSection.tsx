@@ -6,9 +6,9 @@ import EditIcon from "../icons/EditIcon";
 import SaveIcon from "../icons/SaveIcon";
 import TrashIcon from "../icons/TrashIcon";
 import {
-  useAddChart,
+  addNewChart,
+  deleteChart,
   useChartsList,
-  useDeleteChart,
   useSelectedChart,
   useSetSelectedChartId,
   useSetSelectedChartTitle,
@@ -20,8 +20,6 @@ const CurrentChartOption = () => {
   const setSelectedChartId = useSetSelectedChartId();
   const setSelectedChartTitle = useSetSelectedChartTitle();
   const charts = useChartsList();
-  const addNewChart = useAddChart();
-  const deleteChart = useDeleteChart();
 
   const [isEditingChart, setIsEditingChart] = useState(false);
   const isSelectingChart = !isEditingChart;
