@@ -12,3 +12,4 @@
 
 - List 10 recently used colors for background/foreground color
 - Randomize search suggestions
+- Potentially rewrite chart store using Jotai
