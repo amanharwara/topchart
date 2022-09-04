@@ -8,6 +8,7 @@ import TrashIcon from "../icons/TrashIcon";
 import {
   useAddChart,
   useChartsList,
+  useDeleteChart,
   useSelectedChart,
   useSetSelectedChartId,
   useSetSelectedChartTitle,
@@ -20,6 +21,7 @@ const CurrentChartOption = () => {
   const setSelectedChartTitle = useSetSelectedChartTitle();
   const charts = useChartsList();
   const addNewChart = useAddChart();
+  const deleteChart = useDeleteChart();
 
   const [isEditingChart, setIsEditingChart] = useState(false);
   const isSelectingChart = !isEditingChart;
@@ -30,6 +32,10 @@ const CurrentChartOption = () => {
     setCurrentTitle(selectedChart?.title);
   }, [selectedChart]);
 
+  if (!selectedChart) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-2.5">
       <div className="text-lg font-semibold">Current chart:</div>
@@ -37,7 +43,7 @@ const CurrentChartOption = () => {
         {isSelectingChart && (
           <>
             <Select
-              value={selectedChart!.id}
+              value={selectedChart.id}
               setValue={setSelectedChartId}
               options={charts.map(({ id, title }) => ({
                 value: id,
@@ -67,12 +73,12 @@ const CurrentChartOption = () => {
               label="Delete chart"
               onClick={() => {
                 const shouldDeleteChart = confirm(
-                  `Do you want to delete chart "${selectedChart!.title}"?`
+                  `Do you want to delete chart "${selectedChart.title}"?`
                 );
 
-                /* if (shouldDeleteChart) {
-                  deleteChart(selectedChart().id);
-                } */
+                if (shouldDeleteChart) {
+                  deleteChart(selectedChart.id);
+                }
               }}
             />
           </>

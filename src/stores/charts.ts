@@ -48,6 +48,7 @@ interface ChartStore {
 
   charts: Chart[];
   addNewChart: () => string;
+  deleteChart: (id: string) => void;
   setSelectedChartTitle: (title: string) => void;
   setSelectedChartType: (type: ChartType) => void;
 
@@ -134,6 +135,18 @@ const useChartStore = create<ChartStore>()(
           charts: [...state.charts, newChart],
         }));
         return newChart.id;
+      },
+      deleteChart: (id: string) => {
+        set((state) => ({
+          charts: state.charts.filter((chart) => chart.id !== id),
+        }));
+        const firstChart = get().charts[0];
+        if (firstChart) {
+          get().setSelectedChartId(firstChart.id);
+        } else {
+          const id = get().addNewChart();
+          get().setSelectedChartId(id);
+        }
       },
 
       setSelectedChartTitle: (title: string) => {
@@ -523,6 +536,7 @@ export const useSelectedMusicCollageEditingTitleFor = (): [
   ]);
 
 export const useAddChart = () => useChartStore((s) => s.addNewChart);
+export const useDeleteChart = () => useChartStore((s) => s.deleteChart);
 
 export const useSetMusicCollageItem = () =>
   useChartStore((s) => s.setMusicCollageItem);
