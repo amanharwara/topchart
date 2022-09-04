@@ -11,7 +11,6 @@ import { getImageFromDB } from "../stores/imageDB";
 import {
   useMoveMusicCollageItem,
   useSelectedChart,
-  useSelectedMusicCollageAllowEditingTitles,
   useSelectedMusicCollageEditingTitleFor,
   useSetMusicCollageItem,
 } from "../stores/charts";
@@ -51,10 +50,25 @@ const CollageItem = ({
   const [, setEditingTitleFor] = useSelectedMusicCollageEditingTitleFor();
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
-  const [allowEditingTitles] = useSelectedMusicCollageAllowEditingTitles();
-
+  const chart = useSelectedChart();
   const setMusicCollageItem = useSetMusicCollageItem();
   const moveMusicCollageItem = useMoveMusicCollageItem();
+
+  useEffect(() => {
+    const getImage = async () => {
+      if (!item.image) {
+        setImageContent("");
+        return;
+      }
+      const imageFromDB = await getImageFromDB(item.image);
+      if (imageFromDB) setImageContent(imageFromDB);
+    };
+    getImage();
+  }, [item.image]);
+
+  if (!chart) return null;
+
+  const { allowEditingTitles } = chart.options.musicCollage;
 
   const editTitleForCurrentItem = () => {
     setEditingTitleFor(index);
@@ -100,18 +114,6 @@ const CollageItem = ({
 
     setIsDragEntered(false);
   };
-
-  useEffect(() => {
-    const getImage = async () => {
-      if (!item.image) {
-        setImageContent("");
-        return;
-      }
-      const imageFromDB = await getImageFromDB(item.image);
-      if (imageFromDB) setImageContent(imageFromDB);
-    };
-    getImage();
-  }, [item.image]);
 
   return (
     <div className="group relative flex flex-col gap-1">
@@ -206,7 +208,7 @@ const MusicCollage = () => {
     );
 
   const shouldPositionTitlesBelowCover =
-    selectedChart.options.musicCollage.titles.positionBelowCover;
+    selectedChart.options.musicCollage.positionTitlesBelowCover;
 
   return (
     <div
@@ -237,7 +239,7 @@ const MusicCollage = () => {
             />
           ))}
       </div>
-      {selectedChart.options.musicCollage.titles.show &&
+      {selectedChart.options.musicCollage.showTitles &&
       hasAnyTitle() &&
       !shouldPositionTitlesBelowCover ? (
         <div className="flex flex-col gap-1">

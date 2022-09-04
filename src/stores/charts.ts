@@ -33,11 +33,9 @@ export type Chart = {
       fontStyle: MusicCollageFontStyle;
       fontFamily: string;
       foregroundColor: string;
-      titles: {
-        show: boolean;
-        positionBelowCover: boolean;
-        allowEditing: boolean;
-      };
+      showTitles: boolean;
+      positionTitlesBelowCover: boolean;
+      allowEditingTitles: boolean;
     };
   };
 };
@@ -52,23 +50,6 @@ interface ChartStore {
 
   setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
   moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
-  setMusicCollageRows: (rows: number) => void;
-  setMusicCollageColumns: (columns: number) => void;
-  setMusicCollageGap: (gap: MusicCollageSpacing) => void;
-  setMusicCollagePadding: (gap: MusicCollageSpacing) => void;
-  setShowMusicCollageAlbumTitles: (show: boolean) => void;
-  setPositionMusicCollageTitlesBelowCover: (
-    positionBelowCover: boolean
-  ) => void;
-  setAllowEditingMusicCollageTitles: (allowEditing: boolean) => void;
-  setMusicCollageBackgroundType: (
-    backgroundType: MusicCollageBackgroundType
-  ) => void;
-  setMusicCollageBackgroundImage: (image: string) => void;
-  setMusicCollageBackgroundColor: (color: string) => void;
-  setMusicCollageFontStyle: (fontStyle: MusicCollageFontStyle) => void;
-  setMusicCollageFontFamily: (fontFamily: string) => void;
-  setMusicCollageForegroundColor: (color: string) => void;
 
   musicCollageEditingTitleFor: number;
   setMusicCollageEditingTitleFor: (itemIndex: number) => void;
@@ -105,11 +86,9 @@ const getNewChartWithDefaults = ({
       fontStyle: "sans",
       fontFamily: "Inter",
       foregroundColor: "#FFFFFF",
-      titles: {
-        show: false,
-        positionBelowCover: false,
-        allowEditing: false,
-      },
+      showTitles: false,
+      positionTitlesBelowCover: false,
+      allowEditingTitles: false,
     },
   },
 });
@@ -193,166 +172,6 @@ const useChartStore = create<ChartStore>()(
         );
       },
 
-      setMusicCollageRows: (rows: number) =>
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart) selectedChart.options.musicCollage.rows = rows;
-          })
-        ),
-
-      setMusicCollageColumns: (columns: number) =>
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.columns = columns;
-          })
-        ),
-
-      setMusicCollageGap: (gap: MusicCollageSpacing) =>
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart) selectedChart.options.musicCollage.gap = gap;
-          })
-        ),
-
-      setMusicCollagePadding: (padding: MusicCollageSpacing) =>
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.padding = padding;
-          })
-        ),
-
-      setShowMusicCollageAlbumTitles: (show: boolean) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.titles.show = show;
-          })
-        );
-      },
-
-      setPositionMusicCollageTitlesBelowCover: (
-        positionBelowCover: boolean
-      ) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.titles.positionBelowCover =
-                positionBelowCover;
-          })
-        );
-      },
-
-      setAllowEditingMusicCollageTitles: (allowEditing: boolean) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.titles.allowEditing =
-                allowEditing;
-          })
-        );
-      },
-
-      setMusicCollageBackgroundType: (
-        backgroundType: MusicCollageBackgroundType
-      ) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.backgroundType =
-                backgroundType;
-          })
-        );
-      },
-
-      setMusicCollageBackgroundColor: (backgroundColor: string) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.backgroundColor =
-                backgroundColor;
-          })
-        );
-      },
-
-      setMusicCollageBackgroundImage: (backgroundImage: string) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.backgroundImage =
-                backgroundImage;
-          })
-        );
-      },
-
-      setMusicCollageFontStyle: (fontStyle: MusicCollageFontStyle) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.fontStyle = fontStyle;
-          })
-        );
-      },
-
-      setMusicCollageFontFamily: (fontFamily: string) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.fontFamily = fontFamily;
-          })
-        );
-      },
-
-      setMusicCollageForegroundColor: (foregroundColor: string) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart)
-              selectedChart.options.musicCollage.foregroundColor =
-                foregroundColor;
-          })
-        );
-      },
-
       musicCollageEditingTitleFor: -1,
       setMusicCollageEditingTitleFor(itemIndex) {
         set({
@@ -411,133 +230,157 @@ export const useSetSelectedChartTitle = () =>
 export const useSetSelectedChartType = () =>
   useChartStore((s) => s.setSelectedChartType);
 
-export const useSelectedMusicCollageRows = (): [
-  number,
-  (rows: number) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage.rows,
-    s.setMusicCollageRows,
-  ]);
+export const setMusicCollageRows = (rows: number) =>
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart) selectedChart.options.musicCollage.rows = rows;
+    })
+  );
 
-export const useSelectedMusicCollageColumns = (): [
-  number,
-  (columns: number) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .columns,
-    s.setMusicCollageColumns,
-  ]);
+export const setMusicCollageColumns = (columns: number) =>
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart) selectedChart.options.musicCollage.columns = columns;
+    })
+  );
 
-export const useSelectedMusicCollageGap = (): [
-  MusicCollageSpacing,
-  (gap: MusicCollageSpacing) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage.gap,
-    s.setMusicCollageGap,
-  ]);
+export const setMusicCollageGap = (gap: MusicCollageSpacing) =>
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart) selectedChart.options.musicCollage.gap = gap;
+    })
+  );
 
-export const useSelectedMusicCollagePadding = (): [
-  MusicCollageSpacing,
-  (padding: MusicCollageSpacing) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .padding,
-    s.setMusicCollagePadding,
-  ]);
+export const setMusicCollagePadding = (padding: MusicCollageSpacing) =>
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart) selectedChart.options.musicCollage.padding = padding;
+    })
+  );
 
-export const useSelectedMusicCollageShowAlbumTitles = (): [
-  boolean,
-  (show: boolean) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .titles.show,
-    s.setShowMusicCollageAlbumTitles,
-  ]);
+export const setMusicCollageForegroundColor = (foregroundColor: string) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.foregroundColor = foregroundColor;
+    })
+  );
+};
 
-export const useSelectedMusicCollageAlbumTitlesPosition = (): [
-  boolean,
-  (positionBelowCover: boolean) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .titles.positionBelowCover,
-    s.setPositionMusicCollageTitlesBelowCover,
-  ]);
+export const setShowMusicCollageAlbumTitles = (show: boolean) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart) selectedChart.options.musicCollage.showTitles = show;
+    })
+  );
+};
 
-export const useSelectedMusicCollageAllowEditingTitles = (): [
-  boolean,
-  (allowEditing: boolean) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .titles.allowEditing,
-    s.setAllowEditingMusicCollageTitles,
-  ]);
+export const setPositionMusicCollageTitlesBelowCover = (
+  positionBelowCover: boolean
+) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.positionTitlesBelowCover =
+          positionBelowCover;
+    })
+  );
+};
 
-export const useSelectedMusicCollageBackgroundType = (): [
-  MusicCollageBackgroundType,
-  (backgroundType: MusicCollageBackgroundType) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .backgroundType,
-    s.setMusicCollageBackgroundType,
-  ]);
+export const setAllowEditingMusicCollageTitles = (allowEditing: boolean) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.allowEditingTitles = allowEditing;
+    })
+  );
+};
 
-export const useSelectedMusicCollageBackgroundColor = (): [
-  string,
-  (backgroundColor: string) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .backgroundColor,
-    s.setMusicCollageBackgroundColor,
-  ]);
+export const setMusicCollageBackgroundType = (
+  backgroundType: MusicCollageBackgroundType
+) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.backgroundType = backgroundType;
+    })
+  );
+};
 
-export const useSelectedMusicCollageBackgroundImage = (): [
-  string,
-  (backgroundImage: string) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .backgroundImage,
-    s.setMusicCollageBackgroundImage,
-  ]);
+export const setMusicCollageBackgroundColor = (backgroundColor: string) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.backgroundColor = backgroundColor;
+    })
+  );
+};
 
-export const useSelectedMusicCollageFontStyle = (): [
-  MusicCollageFontStyle,
-  (fontStyle: MusicCollageFontStyle) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .fontStyle,
-    s.setMusicCollageFontStyle,
-  ]);
+export const setMusicCollageBackgroundImage = (backgroundImage: string) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.backgroundImage = backgroundImage;
+    })
+  );
+};
 
-export const useSelectedMusicCollageFontFamily = (): [
-  string,
-  (fontFamily: string) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .fontFamily,
-    s.setMusicCollageFontFamily,
-  ]);
+export const setMusicCollageFontStyle = (fontStyle: MusicCollageFontStyle) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.fontStyle = fontStyle;
+    })
+  );
+};
 
-export const useSelectedMusicCollageForegroundColor = (): [
-  string,
-  (foregroundColor: string) => void
-] =>
-  useChartStore((s) => [
-    s.charts.find((c) => c.id === s.selectedChartId)!.options.musicCollage
-      .foregroundColor,
-    s.setMusicCollageForegroundColor,
-  ]);
+export const setMusicCollageFontFamily = (fontFamily: string) => {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (chart) => chart.id === state.selectedChartId
+      );
+      if (selectedChart)
+        selectedChart.options.musicCollage.fontFamily = fontFamily;
+    })
+  );
+};
 
 export const useSelectedMusicCollageEditingTitleFor = (): [
   number,
