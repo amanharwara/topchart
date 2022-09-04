@@ -47,8 +47,6 @@ interface ChartStore {
   setSelectedChartId: (id: string) => void;
 
   charts: Chart[];
-  addNewChart: () => string;
-  deleteChart: (id: string) => void;
   setSelectedChartTitle: (title: string) => void;
   setSelectedChartType: (type: ChartType) => void;
 
@@ -118,7 +116,7 @@ const getNewChartWithDefaults = ({
 
 const useChartStore = create<ChartStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       selectedChartId: "initial",
       setSelectedChartId: (id: string) => {
         set({
@@ -127,35 +125,14 @@ const useChartStore = create<ChartStore>()(
       },
 
       charts: [getNewChartWithDefaults({ id: "initial" })],
-      addNewChart: () => {
-        const newChart = getNewChartWithDefaults({
-          title: `Untitled ${get().charts.length + 1}`,
-        });
-        set((state) => ({
-          charts: [...state.charts, newChart],
-        }));
-        return newChart.id;
-      },
-      deleteChart: (id: string) => {
-        set((state) => ({
-          charts: state.charts.filter((chart) => chart.id !== id),
-        }));
-        const firstChart = get().charts[0];
-        if (firstChart) {
-          get().setSelectedChartId(firstChart.id);
-        } else {
-          const id = get().addNewChart();
-          get().setSelectedChartId(id);
-        }
-      },
 
       setSelectedChartTitle: (title: string) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.title = title;
+            if (selectedChart) selectedChart.title = title;
           })
         );
       },
@@ -163,10 +140,10 @@ const useChartStore = create<ChartStore>()(
       setSelectedChartType: (type: ChartType) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.type = type;
+            if (selectedChart) selectedChart.type = type;
           })
         );
       },
@@ -174,12 +151,11 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageItem: (index: number, item: MusicCollageItem) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.items[
-              index
-            ] = item;
+            if (selectedChart)
+              selectedChart.options.musicCollage.items[index] = item;
           })
         );
       },
@@ -187,11 +163,16 @@ const useChartStore = create<ChartStore>()(
       moveMusicCollageItem: (oldIndex: number, newIndex: number) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            const items =
-              state.charts[selectedChartIndex]!.options.musicCollage.items;
+
+            if (!selectedChart) {
+              throw new Error("Could not find selected chart");
+            }
+
+            const items = selectedChart.options.musicCollage.items;
+
             if (
               oldIndex < 0 ||
               newIndex < 0 ||
@@ -200,7 +181,14 @@ const useChartStore = create<ChartStore>()(
             ) {
               throw new Error("Index(s) are out of bounds.");
             }
-            items.splice(newIndex, 0, items.splice(oldIndex, 1)[0]!);
+
+            const itemToInsert = items.splice(oldIndex, 1)[0];
+
+            if (!itemToInsert) {
+              throw new Error("Could not get item to insert");
+            }
+
+            items.splice(newIndex, 0, itemToInsert);
           })
         );
       },
@@ -208,53 +196,53 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageRows: (rows: number) =>
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.rows = rows;
+            if (selectedChart) selectedChart.options.musicCollage.rows = rows;
           })
         ),
 
       setMusicCollageColumns: (columns: number) =>
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.columns =
-              columns;
+            if (selectedChart)
+              selectedChart.options.musicCollage.columns = columns;
           })
         ),
 
       setMusicCollageGap: (gap: MusicCollageSpacing) =>
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.gap = gap;
+            if (selectedChart) selectedChart.options.musicCollage.gap = gap;
           })
         ),
 
       setMusicCollagePadding: (padding: MusicCollageSpacing) =>
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.padding =
-              padding;
+            if (selectedChart)
+              selectedChart.options.musicCollage.padding = padding;
           })
         ),
 
       setShowMusicCollageAlbumTitles: (show: boolean) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.titles.show =
-              show;
+            if (selectedChart)
+              selectedChart.options.musicCollage.titles.show = show;
           })
         );
       },
@@ -264,12 +252,12 @@ const useChartStore = create<ChartStore>()(
       ) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[
-              selectedChartIndex
-            ]!.options.musicCollage.titles.positionBelowCover = positionBelowCover;
+            if (selectedChart)
+              selectedChart.options.musicCollage.titles.positionBelowCover =
+                positionBelowCover;
           })
         );
       },
@@ -277,12 +265,12 @@ const useChartStore = create<ChartStore>()(
       setAllowEditingMusicCollageTitles: (allowEditing: boolean) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[
-              selectedChartIndex
-            ]!.options.musicCollage.titles.allowEditing = allowEditing;
+            if (selectedChart)
+              selectedChart.options.musicCollage.titles.allowEditing =
+                allowEditing;
           })
         );
       },
@@ -292,12 +280,12 @@ const useChartStore = create<ChartStore>()(
       ) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[
-              selectedChartIndex
-            ]!.options.musicCollage.backgroundType = backgroundType;
+            if (selectedChart)
+              selectedChart.options.musicCollage.backgroundType =
+                backgroundType;
           })
         );
       },
@@ -305,12 +293,12 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageBackgroundColor: (backgroundColor: string) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[
-              selectedChartIndex
-            ]!.options.musicCollage.backgroundColor = backgroundColor;
+            if (selectedChart)
+              selectedChart.options.musicCollage.backgroundColor =
+                backgroundColor;
           })
         );
       },
@@ -318,12 +306,12 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageBackgroundImage: (backgroundImage: string) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[
-              selectedChartIndex
-            ]!.options.musicCollage.backgroundImage = backgroundImage;
+            if (selectedChart)
+              selectedChart.options.musicCollage.backgroundImage =
+                backgroundImage;
           })
         );
       },
@@ -331,11 +319,11 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageFontStyle: (fontStyle: MusicCollageFontStyle) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.fontStyle =
-              fontStyle;
+            if (selectedChart)
+              selectedChart.options.musicCollage.fontStyle = fontStyle;
           })
         );
       },
@@ -343,11 +331,11 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageFontFamily: (fontFamily: string) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[selectedChartIndex]!.options.musicCollage.fontFamily =
-              fontFamily;
+            if (selectedChart)
+              selectedChart.options.musicCollage.fontFamily = fontFamily;
           })
         );
       },
@@ -355,12 +343,12 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageForegroundColor: (foregroundColor: string) => {
         set(
           produce((state: ChartStore) => {
-            const selectedChartIndex = state.charts.findIndex(
+            const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            state.charts[
-              selectedChartIndex
-            ]!.options.musicCollage.foregroundColor = foregroundColor;
+            if (selectedChart)
+              selectedChart.options.musicCollage.foregroundColor =
+                foregroundColor;
           })
         );
       },
@@ -383,6 +371,31 @@ const useChartStore = create<ChartStore>()(
     }
   )
 );
+
+export const addNewChart = () => {
+  const newChart = getNewChartWithDefaults({
+    title: `Untitled ${useChartStore.getState().charts.length + 1}`,
+  });
+  useChartStore.setState((state) => ({
+    charts: [...state.charts, newChart],
+  }));
+  return newChart.id;
+};
+
+export const deleteChart = (id: string) => {
+  const charts = useChartStore.getState().charts;
+  const chartIndex = charts.findIndex((chart) => chart.id === id);
+  const nextChart = charts[chartIndex - 1];
+  useChartStore.setState((state) => ({
+    charts: state.charts.filter((chart) => chart.id !== id),
+  }));
+  if (nextChart) {
+    useChartStore.getState().setSelectedChartId(nextChart.id);
+  } else {
+    const id = addNewChart();
+    useChartStore.getState().setSelectedChartId(id);
+  }
+};
 
 export const useChartsList = () => useChartStore((s) => s.charts);
 
@@ -534,9 +547,6 @@ export const useSelectedMusicCollageEditingTitleFor = (): [
     s.musicCollageEditingTitleFor,
     s.setMusicCollageEditingTitleFor,
   ]);
-
-export const useAddChart = () => useChartStore((s) => s.addNewChart);
-export const useDeleteChart = () => useChartStore((s) => s.deleteChart);
 
 export const useSetMusicCollageItem = () =>
   useChartStore((s) => s.setMusicCollageItem);
