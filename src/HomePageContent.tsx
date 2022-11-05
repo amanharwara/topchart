@@ -2,6 +2,7 @@ import AddCoverArt from "./addCoverArt/AddCoverArt";
 import ChartOptionsSection from "./chartOptions/ChartOptionsSection";
 import Button from "./components/Button";
 import Spinner from "./components/Spinner";
+import { isDev } from "./constants";
 import Header from "./header/Header";
 import MusicCollage from "./musicCollage/MusicCollage";
 import { useIsDownloading, useSetMusicCollageItem } from "./stores/charts";
@@ -29,19 +30,21 @@ const HomePageContent = () => {
             </div>
           )}
           <MusicCollage />
-          <div className="mt-5 flex items-center gap-4 text-white">
-            DevTools:
-            <Button
-              onClick={() => {
-                setMusicCollageItem(0, {
-                  title: "Brian Eno",
-                  image: "eno.jpg",
-                });
-              }}
-            >
-              Add image to first
-            </Button>
-          </div>
+          {isDev && (
+            <div className="mt-5 flex items-center gap-4 text-white">
+              DevTools:
+              <Button
+                onClick={() => {
+                  setMusicCollageItem(0, {
+                    title: "Brian Eno",
+                    image: "eno.jpg",
+                  });
+                }}
+              >
+                Add image to first
+              </Button>
+            </div>
+          )}
         </main>
         <section className="flex min-h-0 flex-col bg-gray-800">
           <AddCoverArt />

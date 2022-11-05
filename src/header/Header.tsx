@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import IconButton from "../components/IconButton";
 import { useSelectedChart, useSetIsDownloading } from "../stores/charts";
 import { toPng } from "html-to-image";
+import { isDev } from "../constants";
 
 const Header = () => {
   const selectedChart = useSelectedChart();
@@ -61,27 +62,31 @@ const Header = () => {
         >
           Download
         </Button>
-        <Button icon={ImportExportIcon}>Import/Export</Button>
-        <IconButton
-          icon={SponsorIcon}
-          label="Donate or Sponsor"
-          className="hidden md:flex"
-        />
-        <IconButton
-          icon={BugsIcon}
-          label="Report an issue"
-          className="hidden md:flex"
-        />
-        <IconButton
-          icon={SettingsIcon}
-          label="App settings"
-          className={"hidden md:flex"}
-        />
-        <IconButton
-          icon={HamburgerMenuIcon}
-          label="App settings"
-          className={"md:hidden"}
-        />
+        {isDev && (
+          <>
+            <Button icon={ImportExportIcon}>Import/Export</Button>
+            <IconButton
+              icon={SponsorIcon}
+              label="Donate or Sponsor"
+              className="hidden md:flex"
+            />
+            <IconButton
+              icon={BugsIcon}
+              label="Report an issue"
+              className="hidden md:flex"
+            />
+            <IconButton
+              icon={SettingsIcon}
+              label="App settings"
+              className={"hidden md:flex"}
+            />
+            <IconButton
+              icon={HamburgerMenuIcon}
+              label="App settings"
+              className={"md:hidden"}
+            />
+          </>
+        )}
       </div>
     </header>
   );
