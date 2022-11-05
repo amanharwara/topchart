@@ -212,6 +212,7 @@ const MusicCollage = () => {
 
   return (
     <div
+      id="music-collage"
       className={classNames("flex w-max", padding(), font)}
       style={{
         background: currentBackground,

@@ -40,21 +40,6 @@ export type Chart = {
   };
 };
 
-interface ChartStore {
-  selectedChartId: Chart["id"];
-  setSelectedChartId: (id: string) => void;
-
-  charts: Chart[];
-  setSelectedChartTitle: (title: string) => void;
-  setSelectedChartType: (type: ChartType) => void;
-
-  setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
-  moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
-
-  musicCollageEditingTitleFor: number;
-  setMusicCollageEditingTitleFor: (itemIndex: number) => void;
-}
-
 const MaxNumberOfRows = 10;
 const MaxNumberOfColumns = 10;
 
@@ -93,6 +78,23 @@ const getNewChartWithDefaults = ({
   },
 });
 
+interface ChartStore {
+  selectedChartId: Chart["id"];
+  setSelectedChartId: (id: string) => void;
+
+  charts: Chart[];
+  setSelectedChartTitle: (title: string) => void;
+  setSelectedChartType: (type: ChartType) => void;
+
+  setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
+  moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
+
+  musicCollageEditingTitleFor: number;
+  setMusicCollageEditingTitleFor: (itemIndex: number) => void;
+
+  isDownloading: boolean;
+  setIsDownloading: (isDownloading: boolean) => void;
+}
 const useChartStore = create<ChartStore>()(
   persist(
     (set) => ({
@@ -178,13 +180,21 @@ const useChartStore = create<ChartStore>()(
           musicCollageEditingTitleFor: itemIndex,
         });
       },
+
+      isDownloading: Boolean(false),
+      setIsDownloading(isDownloading: boolean) {
+        set({
+          isDownloading,
+        });
+      },
     }),
     {
       name: "charts",
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
-            ([key]) => !["musicCollageEditingTitleFor"].includes(key)
+            ([key]) =>
+              !["musicCollageEditingTitleFor", "isDownloading"].includes(key)
           )
         ),
     }
@@ -403,3 +413,8 @@ export const getMusicCollageItem = (index: number) => {
   return state.charts.find((c) => c.id === state.selectedChartId)?.options
     .musicCollage.items[index];
 };
+
+export const useIsDownloading = () => useChartStore((s) => s.isDownloading);
+
+export const useSetIsDownloading = () =>
+  useChartStore((s) => s.setIsDownloading);
