@@ -145,7 +145,10 @@ export const CoverArtSearchTab = () => {
         className="flex gap-2.5 px-2.5 py-3.5"
         onSubmit={async (event) => {
           event.preventDefault();
-          refetch();
+
+          if (searchQuery.length > 0) {
+            refetch();
+          }
         }}
       >
         <input
@@ -177,8 +180,8 @@ export const CoverArtSearchTab = () => {
       </form>
       <div className="flex flex-col items-center gap-2.5 overflow-y-auto px-2.5 pb-5">
         {error instanceof Error && (
-          <div className="flex items-center gap-2.5 text-red-500 text-sm">
-            <ErrorIcon className="w-5 h-5" />
+          <div className="flex gap-3 bg-red-400 text-black rounded p-2.5 text-sm w-full mb-1">
+            <ErrorIcon className="w-5 h-5 flex-shrink-0" />
             {error.message}
           </div>
         )}
