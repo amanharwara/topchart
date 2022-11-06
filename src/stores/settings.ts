@@ -21,6 +21,12 @@ const useSettingsStore = create<SettingsStore>()(
     {
       name: "settings",
       getStorage: () => localStorage,
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(
+            ([key]) => !["isSettingsModalOpen"].includes(key)
+          )
+        ),
     }
   )
 );
