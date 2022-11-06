@@ -26,7 +26,7 @@ const RadioButtonGroup = ({ value, items, onChange }: Props) => {
         <label
           className={classNames(
             "focus-within-ring flex-grow select-none py-1.5 text-center",
-            itemValue === value && "bg-slate-600"
+            itemValue === value && "bg-slate-600 text-white"
           )}
           key={itemValue}
         >

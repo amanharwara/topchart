@@ -43,7 +43,7 @@ const EditTitleModal = () => {
     <Modal
       title="Edit title"
       isOpen={true}
-      close={() => {
+      setOpen={() => {
         if (title && itemToEdit.title) {
           setEditingTitleFor(-1);
         } else {

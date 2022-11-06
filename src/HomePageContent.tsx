@@ -1,3 +1,4 @@
+import { memo } from "react";
 import AddCoverArt from "./addCoverArt/AddCoverArt";
 import ChartOptionsSection from "./chartOptions/ChartOptionsSection";
 import Button from "./components/Button";
@@ -5,6 +6,7 @@ import Spinner from "./components/Spinner";
 import { isDev } from "./constants";
 import Header from "./header/Header";
 import MusicCollage from "./musicCollage/MusicCollage";
+import SettingsModal from "./settings/SettingsModal";
 import { useIsDownloading, useSetMusicCollageItem } from "./stores/charts";
 import classNames from "./utils/classNames";
 
@@ -24,14 +26,14 @@ const HomePageContent = () => {
           )}
         >
           {isDownloading && (
-            <div className="flex items-center justify-center gap-4 w-full h-full absolute top-0 left-0 z-50 bg-slate-800/95 text-white font-bold text-lg">
+            <div className="flex items-center justify-center gap-4 w-full h-full absolute top-0 left-0 z-50 dark:bg-slate-800/95 dark:text-white font-bold text-lg">
               <Spinner className="w-10 h-10" width={2} />
               Preparing download...
             </div>
           )}
           <MusicCollage />
           {isDev && (
-            <div className="mt-5 flex items-center gap-4 text-white">
+            <div className="mt-5 flex items-center gap-4 dark:text-white">
               DevTools:
               <Button
                 onClick={() => {
@@ -46,10 +48,11 @@ const HomePageContent = () => {
             </div>
           )}
         </main>
-        <section className="flex min-h-0 flex-col bg-gray-800">
+        <section className="flex min-h-0 flex-col border-l border-gray-800 dark:border-0 dark:bg-gray-800 bg-slate-100">
           <AddCoverArt />
         </section>
       </div>
+      <SettingsModal />
       {/* <AddCoverArtModal
     isOpen={isCoverArtModalOpen()}
     closeModal={() => toggleCoverArtModal(false)}
@@ -59,4 +62,4 @@ const HomePageContent = () => {
   );
 };
 
-export default HomePageContent;
+export default memo(HomePageContent);

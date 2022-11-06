@@ -17,7 +17,7 @@ const TabButton = (props: {
   <button
     className={classNames(
       "flex-grow border-slate-600 py-2.5 text-sm uppercase first:border-r last:border-l hover:bg-slate-500",
-      props.selected && "bg-slate-600 font-semibold"
+      props.selected && "bg-slate-600 text-white font-semibold"
     )}
     onClick={props.onClick}
   >
@@ -29,7 +29,7 @@ const AddCoverArt = () => {
   const [currentTab, setCurrentTab] = useState<Tab>("Search");
 
   return (
-    <div className="flex h-full min-h-0 flex-col text-white">
+    <div className="flex h-full min-h-0 flex-col dark:text-white">
       <div className="flex border-b border-slate-600">
         <TabButton
           onClick={() => setCurrentTab("Search")}

@@ -123,7 +123,7 @@ const CurrentChartOption = () => {
 
 const ChartOptionsSection = () => {
   return (
-    <section className="flex flex-col gap-6 overflow-y-auto bg-gray-800 py-4 px-5 text-white">
+    <section className="flex flex-col gap-6 overflow-y-auto border-r border-gray-800 dark:border-0 dark:bg-gray-800 bg-slate-100 py-4 px-5 dark:text-white">
       <CurrentChartOption />
       {/* <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Chart type:</div>

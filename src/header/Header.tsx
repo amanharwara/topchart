@@ -9,10 +9,12 @@ import IconButton from "../components/IconButton";
 import { useSelectedChart, useSetIsDownloading } from "../stores/charts";
 import { toPng } from "html-to-image";
 import { isDev } from "../constants";
+import { useSetSettingsModalOpen } from "../stores/settings";
 
 const Header = () => {
   const selectedChart = useSelectedChart();
   const setIsDownloading = useSetIsDownloading();
+  const setSettingsModalOpen = useSetSettingsModalOpen();
 
   const downloadChart = async () => {
     if (!selectedChart) throw new Error("No chart selected");
@@ -50,8 +52,8 @@ const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between bg-slate-800 py-2 px-4">
-      <div className="text-base font-semibold leading-none text-white">
+    <header className="flex items-center justify-between bg-white border-b border-gray-800 dark:border-0 dark:bg-slate-800 py-2 px-4">
+      <div className="text-base font-semibold leading-none dark:text-white">
         Topchart
       </div>
       <div className="flex items-center gap-2">
@@ -76,17 +78,18 @@ const Header = () => {
               className="hidden md:flex"
             />
             <IconButton
-              icon={SettingsIcon}
-              label="App settings"
-              className={"hidden md:flex"}
-            />
-            <IconButton
               icon={HamburgerMenuIcon}
               label="App settings"
               className={"md:hidden"}
             />
           </>
         )}
+        <IconButton
+          icon={SettingsIcon}
+          label="App settings"
+          className={"hidden md:flex"}
+          onClick={() => setSettingsModalOpen(true)}
+        />
       </div>
     </header>
   );

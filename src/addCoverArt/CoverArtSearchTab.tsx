@@ -11,6 +11,7 @@ import Spinner from "../components/Spinner";
 import { useQuery } from "@tanstack/react-query";
 import { blobToDataURL } from "./blobToDataURL";
 import { z } from "zod";
+import Input from "../components/Input";
 
 const LastFmImage = z.object({
   "#text": z.string(),
@@ -151,8 +152,8 @@ export const CoverArtSearchTab = () => {
           }
         }}
       >
-        <input
-          className="flex-grow rounded border border-slate-600 bg-transparent px-2.5 py-1.5 text-xs placeholder:text-slate-400"
+        <Input
+          className="py-1.5 text-xs"
           placeholder="Search for music..."
           value={searchQuery}
           onInput={(event) => {
@@ -194,10 +195,10 @@ export const CoverArtSearchTab = () => {
             <div className="max-w-[20ch] text-center font-semibold">
               Search for any album, artist or song to add cover art
             </div>
-            <div className="text-xs text-slate-200">
+            <div className="text-xs dark:text-slate-200 text-slate-700">
               Example: &quot;
               <span
-                className="cursor-pointer border-b border-dotted border-slate-300 font-semibold"
+                className="cursor-pointer border-b border-dotted dark:border-slate-300 border-slate-400 font-semibold"
                 onClick={() => {
                   setSearchQuery("It's Almost Dry by Pusha T");
                   searchInputRef.current?.focus();
@@ -217,11 +218,11 @@ export const CoverArtSearchTab = () => {
             <div className="max-w-[20ch] text-center font-semibold">
               Couldn’t find any results
             </div>
-            <div className="max-w-[40ch] text-center text-xs text-slate-200">
+            <div className="max-w-[40ch] text-center text-xs dark:text-slate-200 text-slate-700">
               Check your search for typos, or try a different search. For
               example, &quot;
               <span
-                className="cursor-pointer border-b border-dotted border-slate-300 font-semibold"
+                className="cursor-pointer border-b border-dotted dark:border-slate-300 border-slate-400 font-semibold"
                 onClick={() => {
                   setSearchQuery("Brian Eno");
                   searchInputRef.current?.focus();

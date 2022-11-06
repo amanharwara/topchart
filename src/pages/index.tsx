@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
+import { useEffect } from "react";
+import { useDarkMode } from "../stores/settings";
 
 const DynamicContent = dynamic(() => import("../HomePageContent"), {
   ssr: false,
@@ -10,6 +12,12 @@ const DynamicContent = dynamic(() => import("../HomePageContent"), {
 const queryClient = new QueryClient();
 
 const Home: NextPage = () => {
+  const darkMode = useDarkMode();
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
   return (
     <>
       <Head>

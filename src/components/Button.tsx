@@ -10,7 +10,7 @@ const Button = ({ hideLabelOnMobile, icon: Icon, ...props }: Props) => (
   <button
     type="button"
     className={classNames(
-      "flex items-center gap-1.5 rounded border border-solid border-slate-600 text-white hover:bg-slate-600",
+      "flex items-center gap-1.5 rounded border border-solid border-slate-600 dark:text-white hover:bg-slate-600 hover:text-white",
       hideLabelOnMobile ? "p-1.5 md:px-2 md:py-1.5" : "px-2 py-1.5"
     )}
     {...props}

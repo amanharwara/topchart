@@ -8,15 +8,16 @@ body,
   @apply h-auto md:h-full;
 }
 
-body {
-  @apply bg-slate-700;
+body,
+main {
+  @apply bg-slate-200 dark:bg-slate-700;
 }
 
 *:focus,
 .focus-within-ring:focus-within {
-  @apply shadow-none outline-none ring-2 ring-blue-500 ring-offset-1 ring-offset-slate-900;
+  @apply shadow-none outline-none ring-2 ring-blue-500 ring-offset-1 dark:ring-offset-slate-900;
 }
 
 [data-backdrop] {
-  @apply bg-gray-900/75;
+  @apply bg-gray-600/75 dark:bg-gray-900/75;
 }

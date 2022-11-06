@@ -22,7 +22,7 @@ const IconButton = ({
         "peer flex select-none items-center gap-2 rounded border p-1.5",
         disabled
           ? "cursor-not-allowed border-gray-500 text-gray-400"
-          : "border-slate-600 hover:bg-slate-600 text-white",
+          : "border-slate-600 hover:bg-slate-600 dark:text-white hover:text-white",
         className
       )}
       disabled={disabled}
