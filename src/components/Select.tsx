@@ -3,7 +3,6 @@ import {
   SelectArrow,
   SelectItem,
   SelectPopover,
-  SelectState,
   useSelectState,
 } from "ariakit/select";
 

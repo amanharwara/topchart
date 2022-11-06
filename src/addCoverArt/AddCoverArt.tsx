@@ -25,7 +25,7 @@ const TabButton = (props: {
   </button>
 );
 
-const AddCoverArt = () => {
+const AddCoverArt = ({ itemIndex = -1 }: { itemIndex?: number }) => {
   const [currentTab, setCurrentTab] = useState<Tab>("Search");
 
   return (
@@ -51,11 +51,11 @@ const AddCoverArt = () => {
         </TabButton>
       </div>
       {currentTab === "Search" ? (
-        <CoverArtSearchTab />
+        <CoverArtSearchTab itemIndex={itemIndex} />
       ) : currentTab === "Link" ? (
-        <CoverArtLinkTab />
+        <CoverArtLinkTab itemIndex={itemIndex} />
       ) : currentTab === "Upload" ? (
-        <CoverArtUploadTab />
+        <CoverArtUploadTab itemIndex={itemIndex} />
       ) : null}
     </div>
   );

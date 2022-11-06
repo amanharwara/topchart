@@ -92,6 +92,9 @@ interface ChartStore {
   musicCollageEditingTitleFor: number;
   setMusicCollageEditingTitleFor: (itemIndex: number) => void;
 
+  musicCollageAddingCoverTo: number;
+  setMusicCollageAddingCoverTo: (itemIndex: number) => void;
+
   isDownloading: boolean;
   setIsDownloading: (isDownloading: boolean) => void;
 }
@@ -178,6 +181,13 @@ const useChartStore = create<ChartStore>()(
       setMusicCollageEditingTitleFor(itemIndex) {
         set({
           musicCollageEditingTitleFor: itemIndex,
+        });
+      },
+
+      musicCollageAddingCoverTo: -1,
+      setMusicCollageAddingCoverTo(itemIndex) {
+        set({
+          musicCollageAddingCoverTo: itemIndex,
         });
       },
 
@@ -399,6 +409,15 @@ export const useSelectedMusicCollageEditingTitleFor = (): [
   useChartStore((s) => [
     s.musicCollageEditingTitleFor,
     s.setMusicCollageEditingTitleFor,
+  ]);
+
+export const useSelectedMusicCollageAddingCoverTo = (): [
+  number,
+  (itemIndex: number) => void
+] =>
+  useChartStore((s) => [
+    s.musicCollageAddingCoverTo,
+    s.setMusicCollageAddingCoverTo,
   ]);
 
 export const useSetMusicCollageItem = () =>

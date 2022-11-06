@@ -12,11 +12,19 @@ import { useQuery } from "@tanstack/react-query";
 import Input from "../components/Input";
 import { blobToDataURL } from "./blobToDataURL";
 import { fetchLinkBlobWithCorsBackup } from "./fetchLinkBlobWithCorsBackup";
+import {
+  useSetMusicCollageItem,
+  useSelectedMusicCollageAddingCoverTo,
+} from "../stores/charts";
+import Button from "../components/Button";
 
-export const CoverArtLinkTab = () => {
+export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
   const linkInputRef = useRef<HTMLInputElement>(null);
 
   const [link, setLink] = useState("");
+
+  const setMusicCollageItem = useSetMusicCollageItem();
+  const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
   const {
     isFetching,
@@ -104,7 +112,7 @@ export const CoverArtLinkTab = () => {
           {image && (
             <img
               src={image.content}
-              draggable={true}
+              draggable={itemIndex === -1}
               onDragStart={(event) => {
                 event.dataTransfer.setData(
                   "text",
@@ -115,6 +123,20 @@ export const CoverArtLinkTab = () => {
             />
           )}
         </div>
+        {itemIndex > -1 && image && (
+          <Button
+            className="mt-1 text-base"
+            onClick={() => {
+              setMusicCollageItem(itemIndex, {
+                title: image.id,
+                image: image.id,
+              });
+              setAddingCoverTo(-1);
+            }}
+          >
+            Add cover
+          </Button>
+        )}
       </div>
     </div>
   );

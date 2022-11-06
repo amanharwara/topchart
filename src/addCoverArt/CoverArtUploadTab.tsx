@@ -6,13 +6,21 @@ import ImageIcon from "../icons/ImageIcon";
 import { DragEventHandler, useRef, useState } from "react";
 import { Image, storeImageToDB } from "../stores/imageDB";
 import { blobToDataURL } from "./blobToDataURL";
+import Button from "../components/Button";
+import {
+  useSelectedMusicCollageAddingCoverTo,
+  useSetMusicCollageItem,
+} from "../stores/charts";
 
-export const CoverArtUploadTab = () => {
+export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounterRef = useRef(0);
 
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [currentImage, setCurrentImage] = useState<Image>();
+
+  const setMusicCollageItem = useSetMusicCollageItem();
+  const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
   const preventDefaultOnDrag: DragEventHandler = (event) => {
     event.preventDefault();
@@ -116,13 +124,15 @@ export const CoverArtUploadTab = () => {
           <ImageIcon className="h-12 w-12 text-white" />
         </div>
         <div className="font-semibold">Click to browse images</div>
-        <div className="text-sm">Or drop your files here</div>
+        <div className="hidden md:block text-sm">Or drop your files here</div>
       </button>
       {currentImage && (
         <div className="flex flex-col items-center gap-2 px-2.5 pb-5">
-          <div className="text-sm">Drag this to your desired cell:</div>
+          <div className="text-sm">
+            {itemIndex === -1 ? "Drag this to your desired cell:" : "Preview:"}
+          </div>
           <img
-            draggable={true}
+            draggable={itemIndex === -1}
             onDragStart={(event) => {
               event.dataTransfer.setData(
                 "text",
@@ -134,6 +144,20 @@ export const CoverArtUploadTab = () => {
             className="h-36 w-36 rounded border-0"
             src={currentImage.content}
           />
+          {itemIndex > -1 && (
+            <Button
+              className="mt-1 text-base"
+              onClick={() => {
+                setMusicCollageItem(itemIndex, {
+                  title: currentImage.id,
+                  image: currentImage.id,
+                });
+                setAddingCoverTo(-1);
+              }}
+            >
+              Add cover
+            </Button>
+          )}
         </div>
       )}
     </div>

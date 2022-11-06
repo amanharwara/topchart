@@ -1,11 +1,4 @@
-import {
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanelOptions,
-  TabState,
-  useTabState,
-} from "ariakit";
+import { Tab, TabList, TabPanel, TabPanelOptions, useTabState } from "ariakit";
 import { memo, ReactNode } from "react";
 import AddCoverArt from "./addCoverArt/AddCoverArt";
 import ChartOptionsSection from "./chartOptions/ChartOptionsSection";

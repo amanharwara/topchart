@@ -12,6 +12,11 @@ import { useQuery } from "@tanstack/react-query";
 import { blobToDataURL } from "./blobToDataURL";
 import { z } from "zod";
 import Input from "../components/Input";
+import {
+  useSelectedMusicCollageAddingCoverTo,
+  useSetMusicCollageItem,
+} from "../stores/charts";
+import classNames from "../utils/classNames";
 
 const LastFmImage = z.object({
   "#text": z.string(),
@@ -35,7 +40,18 @@ const LastFmSearchResponse = z.object({
   }),
 });
 
-const SearchResult = ({ alt, link }: { alt: string; link: string }) => {
+const SearchResult = ({
+  alt,
+  link,
+  itemIndex,
+}: {
+  alt: string;
+  link: string;
+  itemIndex: number;
+}) => {
+  const setMusicCollageItem = useSetMusicCollageItem();
+  const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
+
   const {
     isFetching,
     data: image,
@@ -71,8 +87,11 @@ const SearchResult = ({ alt, link }: { alt: string; link: string }) => {
 
   return (
     <div
-      className="flex items-center justify-center rounded select-none bg-slate-600"
-      draggable={!!image}
+      className={classNames(
+        "flex items-center justify-center rounded select-none bg-slate-600",
+        itemIndex > -1 && "cursor-pointer"
+      )}
+      draggable={!!image && itemIndex === -1}
       onDragStart={(event) => {
         if (!image) return;
         event.dataTransfer.setData(
@@ -83,6 +102,16 @@ const SearchResult = ({ alt, link }: { alt: string; link: string }) => {
           })
         );
       }}
+      onClick={() => {
+        if (itemIndex < 0 || !image) return;
+
+        setMusicCollageItem(itemIndex, {
+          title: alt,
+          image: image.id,
+        });
+
+        setAddingCoverTo(-1);
+      }}
     >
       {isFetching && <Spinner className="w-7 h-7" />}
       {image && (
@@ -92,7 +121,7 @@ const SearchResult = ({ alt, link }: { alt: string; link: string }) => {
   );
 };
 
-export const CoverArtSearchTab = () => {
+export const CoverArtSearchTab = ({ itemIndex }: { itemIndex: number }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -248,6 +277,7 @@ export const CoverArtSearchTab = () => {
                   alt={`${result.artist} - ${result.name}`}
                   link={image}
                   key={image}
+                  itemIndex={itemIndex}
                 />
               );
             })}

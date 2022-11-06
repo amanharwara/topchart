@@ -11,10 +11,13 @@ import { getImageFromDB } from "../stores/imageDB";
 import {
   useMoveMusicCollageItem,
   useSelectedChart,
+  useSelectedMusicCollageAddingCoverTo,
   useSelectedMusicCollageEditingTitleFor,
   useSetMusicCollageItem,
 } from "../stores/charts";
 import { z } from "zod";
+import AddIcon from "../icons/AddIcon";
+import AddCoverArtModal from "../addCoverArt/AddCoverArtModal";
 
 export type MusicCollageItem = {
   image: string | null;
@@ -48,6 +51,7 @@ const CollageItem = ({
   shouldPositionTitlesBelowCover,
 }: CollageItemProps) => {
   const [, setEditingTitleFor] = useSelectedMusicCollageEditingTitleFor();
+  const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
   const [isFocusWithinItem, setIsFocusWithinItem] = useState(false);
@@ -188,6 +192,19 @@ const CollageItem = ({
           </>
         )}
       </div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        {!item.image && (
+          <IconButton
+            icon={AddIcon}
+            label="Add cover art"
+            className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
+            onClick={() => {
+              setAddingCoverTo(index);
+            }}
+            tabIndex={isFocusWithinItem ? 0 : -1}
+          />
+        )}
+      </div>
       <div
         className={classNames(
           "h-40 w-40 select-none bg-white",
@@ -298,6 +315,7 @@ const MusicCollage = () => {
         </div>
       ) : null}
       <EditTitleModal />
+      <AddCoverArtModal />
     </div>
   );
 };
