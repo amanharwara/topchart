@@ -5,7 +5,7 @@ import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
-import { DragEventHandler, Fragment, useEffect, useState } from "react";
+import { DragEventHandler, Fragment, useEffect, useRef, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
@@ -50,9 +50,11 @@ const CollageItem = ({
   const [, setEditingTitleFor] = useSelectedMusicCollageEditingTitleFor();
   const [imageContent, setImageContent] = useState("");
   const [isDragEntered, setIsDragEntered] = useState(false);
+  const [isFocusWithinItem, setIsFocusWithinItem] = useState(false);
   const chart = useSelectedChart();
   const setMusicCollageItem = useSetMusicCollageItem();
   const moveMusicCollageItem = useMoveMusicCollageItem();
+  const itemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getImage = async () => {
@@ -116,7 +118,34 @@ const CollageItem = ({
   };
 
   return (
-    <div className="group relative flex flex-col gap-1">
+    <div
+      className="group relative flex flex-col gap-1"
+      tabIndex={index === 0 ? 0 : isFocusWithinItem ? 0 : -1}
+      onFocus={(event) => {
+        event.stopPropagation();
+        setIsFocusWithinItem(true);
+      }}
+      onBlur={(event) => {
+        event.stopPropagation();
+        setIsFocusWithinItem(false);
+      }}
+      onKeyDown={(event) => {
+        if (event.currentTarget !== itemRef.current) return;
+
+        if (event.key === "ArrowLeft") {
+          event.stopPropagation();
+          const previousItem = event.currentTarget
+            .previousElementSibling as HTMLDivElement | null;
+          previousItem?.focus();
+        } else if (event.key === "ArrowRight") {
+          event.stopPropagation();
+          const nextItem = event.currentTarget
+            .nextElementSibling as HTMLDivElement | null;
+          nextItem?.focus();
+        }
+      }}
+      ref={itemRef}
+    >
       <div className="absolute right-3 top-3 flex items-center gap-2">
         {item.image && (
           <>
@@ -124,20 +153,22 @@ const CollageItem = ({
               <IconButton
                 icon={EditIcon}
                 label="Edit title"
-                className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
+                className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
                 onClick={editTitleForCurrentItem}
+                tabIndex={isFocusWithinItem ? 0 : -1}
               />
             )}
             <IconButton
               icon={TrashIcon}
               label="Delete item"
-              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-hover:opacity-100"
+              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
               onClick={() => {
                 setMusicCollageItem(index, {
                   title: "",
                   image: "",
                 });
               }}
+              tabIndex={isFocusWithinItem ? 0 : -1}
             />
           </>
         )}
