@@ -134,14 +134,29 @@ const CollageItem = ({
 
         if (event.key === "ArrowLeft") {
           event.stopPropagation();
+
           const previousItem = event.currentTarget
             .previousElementSibling as HTMLDivElement | null;
           previousItem?.focus();
+
+          if (event.shiftKey) {
+            const previousItemIndex = index - 1;
+            if (previousItemIndex < 0) return;
+            moveMusicCollageItem(index, previousItemIndex);
+          }
         } else if (event.key === "ArrowRight") {
           event.stopPropagation();
+
           const nextItem = event.currentTarget
             .nextElementSibling as HTMLDivElement | null;
           nextItem?.focus();
+
+          if (event.shiftKey) {
+            const nextItemIndex = index + 1;
+            if (nextItemIndex >= chart.options.musicCollage.items.length)
+              return;
+            moveMusicCollageItem(index, nextItemIndex);
+          }
         }
       }}
       ref={itemRef}
