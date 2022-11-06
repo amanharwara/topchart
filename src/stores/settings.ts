@@ -11,7 +11,7 @@ interface SettingsStore {
 const useSettingsStore = create<SettingsStore>()(
   persist(
     (set) => ({
-      darkMode: false,
+      darkMode: true,
       setDarkMode: (darkMode) => set({ darkMode }),
 
       isSettingsModalOpen: false,
