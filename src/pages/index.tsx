@@ -15,7 +15,7 @@ const Home: NextPage = () => {
   const darkMode = useDarkMode();
 
   useEffect(() => {
-    document.body.classList.toggle("dark", darkMode);
+    document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
   return (
@@ -31,7 +31,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      <div className="flex flex-col overflow-hidden">
+      <div className="flex flex-col overflow-hidden h-full max-h-screen md:max-h-max">
         <QueryClientProvider client={queryClient}>
           <DynamicContent />
         </QueryClientProvider>

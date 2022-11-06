@@ -57,16 +57,14 @@ const Header = () => {
         Topchart
       </div>
       <div className="flex items-center gap-2">
-        <Button
-          icon={DownloadIcon}
-          onClick={downloadChart}
-          hideLabelOnMobile={false}
-        >
+        <Button icon={DownloadIcon} onClick={downloadChart}>
           Download
         </Button>
         {isDev && (
           <>
-            <Button icon={ImportExportIcon}>Import/Export</Button>
+            <Button icon={ImportExportIcon} hideLabelOnMobile={true}>
+              Import/Export
+            </Button>
             <IconButton
               icon={SponsorIcon}
               label="Donate or Sponsor"

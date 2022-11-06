@@ -37,7 +37,7 @@ const Select = ({ value, setValue, options }: Props) => {
           <SelectItem
             value={value}
             key={value}
-            className="[data-active-item]:bg-gray-700 cursor-pointer rounded px-2.5 py-1.5 hover:bg-gray-700 hover:text-white [&[data-active-item]]:bg-gray-700 [&[data-active-item]]:text-white"
+            className="cursor-pointer rounded px-2.5 py-1.5 hover:bg-gray-700 hover:text-white [&[data-active-item]]:bg-gray-700 [&[data-active-item]]:text-white"
           >
             {label}
           </SelectItem>

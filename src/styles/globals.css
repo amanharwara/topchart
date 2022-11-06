@@ -5,7 +5,7 @@
 html,
 body,
 #__next {
-  @apply h-auto md:h-full;
+  @apply h-screen overflow-hidden md:h-full md:overflow-auto;
 }
 
 body,
