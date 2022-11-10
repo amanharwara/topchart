@@ -5,10 +5,11 @@ import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
-import { DragEventHandler, Fragment, useEffect, useRef, useState } from "react";
+import { DragEventHandler, useEffect, useRef, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
+  useIsDownloading,
   useMoveMusicCollageItem,
   useSelectedChart,
   useSelectedMusicCollageAddingCoverTo,
@@ -58,6 +59,7 @@ const CollageItem = ({
   const chart = useSelectedChart();
   const setMusicCollageItem = useSetMusicCollageItem();
   const moveMusicCollageItem = useMoveMusicCollageItem();
+  const isDownloading = useIsDownloading();
   const itemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -166,7 +168,7 @@ const CollageItem = ({
       ref={itemRef}
     >
       <div className="absolute right-3 top-3 flex items-center gap-2">
-        {item.image && (
+        {item.image && !isDownloading && (
           <>
             {allowEditingTitles && (
               <IconButton
@@ -193,7 +195,7 @@ const CollageItem = ({
         )}
       </div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        {!item.image && (
+        {!item.image && !isDownloading && (
           <IconButton
             icon={AddIcon}
             label="Add cover art"
