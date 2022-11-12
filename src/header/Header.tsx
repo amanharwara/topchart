@@ -10,6 +10,7 @@ import { useSelectedChart, useSetIsDownloading } from "../stores/charts";
 import { toPng } from "html-to-image";
 import { isDev } from "../constants";
 import { useSetSettingsModalOpen } from "../stores/settings";
+import Tooltip from "../components/Tooltip";
 
 const Header = () => {
   const selectedChart = useSelectedChart();
@@ -71,23 +72,33 @@ const Header = () => {
               className="hidden md:flex"
             />
             <IconButton
-              icon={BugsIcon}
-              label="Report an issue"
-              className="hidden md:flex"
-            />
-            <IconButton
               icon={HamburgerMenuIcon}
               label="App settings"
               className={"md:hidden"}
             />
           </>
         )}
-        <IconButton
-          icon={SettingsIcon}
-          label="App settings"
-          className={"hidden md:flex"}
-          onClick={() => setSettingsModalOpen(true)}
-        />
+        <Tooltip text="Report an issue">
+          <IconButton
+            icon={BugsIcon}
+            label="Report an issue"
+            className="hidden md:flex"
+            onClick={() => {
+              window.open(
+                "https://github.com/amanharwara/topchart/issues",
+                "_blank"
+              );
+            }}
+          />
+        </Tooltip>
+        <Tooltip text="App settings">
+          <IconButton
+            icon={SettingsIcon}
+            label="App settings"
+            className={"hidden md:flex"}
+            onClick={() => setSettingsModalOpen(true)}
+          />
+        </Tooltip>
       </div>
     </header>
   );
