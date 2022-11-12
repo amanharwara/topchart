@@ -1,4 +1,9 @@
-import { ComponentPropsWithoutRef, ComponentType } from "react";
+import {
+  ComponentPropsWithoutRef,
+  ComponentType,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import classNames from "../utils/classNames";
 
 type Props = {
@@ -7,13 +12,10 @@ type Props = {
   className?: string;
 } & ComponentPropsWithoutRef<"button">;
 
-const IconButton = ({
-  icon: Icon,
-  label,
-  className,
-  disabled,
-  ...props
-}: Props) => {
+const IconButton = forwardRef(function IconButton(
+  { icon: Icon, label, className, disabled, ...props }: Props,
+  ref: ForwardedRef<HTMLButtonElement>
+) {
   return (
     <button
       type="button"
@@ -26,11 +28,12 @@ const IconButton = ({
         className
       )}
       disabled={disabled}
+      ref={ref}
       {...props}
     >
       {<Icon className="h-4 w-4" />}
     </button>
   );
-};
+});
 
 export default IconButton;

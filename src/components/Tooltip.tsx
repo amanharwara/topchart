@@ -8,12 +8,15 @@ import {
 const Tooltip = ({
   text,
   children,
+  forceHide,
 }: {
   text: string;
   children: React.ReactNode;
+  forceHide?: boolean;
 }) => {
   const state = useTooltipState({
     gutter: -1,
+    open: forceHide ? false : undefined,
   });
 
   return (
