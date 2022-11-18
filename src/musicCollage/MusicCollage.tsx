@@ -5,7 +5,13 @@ import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
-import { DragEventHandler, useEffect, useRef, useState } from "react";
+import {
+  DragEventHandler,
+  KeyboardEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
@@ -113,14 +119,46 @@ const CollageItem = ({
         title,
         image: dataTransferObject.image,
       });
+      itemRef.current?.focus();
       if (!title) editTitleForCurrentItem();
     }
 
     if ("index" in dataTransferObject) {
       moveMusicCollageItem(dataTransferObject.index, index);
+      itemRef.current?.focus();
     }
 
     setIsDragEntered(false);
+  };
+
+  const handleKeyDown: KeyboardEventHandler = (event) => {
+    if (event.currentTarget !== itemRef.current) return;
+
+    if (event.key === "ArrowLeft") {
+      event.stopPropagation();
+
+      const previousItem = event.currentTarget
+        .previousElementSibling as HTMLDivElement | null;
+      previousItem?.focus();
+
+      if (event.shiftKey) {
+        const previousItemIndex = index - 1;
+        if (previousItemIndex < 0) return;
+        moveMusicCollageItem(index, previousItemIndex);
+      }
+    } else if (event.key === "ArrowRight") {
+      event.stopPropagation();
+
+      const nextItem = event.currentTarget
+        .nextElementSibling as HTMLDivElement | null;
+      nextItem?.focus();
+
+      if (event.shiftKey) {
+        const nextItemIndex = index + 1;
+        if (nextItemIndex >= chart.options.musicCollage.items.length) return;
+        moveMusicCollageItem(index, nextItemIndex);
+      }
+    }
   };
 
   return (
@@ -135,36 +173,7 @@ const CollageItem = ({
         event.stopPropagation();
         setIsFocusWithinItem(false);
       }}
-      onKeyDown={(event) => {
-        if (event.currentTarget !== itemRef.current) return;
-
-        if (event.key === "ArrowLeft") {
-          event.stopPropagation();
-
-          const previousItem = event.currentTarget
-            .previousElementSibling as HTMLDivElement | null;
-          previousItem?.focus();
-
-          if (event.shiftKey) {
-            const previousItemIndex = index - 1;
-            if (previousItemIndex < 0) return;
-            moveMusicCollageItem(index, previousItemIndex);
-          }
-        } else if (event.key === "ArrowRight") {
-          event.stopPropagation();
-
-          const nextItem = event.currentTarget
-            .nextElementSibling as HTMLDivElement | null;
-          nextItem?.focus();
-
-          if (event.shiftKey) {
-            const nextItemIndex = index + 1;
-            if (nextItemIndex >= chart.options.musicCollage.items.length)
-              return;
-            moveMusicCollageItem(index, nextItemIndex);
-          }
-        }
-      }}
+      onKeyDown={handleKeyDown}
       ref={itemRef}
     >
       <div className="absolute right-3 top-3 flex items-center gap-2">
@@ -217,9 +226,7 @@ const CollageItem = ({
           event.dataTransfer.setData("text", JSON.stringify({ index }));
         }}
         onDrag={preventDefaultOnDrag}
-        onDragEnter={handleDragEnter}
-        onDragExit={handleDragExit}
-        onDragOver={preventDefaultOnDrag}
+        onDragOver={handleDragEnter}
         onDragLeave={handleDragExit}
         onDrop={handleDrop}
       >
