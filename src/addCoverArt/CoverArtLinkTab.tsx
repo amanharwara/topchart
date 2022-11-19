@@ -13,8 +13,9 @@ import Input from "../components/Input";
 import { blobToDataURL } from "./blobToDataURL";
 import { fetchLinkBlobWithCorsBackup } from "./fetchLinkBlobWithCorsBackup";
 import {
-  useSetMusicCollageItem,
   useSelectedMusicCollageAddingCoverTo,
+  useSetMusicCollageItemImage,
+  useSetMusicCollageItemTitle,
 } from "../stores/charts";
 import Button from "../components/Button";
 
@@ -23,7 +24,8 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
 
   const [link, setLink] = useState("");
 
-  const setMusicCollageItem = useSetMusicCollageItem();
+  const setMusicCollageItemTitle = useSetMusicCollageItemTitle();
+  const setMusicCollageItemImage = useSetMusicCollageItemImage();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
   const {
@@ -127,10 +129,8 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
           <Button
             className="mt-1 text-base"
             onClick={() => {
-              setMusicCollageItem(itemIndex, {
-                title: image.id,
-                image: image.id,
-              });
+              setMusicCollageItemTitle(itemIndex, image.id);
+              setMusicCollageItemImage(itemIndex, image.id);
               setAddingCoverTo(-1);
             }}
           >

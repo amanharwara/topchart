@@ -14,7 +14,8 @@ import { z } from "zod";
 import Input from "../components/Input";
 import {
   useSelectedMusicCollageAddingCoverTo,
-  useSetMusicCollageItem,
+  useSetMusicCollageItemImage,
+  useSetMusicCollageItemTitle,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
 
@@ -49,7 +50,8 @@ const SearchResult = ({
   link: string;
   itemIndex: number;
 }) => {
-  const setMusicCollageItem = useSetMusicCollageItem();
+  const setMusicCollageItemTitle = useSetMusicCollageItemTitle();
+  const setMusicCollageItemImage = useSetMusicCollageItemImage();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
   const {
@@ -105,10 +107,8 @@ const SearchResult = ({
       onClick={() => {
         if (itemIndex < 0 || !image) return;
 
-        setMusicCollageItem(itemIndex, {
-          title: alt,
-          image: image.id,
-        });
+        setMusicCollageItemTitle(itemIndex, alt);
+        setMusicCollageItemImage(itemIndex, image.id);
 
         setAddingCoverTo(-1);
       }}
