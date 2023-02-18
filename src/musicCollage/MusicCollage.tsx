@@ -45,26 +45,11 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS as CSSUtils } from "@dnd-kit/utilities";
 
-// const preventDefaultOnDrag: DragEventHandler = (event) => {
-//   event.preventDefault();
-//   event.stopPropagation();
-// };
-
 type CollageItemProps = {
   item: MusicCollageItem;
   index: number;
   shouldPositionTitlesBelowCover: boolean;
 };
-
-// const DragDataTransferObject = z.union([
-//   z.object({
-//     image: z.string(),
-//     title: z.string().optional(),
-//   }),
-//   z.object({
-//     index: z.number(),
-//   }),
-// ]);
 
 const CollageItem = ({
   item,
@@ -74,11 +59,9 @@ const CollageItem = ({
   const [, setEditingTitleFor] = useSelectedMusicCollageEditingTitleFor();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
   const [imageContent, setImageContent] = useState("");
-  // const [isDragEntered, setIsDragEntered] = useState(false);
-  const [isFocusWithinItem] = useState(false);
+  const [isFocusWithinItem, setIsFocusWithinItem] = useState(false);
   const chart = useSelectedChart();
   const setMusicCollageItem = useSetMusicCollageItem();
-  // const moveMusicCollageItem = useMoveMusicCollageItem();
   const isDownloading = useIsDownloading();
   const itemRef = useRef<HTMLDivElement>(null);
 
@@ -119,94 +102,20 @@ const CollageItem = ({
     setEditingTitleFor(index);
   };
 
-  // const handleDragEnter: DragEventHandler = (event) => {
-  //   event.preventDefault();
-  //   if (!event.dataTransfer) return;
-  //   if (event.dataTransfer.types.includes("text/plain")) {
-  //     setIsDragEntered(true);
-  //   }
-  // };
-
-  // const handleDragExit: DragEventHandler = (event) => {
-  //   event.preventDefault();
-  //   setIsDragEntered(false);
-  // };
-
-  // const handleDrop: DragEventHandler = async (event) => {
-  //   event.preventDefault();
-  //   if (!event.dataTransfer || !event.dataTransfer.getData("text")) return;
-
-  //   const parsedDataTransferText = JSON.parse(
-  //     event.dataTransfer.getData("text")
-  //   );
-
-  //   const dataTransferObject = DragDataTransferObject.parse(
-  //     parsedDataTransferText
-  //   );
-
-  //   if ("image" in dataTransferObject) {
-  //     const title = dataTransferObject.title ?? item.title;
-  //     setMusicCollageItem(index, {
-  //       title,
-  //       image: dataTransferObject.image,
-  //     });
-  //     itemRef.current?.focus();
-  //     if (!title) editTitleForCurrentItem();
-  //   }
-
-  //   if ("index" in dataTransferObject) {
-  //     moveMusicCollageItem(dataTransferObject.index, index);
-  //     itemRef.current?.focus();
-  //   }
-
-  //   setIsDragEntered(false);
-  // };
-
-  // const handleKeyDown: KeyboardEventHandler = (event) => {
-  //   if (event.currentTarget !== itemRef.current) return;
-
-  //   if (event.key === "ArrowLeft") {
-  //     event.stopPropagation();
-
-  //     const previousItem = event.currentTarget
-  //       .previousElementSibling as HTMLDivElement | null;
-  //     previousItem?.focus();
-
-  //     if (event.shiftKey) {
-  //       const previousItemIndex = index - 1;
-  //       if (previousItemIndex < 0) return;
-  //       moveMusicCollageItem(index, previousItemIndex);
-  //     }
-  //   } else if (event.key === "ArrowRight") {
-  //     event.stopPropagation();
-
-  //     const nextItem = event.currentTarget
-  //       .nextElementSibling as HTMLDivElement | null;
-  //     nextItem?.focus();
-
-  //     if (event.shiftKey) {
-  //       const nextItemIndex = index + 1;
-  //       if (nextItemIndex >= chart.options.musicCollage.items.length) return;
-  //       moveMusicCollageItem(index, nextItemIndex);
-  //     }
-  //   }
-  // };
-
   const shouldHideButtons = isDownloading || isDragging || isOver || isSorting;
 
   return (
     <div
       className="group relative flex flex-col gap-1"
-      // tabIndex={index === 0 ? 0 : isFocusWithinItem ? 0 : -1}
-      // onFocus={(event) => {
-      //   event.stopPropagation();
-      //   setIsFocusWithinItem(true);
-      // }}
-      // onBlur={(event) => {
-      //   event.stopPropagation();
-      //   setIsFocusWithinItem(false);
-      // }}
-      // onKeyDown={handleKeyDown}
+      tabIndex={index === 0 ? 0 : isFocusWithinItem ? 0 : -1}
+      onFocus={(event) => {
+        event.stopPropagation();
+        setIsFocusWithinItem(true);
+      }}
+      onBlur={(event) => {
+        event.stopPropagation();
+        setIsFocusWithinItem(false);
+      }}
       ref={itemRef}
     >
       <div className="absolute right-3 top-3 flex items-center gap-2">
@@ -226,10 +135,10 @@ const CollageItem = ({
               label="Delete item"
               className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
               onClick={() => {
-                // setMusicCollageItem(index, {
-                //   title: "",
-                //   image: "",
-                // });
+                setMusicCollageItem(index, {
+                  title: "",
+                  image: "",
+                });
               }}
               tabIndex={isFocusWithinItem ? 0 : -1}
             />
