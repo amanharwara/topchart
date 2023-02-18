@@ -5,14 +5,7 @@ import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
-import {
-  // DragEventHandler,
-  // KeyboardEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
@@ -24,7 +17,6 @@ import {
   useSelectedMusicCollageEditingTitleFor,
   useSetMusicCollageItem,
 } from "../stores/charts";
-// import { z } from "zod";
 import AddIcon from "../icons/AddIcon";
 import AddCoverArtModal from "../addCoverArt/AddCoverArtModal";
 import {

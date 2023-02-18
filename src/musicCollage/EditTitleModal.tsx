@@ -8,7 +8,7 @@ import {
   useSelectedMusicCollageEditingTitleFor,
   useSetMusicCollageItem,
 } from "../stores/charts";
-import { MusicCollageItem } from "./MusicCollage";
+import { MusicCollageItem } from "../stores/charts";
 
 const EditTitleModal = () => {
   const setMusicCollageItem = useSetMusicCollageItem();
