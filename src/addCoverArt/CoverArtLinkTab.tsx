@@ -17,6 +17,7 @@ import {
   useSelectedMusicCollageAddingCoverTo,
 } from "../stores/charts";
 import Button from "../components/Button";
+import { useResultDrag } from "./useResultDrag";
 
 export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
   const linkInputRef = useRef<HTMLInputElement>(null);
@@ -57,6 +58,14 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
   };
 
   const linkInputId = `link-input-${Date.now()}`;
+
+  const isAddingToSpecificItem = itemIndex > -1;
+
+  const dragAttributes = useResultDrag({
+    isDraggable: !!image && !isAddingToSpecificItem,
+    title: image?.id,
+    image: image?.id,
+  });
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -112,18 +121,12 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
           {image && (
             <img
               src={image.content}
-              draggable={itemIndex === -1}
-              onDragStart={(event) => {
-                event.dataTransfer.setData(
-                  "text",
-                  JSON.stringify({ image: image.id })
-                );
-              }}
+              {...dragAttributes}
               className="h-36 w-36 rounded border-0"
             />
           )}
         </div>
-        {itemIndex > -1 && image && (
+        {isAddingToSpecificItem && image && (
           <Button
             className="mt-1 text-base"
             onClick={() => {

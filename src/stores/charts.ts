@@ -90,7 +90,7 @@ interface ChartStore {
 
   setMusicCollageItem: (
     index: number,
-    item: Omit<MusicCollageItem, "id">
+    item: Partial<Omit<MusicCollageItem, "id">>
   ) => void;
   moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
 
@@ -139,7 +139,7 @@ const useChartStore = create<ChartStore>()(
 
       setMusicCollageItem: (
         index: number,
-        item: Omit<MusicCollageItem, "id">
+        item: Partial<Omit<MusicCollageItem, "id">>
       ) => {
         set(
           produce((state: ChartStore) => {

@@ -11,6 +11,7 @@ import {
   useSelectedMusicCollageAddingCoverTo,
   useSetMusicCollageItem,
 } from "../stores/charts";
+import { useResultDrag } from "./useResultDrag";
 
 export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -94,6 +95,14 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
     }
   };
 
+  const isAddingToSpecificItem = itemIndex > -1;
+
+  const dragAttributes = useResultDrag({
+    isDraggable: !!currentImage && !isAddingToSpecificItem,
+    title: currentImage?.id,
+    image: currentImage?.id,
+  });
+
   return (
     <div className="flex flex-col gap-2.5 p-4">
       <input
@@ -129,22 +138,18 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
       {currentImage && (
         <div className="flex flex-col items-center gap-2 px-2.5 pb-5">
           <div className="text-sm">
-            {itemIndex === -1 ? "Drag this to your desired cell:" : "Preview:"}
+            {!isAddingToSpecificItem
+              ? "Drag this to your desired cell:"
+              : "Preview:"}
           </div>
-          <img
-            draggable={itemIndex === -1}
-            onDragStart={(event) => {
-              event.dataTransfer.setData(
-                "text",
-                JSON.stringify({
-                  image: currentImage.id,
-                })
-              );
-            }}
-            className="h-36 w-36 rounded border-0"
-            src={currentImage.content}
-          />
-          {itemIndex > -1 && (
+          <div className="h-36 w-36 rounded border-0 bg-slate-600">
+            <img
+              {...dragAttributes}
+              className="h-36 w-36 rounded border-0"
+              src={currentImage.content}
+            />
+          </div>
+          {isAddingToSpecificItem && (
             <Button
               className="mt-1 text-base"
               onClick={() => {

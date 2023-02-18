@@ -17,6 +17,7 @@ import {
   useSetMusicCollageItem,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
+import { useResultDrag } from "./useResultDrag";
 
 const LastFmImage = z.object({
   "#text": z.string(),
@@ -83,27 +84,25 @@ const SearchResult = ({
     }
   }, [error]);
 
+  const isAddingToSpecificItem = itemIndex > -1;
+
+  const dragAttributes = useResultDrag({
+    isDraggable: !!image && !isAddingToSpecificItem,
+    title: alt,
+    image: image?.id,
+  });
+
   if (error) return null;
 
   return (
     <div
       className={classNames(
         "flex items-center justify-center rounded select-none bg-slate-600",
-        itemIndex > -1 && "cursor-pointer"
+        isAddingToSpecificItem && "cursor-pointer"
       )}
-      draggable={!!image && itemIndex === -1}
-      onDragStart={(event) => {
-        if (!image) return;
-        event.dataTransfer.setData(
-          "text",
-          JSON.stringify({
-            title: alt,
-            image: image.id,
-          })
-        );
-      }}
+      {...dragAttributes}
       onClick={() => {
-        if (itemIndex < 0 || !image) return;
+        if (!isAddingToSpecificItem || !image) return;
 
         setMusicCollageItem(itemIndex, {
           title: alt,

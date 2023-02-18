@@ -5,13 +5,12 @@ import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
   MusicCollageItem,
   useIsDownloading,
-  useMoveMusicCollageItem,
   useSelectedChart,
   useSelectedMusicCollageAddingCoverTo,
   useSelectedMusicCollageEditingTitleFor,
@@ -20,19 +19,8 @@ import {
 import AddIcon from "../icons/AddIcon";
 import AddCoverArtModal from "../addCoverArt/AddCoverArtModal";
 import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
   rectSortingStrategy,
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS as CSSUtils } from "@dnd-kit/utilities";
@@ -168,39 +156,7 @@ const CollageItem = ({
 };
 
 const MusicCollage = () => {
-  const dndSensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
   const selectedChart = useSelectedChart();
-
-  const moveMusicCollageItem = useMoveMusicCollageItem();
-
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-
-      if (!active.id || !over?.id) return;
-      if (active.id === over.id) return;
-      if (!selectedChart) return;
-
-      const items = selectedChart.options.musicCollage.items;
-      const activeIndex = items.findIndex((item) => item.id === active.id);
-      const overIndex = items.findIndex((item) => item.id === over.id);
-
-      moveMusicCollageItem(activeIndex, overIndex);
-    },
-    [moveMusicCollageItem, selectedChart]
-  );
 
   if (!selectedChart) return null;
 
@@ -250,51 +206,45 @@ const MusicCollage = () => {
     collage.showTitles && hasAnyTitle && !shouldPositionTitlesBelowCover;
 
   return (
-    <DndContext
-      sensors={dndSensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext items={visibleItems} strategy={rectSortingStrategy}>
+    <SortableContext items={visibleItems} strategy={rectSortingStrategy}>
+      <div
+        id="music-collage"
+        className={classNames("flex w-max", padding(), font)}
+        style={{
+          background: currentBackground,
+          color: collage.foregroundColor,
+          ...(collage.fontStyle === "custom" && {
+            "font-family": collage.fontFamily,
+          }),
+        }}
+      >
         <div
-          id="music-collage"
-          className={classNames("flex w-max", padding(), font)}
+          className={classNames("grid w-min", gap())}
           style={{
-            background: currentBackground,
-            color: collage.foregroundColor,
-            ...(collage.fontStyle === "custom" && {
-              "font-family": collage.fontFamily,
-            }),
+            gridTemplateColumns: `repeat(${columns}, auto)`,
+            gridTemplateRows: `repeat(${rows}, auto)`,
           }}
         >
-          <div
-            className={classNames("grid w-min", gap())}
-            style={{
-              gridTemplateColumns: `repeat(${columns}, auto)`,
-              gridTemplateRows: `repeat(${rows}, auto)`,
-            }}
-          >
-            {visibleItems.map((item, index) => (
-              <CollageItem
-                item={item}
-                key={item.id}
-                index={index}
-                shouldPositionTitlesBelowCover={shouldPositionTitlesBelowCover}
-              />
-            ))}
-          </div>
-          {showTitlesColumn ? (
-            <div className="flex flex-col gap-1">
-              {visibleItems.map((item, index) =>
-                item.title ? <div key={index}>{item.title}</div> : null
-              )}
-            </div>
-          ) : null}
-          <EditTitleModal />
-          <AddCoverArtModal />
+          {visibleItems.map((item, index) => (
+            <CollageItem
+              item={item}
+              key={item.id}
+              index={index}
+              shouldPositionTitlesBelowCover={shouldPositionTitlesBelowCover}
+            />
+          ))}
         </div>
-      </SortableContext>
-    </DndContext>
+        {showTitlesColumn ? (
+          <div className="flex flex-col gap-1">
+            {visibleItems.map((item, index) =>
+              item.title ? <div key={index}>{item.title}</div> : null
+            )}
+          </div>
+        ) : null}
+        <EditTitleModal />
+        <AddCoverArtModal />
+      </div>
+    </SortableContext>
   );
 };
 
