@@ -6,8 +6,9 @@ import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
 import {
-  DragEventHandler,
-  KeyboardEventHandler,
+  // DragEventHandler,
+  // KeyboardEventHandler,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -15,6 +16,7 @@ import {
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
+  MusicCollageItem,
   useIsDownloading,
   useMoveMusicCollageItem,
   useSelectedChart,
@@ -22,19 +24,30 @@ import {
   useSelectedMusicCollageEditingTitleFor,
   useSetMusicCollageItem,
 } from "../stores/charts";
-import { z } from "zod";
+// import { z } from "zod";
 import AddIcon from "../icons/AddIcon";
 import AddCoverArtModal from "../addCoverArt/AddCoverArtModal";
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS as CSSUtils } from "@dnd-kit/utilities";
 
-export type MusicCollageItem = {
-  image: string | null;
-  title: string;
-};
-
-const preventDefaultOnDrag: DragEventHandler = (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-};
+// const preventDefaultOnDrag: DragEventHandler = (event) => {
+//   event.preventDefault();
+//   event.stopPropagation();
+// };
 
 type CollageItemProps = {
   item: MusicCollageItem;
@@ -42,15 +55,15 @@ type CollageItemProps = {
   shouldPositionTitlesBelowCover: boolean;
 };
 
-const DragDataTransferObject = z.union([
-  z.object({
-    image: z.string(),
-    title: z.string().optional(),
-  }),
-  z.object({
-    index: z.number(),
-  }),
-]);
+// const DragDataTransferObject = z.union([
+//   z.object({
+//     image: z.string(),
+//     title: z.string().optional(),
+//   }),
+//   z.object({
+//     index: z.number(),
+//   }),
+// ]);
 
 const CollageItem = ({
   item,
@@ -60,13 +73,30 @@ const CollageItem = ({
   const [, setEditingTitleFor] = useSelectedMusicCollageEditingTitleFor();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
   const [imageContent, setImageContent] = useState("");
-  const [isDragEntered, setIsDragEntered] = useState(false);
-  const [isFocusWithinItem, setIsFocusWithinItem] = useState(false);
+  // const [isDragEntered, setIsDragEntered] = useState(false);
+  const [isFocusWithinItem] = useState(false);
   const chart = useSelectedChart();
   const setMusicCollageItem = useSetMusicCollageItem();
-  const moveMusicCollageItem = useMoveMusicCollageItem();
+  // const moveMusicCollageItem = useMoveMusicCollageItem();
   const isDownloading = useIsDownloading();
   const itemRef = useRef<HTMLDivElement>(null);
+
+  const {
+    // isDragging,
+    // isOver,
+    // isSorting,
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({
+    id: item.id,
+  });
+  const dragStyle = {
+    transform: CSSUtils.Transform.toString(transform),
+    transition,
+  };
 
   useEffect(() => {
     const getImage = async () => {
@@ -88,92 +118,92 @@ const CollageItem = ({
     setEditingTitleFor(index);
   };
 
-  const handleDragEnter: DragEventHandler = (event) => {
-    event.preventDefault();
-    if (!event.dataTransfer) return;
-    if (event.dataTransfer.types.includes("text/plain")) {
-      setIsDragEntered(true);
-    }
-  };
+  // const handleDragEnter: DragEventHandler = (event) => {
+  //   event.preventDefault();
+  //   if (!event.dataTransfer) return;
+  //   if (event.dataTransfer.types.includes("text/plain")) {
+  //     setIsDragEntered(true);
+  //   }
+  // };
 
-  const handleDragExit: DragEventHandler = (event) => {
-    event.preventDefault();
-    setIsDragEntered(false);
-  };
+  // const handleDragExit: DragEventHandler = (event) => {
+  //   event.preventDefault();
+  //   setIsDragEntered(false);
+  // };
 
-  const handleDrop: DragEventHandler = async (event) => {
-    event.preventDefault();
-    if (!event.dataTransfer || !event.dataTransfer.getData("text")) return;
+  // const handleDrop: DragEventHandler = async (event) => {
+  //   event.preventDefault();
+  //   if (!event.dataTransfer || !event.dataTransfer.getData("text")) return;
 
-    const parsedDataTransferText = JSON.parse(
-      event.dataTransfer.getData("text")
-    );
+  //   const parsedDataTransferText = JSON.parse(
+  //     event.dataTransfer.getData("text")
+  //   );
 
-    const dataTransferObject = DragDataTransferObject.parse(
-      parsedDataTransferText
-    );
+  //   const dataTransferObject = DragDataTransferObject.parse(
+  //     parsedDataTransferText
+  //   );
 
-    if ("image" in dataTransferObject) {
-      const title = dataTransferObject.title ?? item.title;
-      setMusicCollageItem(index, {
-        title,
-        image: dataTransferObject.image,
-      });
-      itemRef.current?.focus();
-      if (!title) editTitleForCurrentItem();
-    }
+  //   if ("image" in dataTransferObject) {
+  //     const title = dataTransferObject.title ?? item.title;
+  //     setMusicCollageItem(index, {
+  //       title,
+  //       image: dataTransferObject.image,
+  //     });
+  //     itemRef.current?.focus();
+  //     if (!title) editTitleForCurrentItem();
+  //   }
 
-    if ("index" in dataTransferObject) {
-      moveMusicCollageItem(dataTransferObject.index, index);
-      itemRef.current?.focus();
-    }
+  //   if ("index" in dataTransferObject) {
+  //     moveMusicCollageItem(dataTransferObject.index, index);
+  //     itemRef.current?.focus();
+  //   }
 
-    setIsDragEntered(false);
-  };
+  //   setIsDragEntered(false);
+  // };
 
-  const handleKeyDown: KeyboardEventHandler = (event) => {
-    if (event.currentTarget !== itemRef.current) return;
+  // const handleKeyDown: KeyboardEventHandler = (event) => {
+  //   if (event.currentTarget !== itemRef.current) return;
 
-    if (event.key === "ArrowLeft") {
-      event.stopPropagation();
+  //   if (event.key === "ArrowLeft") {
+  //     event.stopPropagation();
 
-      const previousItem = event.currentTarget
-        .previousElementSibling as HTMLDivElement | null;
-      previousItem?.focus();
+  //     const previousItem = event.currentTarget
+  //       .previousElementSibling as HTMLDivElement | null;
+  //     previousItem?.focus();
 
-      if (event.shiftKey) {
-        const previousItemIndex = index - 1;
-        if (previousItemIndex < 0) return;
-        moveMusicCollageItem(index, previousItemIndex);
-      }
-    } else if (event.key === "ArrowRight") {
-      event.stopPropagation();
+  //     if (event.shiftKey) {
+  //       const previousItemIndex = index - 1;
+  //       if (previousItemIndex < 0) return;
+  //       moveMusicCollageItem(index, previousItemIndex);
+  //     }
+  //   } else if (event.key === "ArrowRight") {
+  //     event.stopPropagation();
 
-      const nextItem = event.currentTarget
-        .nextElementSibling as HTMLDivElement | null;
-      nextItem?.focus();
+  //     const nextItem = event.currentTarget
+  //       .nextElementSibling as HTMLDivElement | null;
+  //     nextItem?.focus();
 
-      if (event.shiftKey) {
-        const nextItemIndex = index + 1;
-        if (nextItemIndex >= chart.options.musicCollage.items.length) return;
-        moveMusicCollageItem(index, nextItemIndex);
-      }
-    }
-  };
+  //     if (event.shiftKey) {
+  //       const nextItemIndex = index + 1;
+  //       if (nextItemIndex >= chart.options.musicCollage.items.length) return;
+  //       moveMusicCollageItem(index, nextItemIndex);
+  //     }
+  //   }
+  // };
 
   return (
     <div
       className="group relative flex flex-col gap-1"
-      tabIndex={index === 0 ? 0 : isFocusWithinItem ? 0 : -1}
-      onFocus={(event) => {
-        event.stopPropagation();
-        setIsFocusWithinItem(true);
-      }}
-      onBlur={(event) => {
-        event.stopPropagation();
-        setIsFocusWithinItem(false);
-      }}
-      onKeyDown={handleKeyDown}
+      // tabIndex={index === 0 ? 0 : isFocusWithinItem ? 0 : -1}
+      // onFocus={(event) => {
+      //   event.stopPropagation();
+      //   setIsFocusWithinItem(true);
+      // }}
+      // onBlur={(event) => {
+      //   event.stopPropagation();
+      //   setIsFocusWithinItem(false);
+      // }}
+      // onKeyDown={handleKeyDown}
       ref={itemRef}
     >
       <div className="absolute right-3 top-3 flex items-center gap-2">
@@ -193,10 +223,10 @@ const CollageItem = ({
               label="Delete item"
               className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
               onClick={() => {
-                setMusicCollageItem(index, {
-                  title: "",
-                  image: "",
-                });
+                // setMusicCollageItem(index, {
+                //   title: "",
+                //   image: "",
+                // });
               }}
               tabIndex={isFocusWithinItem ? 0 : -1}
             />
@@ -218,17 +248,13 @@ const CollageItem = ({
       </div>
       <div
         className={classNames(
-          "h-40 w-40 select-none bg-white",
-          isDragEntered && "ring-2 ring-blue-700"
+          "h-40 w-40 select-none bg-white"
+          // isDragging && "ring-2 ring-blue-700"
         )}
-        draggable={true}
-        onDragStart={(event) => {
-          event.dataTransfer.setData("text", JSON.stringify({ index }));
-        }}
-        onDrag={preventDefaultOnDrag}
-        onDragOver={handleDragEnter}
-        onDragLeave={handleDragExit}
-        onDrop={handleDrop}
+        ref={setNodeRef}
+        style={dragStyle}
+        {...attributes}
+        {...listeners}
       >
         {imageContent && <img src={imageContent} className="h-full w-full" />}
       </div>
@@ -238,7 +264,37 @@ const CollageItem = ({
 };
 
 const MusicCollage = () => {
+  const dndSensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
+
   const selectedChart = useSelectedChart();
+
+  const moveMusicCollageItem = useMoveMusicCollageItem();
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      if (!active.id || !over?.id) return;
+      if (active.id === over.id) return;
+      if (!selectedChart) return;
+
+      const items = selectedChart.options.musicCollage.items;
+      const activeIndex = items.findIndex((item) => item.id === active.id);
+      const overIndex = items.findIndex((item) => item.id === over.id);
+
+      moveMusicCollageItem(activeIndex, overIndex);
+    },
+    [moveMusicCollageItem, selectedChart]
+  );
 
   if (!selectedChart) return null;
 
@@ -282,50 +338,61 @@ const MusicCollage = () => {
   const shouldPositionTitlesBelowCover =
     selectedChart.options.musicCollage.positionTitlesBelowCover;
 
+  const visibleItems = selectedChart.options.musicCollage.items.slice(
+    0,
+    rows * columns
+  );
+
+  console.log(visibleItems);
+
   return (
-    <div
-      id="music-collage"
-      className={classNames("flex w-max", padding(), font)}
-      style={{
-        background: currentBackground,
-        color: selectedChart.options.musicCollage.foregroundColor,
-        ...(selectedChart.options.musicCollage.fontStyle === "custom" && {
-          "font-family": selectedChart.options.musicCollage.fontFamily,
-        }),
-      }}
+    <DndContext
+      sensors={dndSensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
     >
-      <div
-        className={classNames("grid w-min", gap())}
-        style={{
-          gridTemplateColumns: `repeat(${columns}, auto)`,
-          gridTemplateRows: `repeat(${rows}, auto)`,
-        }}
-      >
-        {selectedChart.options.musicCollage.items
-          .slice(0, rows * columns)
-          .map((item, index) => (
-            <CollageItem
-              item={item}
-              key={index}
-              index={index}
-              shouldPositionTitlesBelowCover={shouldPositionTitlesBelowCover}
-            />
-          ))}
-      </div>
-      {selectedChart.options.musicCollage.showTitles &&
-      hasAnyTitle() &&
-      !shouldPositionTitlesBelowCover ? (
-        <div className="flex flex-col gap-1">
-          {selectedChart.options.musicCollage.items
-            .slice(0, rows * columns)
-            .map((item, index) =>
-              item.title ? <div key={index}>{item.title}</div> : null
-            )}
+      <SortableContext items={visibleItems} strategy={rectSortingStrategy}>
+        <div
+          id="music-collage"
+          className={classNames("flex w-max", padding(), font)}
+          style={{
+            background: currentBackground,
+            color: selectedChart.options.musicCollage.foregroundColor,
+            ...(selectedChart.options.musicCollage.fontStyle === "custom" && {
+              "font-family": selectedChart.options.musicCollage.fontFamily,
+            }),
+          }}
+        >
+          <div
+            className={classNames("grid w-min", gap())}
+            style={{
+              gridTemplateColumns: `repeat(${columns}, auto)`,
+              gridTemplateRows: `repeat(${rows}, auto)`,
+            }}
+          >
+            {visibleItems.map((item, index) => (
+              <CollageItem
+                item={item}
+                key={index}
+                index={index}
+                shouldPositionTitlesBelowCover={shouldPositionTitlesBelowCover}
+              />
+            ))}
+          </div>
+          {selectedChart.options.musicCollage.showTitles &&
+          hasAnyTitle() &&
+          !shouldPositionTitlesBelowCover ? (
+            <div className="flex flex-col gap-1">
+              {visibleItems.map((item, index) =>
+                item.title ? <div key={index}>{item.title}</div> : null
+              )}
+            </div>
+          ) : null}
+          <EditTitleModal />
+          <AddCoverArtModal />
         </div>
-      ) : null}
-      <EditTitleModal />
-      <AddCoverArtModal />
-    </div>
+      </SortableContext>
+    </DndContext>
   );
 };
 

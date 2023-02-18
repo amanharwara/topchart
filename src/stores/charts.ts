@@ -8,6 +8,7 @@ export type ChartType = "musicCollage";
 export type MusicCollageSpacing = "none" | "small" | "medium" | "large";
 
 export type MusicCollageItem = {
+  id: string;
   image: string | null;
   title: string;
 };
@@ -62,6 +63,7 @@ const getNewChartWithDefaults = ({
       items: new Array(MaxNumberOfRows * MaxNumberOfColumns)
         .fill(null)
         .map(() => ({
+          id: nanoid(),
           title: "",
           image: null,
         })),
@@ -86,7 +88,10 @@ interface ChartStore {
   setSelectedChartTitle: (title: string) => void;
   setSelectedChartType: (type: ChartType) => void;
 
-  setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
+  setMusicCollageItem: (
+    index: number,
+    item: Omit<MusicCollageItem, "id">
+  ) => void;
   moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
 
   musicCollageEditingTitleFor: number;
@@ -132,14 +137,23 @@ const useChartStore = create<ChartStore>()(
         );
       },
 
-      setMusicCollageItem: (index: number, item: MusicCollageItem) => {
+      setMusicCollageItem: (
+        index: number,
+        item: Omit<MusicCollageItem, "id">
+      ) => {
         set(
           produce((state: ChartStore) => {
             const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            if (selectedChart)
-              selectedChart.options.musicCollage.items[index] = item;
+            if (selectedChart) {
+              const existingItem =
+                selectedChart.options.musicCollage.items[index]!;
+              selectedChart.options.musicCollage.items[index] = {
+                ...existingItem,
+                ...item,
+              };
+            }
           })
         );
       },
