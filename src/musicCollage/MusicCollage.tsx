@@ -204,8 +204,10 @@ const MusicCollage = () => {
 
   if (!selectedChart) return null;
 
+  const collage = selectedChart.options.musicCollage;
+
   const gap = () => {
-    switch (selectedChart.options.musicCollage.gap) {
+    switch (collage.gap) {
       case "small":
         return "gap-2";
       case "medium":
@@ -216,7 +218,7 @@ const MusicCollage = () => {
   };
 
   const padding = () => {
-    switch (selectedChart.options.musicCollage.padding) {
+    switch (collage.padding) {
       case "small":
         return "p-2 gap-2";
       case "medium":
@@ -226,28 +228,26 @@ const MusicCollage = () => {
     }
   };
 
-  const font = `font-${selectedChart.options.musicCollage.fontStyle}`;
+  const font = `font-${collage.fontStyle}`;
 
   const currentBackground =
-    selectedChart.options.musicCollage.backgroundType === "color"
-      ? selectedChart.options.musicCollage.backgroundColor
-      : `url(${selectedChart.options.musicCollage.backgroundImage})`;
+    collage.backgroundType === "color"
+      ? collage.backgroundColor
+      : `url(${collage.backgroundImage})`;
 
-  const rows = selectedChart.options.musicCollage.rows;
-  const columns = selectedChart.options.musicCollage.columns;
+  const rows = collage.rows;
+  const columns = collage.columns;
 
-  const hasAnyTitle = () =>
-    selectedChart.options.musicCollage.items.some(
-      (item: MusicCollageItem) => !!item.title
-    );
-
-  const shouldPositionTitlesBelowCover =
-    selectedChart.options.musicCollage.positionTitlesBelowCover;
-
-  const visibleItems = selectedChart.options.musicCollage.items.slice(
-    0,
-    rows * columns
+  const hasAnyTitle = collage.items.some(
+    (item: MusicCollageItem) => !!item.title
   );
+
+  const shouldPositionTitlesBelowCover = collage.positionTitlesBelowCover;
+
+  const visibleItems = collage.items.slice(0, rows * columns);
+
+  const showTitlesColumn =
+    collage.showTitles && hasAnyTitle && !shouldPositionTitlesBelowCover;
 
   return (
     <DndContext
@@ -261,9 +261,9 @@ const MusicCollage = () => {
           className={classNames("flex w-max", padding(), font)}
           style={{
             background: currentBackground,
-            color: selectedChart.options.musicCollage.foregroundColor,
-            ...(selectedChart.options.musicCollage.fontStyle === "custom" && {
-              "font-family": selectedChart.options.musicCollage.fontFamily,
+            color: collage.foregroundColor,
+            ...(collage.fontStyle === "custom" && {
+              "font-family": collage.fontFamily,
             }),
           }}
         >
@@ -283,9 +283,7 @@ const MusicCollage = () => {
               />
             ))}
           </div>
-          {selectedChart.options.musicCollage.showTitles &&
-          hasAnyTitle() &&
-          !shouldPositionTitlesBelowCover ? (
+          {showTitlesColumn ? (
             <div className="flex flex-col gap-1">
               {visibleItems.map((item, index) =>
                 item.title ? <div key={index}>{item.title}</div> : null
