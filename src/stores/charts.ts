@@ -8,7 +8,6 @@ export type ChartType = "musicCollage";
 export type MusicCollageSpacing = "none" | "small" | "medium" | "large";
 
 export type MusicCollageItem = {
-  id: string;
   image: string | null;
   title: string;
 };
@@ -63,7 +62,6 @@ const getNewChartWithDefaults = ({
       items: new Array(MaxNumberOfRows * MaxNumberOfColumns)
         .fill(null)
         .map(() => ({
-          id: nanoid(),
           title: "",
           image: null,
         })),
@@ -88,8 +86,7 @@ interface ChartStore {
   setSelectedChartTitle: (title: string) => void;
   setSelectedChartType: (type: ChartType) => void;
 
-  setMusicCollageItemTitle: (index: number, title: string) => void;
-  setMusicCollageItemImage: (index: number, image: string) => void;
+  setMusicCollageItem: (index: number, item: MusicCollageItem) => void;
   moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
 
   musicCollageEditingTitleFor: number;
@@ -135,36 +132,14 @@ const useChartStore = create<ChartStore>()(
         );
       },
 
-      setMusicCollageItemTitle: (index: number, title: string) => {
+      setMusicCollageItem: (index: number, item: MusicCollageItem) => {
         set(
           produce((state: ChartStore) => {
             const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            if (selectedChart) {
-              const item = selectedChart.options.musicCollage.items[index];
-              if (!item) {
-                throw new Error("Invalid item index");
-              }
-              item.title = title;
-            }
-          })
-        );
-      },
-
-      setMusicCollageItemImage: (index: number, image: string) => {
-        set(
-          produce((state: ChartStore) => {
-            const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
-            );
-            if (selectedChart) {
-              const item = selectedChart.options.musicCollage.items[index];
-              if (!item) {
-                throw new Error("Invalid item index");
-              }
-              item.image = image;
-            }
+            if (selectedChart)
+              selectedChart.options.musicCollage.items[index] = item;
           })
         );
       },
@@ -445,11 +420,8 @@ export const useSelectedMusicCollageAddingCoverTo = (): [
     s.setMusicCollageAddingCoverTo,
   ]);
 
-export const useSetMusicCollageItemTitle = () =>
-  useChartStore((s) => s.setMusicCollageItemTitle);
-
-export const useSetMusicCollageItemImage = () =>
-  useChartStore((s) => s.setMusicCollageItemImage);
+export const useSetMusicCollageItem = () =>
+  useChartStore((s) => s.setMusicCollageItem);
 
 export const useMoveMusicCollageItem = () =>
   useChartStore((s) => s.moveMusicCollageItem);

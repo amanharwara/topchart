@@ -10,11 +10,7 @@ import ImageIcon from "./icons/ImageIcon";
 import SettingsIcon from "./icons/SettingsIcon";
 import MusicCollage from "./musicCollage/MusicCollage";
 import SettingsModal from "./settings/SettingsModal";
-import {
-  useIsDownloading,
-  useSetMusicCollageItemImage,
-  useSetMusicCollageItemTitle,
-} from "./stores/charts";
+import { useIsDownloading, useSetMusicCollageItem } from "./stores/charts";
 import classNames from "./utils/classNames";
 import { useMediaQuery } from "./utils/useMediaQuery";
 
@@ -37,8 +33,7 @@ const WrapWithTabPanelIfMobile = ({
 };
 
 const HomePageContent = () => {
-  const setMusicCollageItemTitle = useSetMusicCollageItemTitle();
-  const setMusicCollageItemImage = useSetMusicCollageItemImage();
+  const setMusicCollageItem = useSetMusicCollageItem();
   const isDownloading = useIsDownloading();
 
   const mobileTabState = useTabState({
@@ -72,8 +67,10 @@ const HomePageContent = () => {
                 DevTools:
                 <Button
                   onClick={() => {
-                    setMusicCollageItemTitle(0, "Brian Eno");
-                    setMusicCollageItemImage(0, "eno.jpg");
+                    setMusicCollageItem(0, {
+                      title: "Brian Eno",
+                      image: "eno.jpg",
+                    });
                   }}
                 >
                   Add image to first

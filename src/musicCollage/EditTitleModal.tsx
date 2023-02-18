@@ -6,11 +6,12 @@ import SaveIcon from "../icons/SaveIcon";
 import {
   getMusicCollageItem,
   useSelectedMusicCollageEditingTitleFor,
-  useSetMusicCollageItemTitle,
+  useSetMusicCollageItem,
 } from "../stores/charts";
+import { MusicCollageItem } from "./MusicCollage";
 
 const EditTitleModal = () => {
-  const setMusicCollageItemTitle = useSetMusicCollageItemTitle();
+  const setMusicCollageItem = useSetMusicCollageItem();
   const [editingTitleFor, setEditingTitleFor] =
     useSelectedMusicCollageEditingTitleFor();
   const itemToEdit = getMusicCollageItem(editingTitleFor);
@@ -22,7 +23,7 @@ const EditTitleModal = () => {
     setTitle(itemToEdit?.title ?? "");
   }, [itemToEdit]);
 
-  const saveTitle = () => {
+  const saveTitle = (item: MusicCollageItem) => {
     const titleToSave = title;
 
     if (!titleToSave) {
@@ -30,7 +31,10 @@ const EditTitleModal = () => {
       return;
     }
 
-    setMusicCollageItemTitle(editingTitleFor, titleToSave);
+    setMusicCollageItem(editingTitleFor, {
+      ...item,
+      title: titleToSave,
+    });
 
     setEditingTitleFor(-1);
   };
@@ -51,7 +55,7 @@ const EditTitleModal = () => {
         className="flex flex-col items-start gap-2.5 px-2.5 py-3"
         onSubmit={(event) => {
           event.preventDefault();
-          saveTitle();
+          saveTitle(itemToEdit);
         }}
       >
         <Input

@@ -9,8 +9,7 @@ import { blobToDataURL } from "./blobToDataURL";
 import Button from "../components/Button";
 import {
   useSelectedMusicCollageAddingCoverTo,
-  useSetMusicCollageItemImage,
-  useSetMusicCollageItemTitle,
+  useSetMusicCollageItem,
 } from "../stores/charts";
 
 export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
@@ -20,8 +19,7 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [currentImage, setCurrentImage] = useState<Image>();
 
-  const setMusicCollageItemTitle = useSetMusicCollageItemTitle();
-  const setMusicCollageItemImage = useSetMusicCollageItemImage();
+  const setMusicCollageItem = useSetMusicCollageItem();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
   const preventDefaultOnDrag: DragEventHandler = (event) => {
@@ -150,8 +148,10 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
             <Button
               className="mt-1 text-base"
               onClick={() => {
-                setMusicCollageItemTitle(itemIndex, currentImage.id);
-                setMusicCollageItemImage(itemIndex, currentImage.id);
+                setMusicCollageItem(itemIndex, {
+                  title: currentImage.id,
+                  image: currentImage.id,
+                });
                 setAddingCoverTo(-1);
               }}
             >
