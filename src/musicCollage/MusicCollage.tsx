@@ -82,9 +82,9 @@ const CollageItem = ({
   const itemRef = useRef<HTMLDivElement>(null);
 
   const {
-    // isDragging,
-    // isOver,
-    // isSorting,
+    isDragging,
+    isOver,
+    isSorting,
     attributes,
     listeners,
     setNodeRef,
@@ -191,6 +191,8 @@ const CollageItem = ({
   //   }
   // };
 
+  const shouldHideButtons = isDownloading || isDragging || isOver || isSorting;
+
   return (
     <div
       className="group relative flex flex-col gap-1"
@@ -207,7 +209,7 @@ const CollageItem = ({
       ref={itemRef}
     >
       <div className="absolute right-3 top-3 flex items-center gap-2">
-        {item.image && !isDownloading && (
+        {item.image && !shouldHideButtons && (
           <>
             {allowEditingTitles && (
               <IconButton
@@ -234,7 +236,7 @@ const CollageItem = ({
         )}
       </div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        {!item.image && !isDownloading && (
+        {!item.image && !shouldHideButtons && (
           <IconButton
             icon={AddIcon}
             label="Add cover art"
@@ -248,8 +250,8 @@ const CollageItem = ({
       </div>
       <div
         className={classNames(
-          "h-40 w-40 select-none bg-white"
-          // isDragging && "ring-2 ring-blue-700"
+          "h-40 w-40 select-none bg-white",
+          isDragging && "ring-2 ring-blue-700"
         )}
         ref={setNodeRef}
         style={dragStyle}
@@ -342,8 +344,6 @@ const MusicCollage = () => {
     0,
     rows * columns
   );
-
-  console.log(visibleItems);
 
   return (
     <DndContext
