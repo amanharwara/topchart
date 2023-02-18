@@ -40,6 +40,7 @@ import {
 import {
   rectSortingStrategy,
   SortableContext,
+  sortableKeyboardCoordinates,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS as CSSUtils } from "@dnd-kit/utilities";
@@ -274,7 +275,9 @@ const MusicCollage = () => {
         tolerance: 5,
       },
     }),
-    useSensor(KeyboardSensor)
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
 
   const selectedChart = useSelectedChart();
@@ -373,7 +376,7 @@ const MusicCollage = () => {
             {visibleItems.map((item, index) => (
               <CollageItem
                 item={item}
-                key={index}
+                key={item.id}
                 index={index}
                 shouldPositionTitlesBelowCover={shouldPositionTitlesBelowCover}
               />
