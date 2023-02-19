@@ -27,6 +27,7 @@ import {
   useSelectedChart,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
+import SliderOption from "./SliderOption";
 
 const MusicCollageOptions = () => {
   const chart = useSelectedChart();
@@ -61,48 +62,20 @@ const MusicCollageOptions = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Rows:</div>
-        <div className="flex gap-3">
-          <input
-            type="range"
-            className="flex-grow "
-            value={rows}
-            min={1}
-            max={10}
-            onInput={onRowsInput}
-          />
-          <input
-            type="number"
-            className="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={rows}
-            min={1}
-            max={10}
-            onInput={onRowsInput}
-          />
-        </div>
-      </div>
-      <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Columns:</div>
-        <div className="flex gap-3">
-          <input
-            type="range"
-            className="flex-grow "
-            value={columns}
-            min={1}
-            max={10}
-            onInput={onColumnsInput}
-          />
-          <input
-            type="number"
-            className="max-w-[4rem] rounded border border-slate-600 bg-transparent px-2.5 py-2 text-sm placeholder:text-slate-400"
-            value={columns}
-            min={1}
-            max={10}
-            onInput={onColumnsInput}
-          />
-        </div>
-      </div>
+      <SliderOption
+        label="Rows"
+        value={rows}
+        onChange={(value) => {
+          setMusicCollageRows(value);
+        }}
+      />
+      <SliderOption
+        label="Columns"
+        value={columns}
+        onChange={(value) => {
+          setMusicCollageColumns(value);
+        }}
+      />
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Gap Between Items:</div>
         <RadioButtonGroup
