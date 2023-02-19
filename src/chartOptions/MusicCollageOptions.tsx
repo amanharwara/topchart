@@ -1,4 +1,3 @@
-import { FormEventHandler } from "react";
 import ColorPickerButton from "../components/ColorPickerButton";
 import IconButton from "../components/IconButton";
 import Input from "../components/Input";
@@ -257,6 +256,7 @@ const MusicCollageOptions = () => {
         <div className="text-lg font-semibold">Text color:</div>
         <div className="flex flex-grow gap-1.5">
           <Input
+            className="min-w-0"
             placeholder="Enter color..."
             value={foregroundColor}
             onChange={(event) => {
