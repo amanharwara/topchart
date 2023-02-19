@@ -219,7 +219,7 @@ const MusicCollage = () => {
           background: currentBackground,
           color: collage.foregroundColor,
           ...(collage.fontStyle === "custom" && {
-            "font-family": collage.fontFamily,
+            fontFamily: collage.fontFamily,
           }),
         }}
       >
