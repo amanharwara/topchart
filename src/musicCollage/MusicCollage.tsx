@@ -60,6 +60,7 @@ const CollageItem = ({
   const dragStyle = {
     transform: CSSUtils.Transform.toString(transform),
     transition,
+    willChange: "transform",
   };
 
   useEffect(() => {
@@ -140,7 +141,7 @@ const CollageItem = ({
       </div>
       <div
         className={classNames(
-          "h-40 w-40 select-none bg-white",
+          "relative h-40 w-40 select-none bg-white",
           isDragging && "ring-2 ring-blue-700"
         )}
         ref={setNodeRef}
@@ -148,7 +149,12 @@ const CollageItem = ({
         {...attributes}
         {...listeners}
       >
-        {imageContent && <img src={imageContent} className="h-full w-full" />}
+        {imageContent && (
+          <>
+            <div className="absolute top-0 left-0 h-full w-full z-[1]" />
+            <img src={imageContent} className="h-full w-full select-none" />
+          </>
+        )}
       </div>
       {shouldPositionTitlesBelowCover && item.title && <div>{item.title}</div>}
     </div>
@@ -209,7 +215,7 @@ const MusicCollage = () => {
     <SortableContext items={visibleItems} strategy={rectSortingStrategy}>
       <div
         id="music-collage"
-        className={classNames("flex w-max", padding(), font)}
+        className={classNames("flex w-max select-none", padding(), font)}
         style={{
           background: currentBackground,
           color: collage.foregroundColor,
