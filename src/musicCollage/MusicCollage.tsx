@@ -87,7 +87,7 @@ const CollageItem = ({
 
   return (
     <div
-      className="group relative flex flex-col gap-1"
+      className="group relative flex flex-col gap-1 z-0"
       onFocus={(event) => {
         event.stopPropagation();
         setIsFocusWithinItem(true);
