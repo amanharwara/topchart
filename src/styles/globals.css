@@ -5,7 +5,10 @@
 html,
 body,
 #__next {
-  @apply h-screen overflow-hidden md:h-full md:overflow-auto;
+  height: 100vh;
+  height: 100svh;
+
+  @apply overflow-hidden md:h-full md:overflow-auto;
 }
 
 body,
