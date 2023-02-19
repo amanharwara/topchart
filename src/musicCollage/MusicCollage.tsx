@@ -88,7 +88,6 @@ const CollageItem = ({
   return (
     <div
       className="group relative flex flex-col gap-1"
-      tabIndex={index === 0 ? 0 : isFocusWithinItem ? 0 : -1}
       onFocus={(event) => {
         event.stopPropagation();
         setIsFocusWithinItem(true);
@@ -99,7 +98,7 @@ const CollageItem = ({
       }}
       ref={itemRef}
     >
-      <div className="absolute right-3 top-3 flex items-center gap-2">
+      <div className="absolute right-3 top-3 flex items-center gap-2 z-[1]">
         {item.image && !shouldHideButtons && (
           <>
             {allowEditingTitles && (
@@ -126,7 +125,7 @@ const CollageItem = ({
           </>
         )}
       </div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1]">
         {!item.image && !shouldHideButtons && (
           <IconButton
             icon={AddIcon}
