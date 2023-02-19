@@ -4,6 +4,7 @@ import IconButton from "../components/IconButton";
 import Input from "../components/Input";
 import InputWithIcon from "../components/InputWithIcon";
 import RadioButtonGroup from "../components/RadioButtonGroup";
+import Select from "../components/Select";
 import Toggle from "../components/Toggle";
 import ColorPickerIcon from "../icons/ColorPickerIcon";
 import ImageIcon from "../icons/ImageIcon";
@@ -49,14 +50,6 @@ const MusicCollageOptions = () => {
     fontStyle,
     fontFamily,
   } = chart.options.musicCollage;
-
-  const onRowsInput: FormEventHandler<HTMLInputElement> = (event) => {
-    setMusicCollageRows(parseInt(event.currentTarget.value));
-  };
-
-  const onColumnsInput: FormEventHandler<HTMLInputElement> = (event) => {
-    setMusicCollageColumns(parseInt(event.currentTarget.value));
-  };
 
   const shouldUseColorForBg = backgroundType === "color";
 
@@ -225,8 +218,12 @@ const MusicCollageOptions = () => {
       </div>
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Font style:</div>
-        <RadioButtonGroup
-          items={[
+        <Select
+          value={fontStyle}
+          setValue={(value) =>
+            setMusicCollageFontStyle(value as MusicCollageFontStyle)
+          }
+          options={[
             {
               label: "Sans-serif",
               value: "sans",
@@ -244,10 +241,6 @@ const MusicCollageOptions = () => {
               value: "custom",
             },
           ]}
-          value={fontStyle}
-          onChange={(value) => {
-            setMusicCollageFontStyle(value as MusicCollageFontStyle);
-          }}
         />
         {fontStyle === "custom" && (
           <Input
