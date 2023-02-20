@@ -190,6 +190,7 @@ const MusicCollageOptions = () => {
         {shouldUseColorForBg ? (
           <div className="flex flex-grow gap-1.5">
             <Input
+              className="min-w-0"
               placeholder="Enter color..."
               value={backgroundColor}
               onChange={(event) => {
