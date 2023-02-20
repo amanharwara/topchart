@@ -22,9 +22,9 @@ import SettingsIcon from "./icons/SettingsIcon";
 import MusicCollage from "./musicCollage/MusicCollage";
 import SettingsModal from "./settings/SettingsModal";
 import {
+  getSelectedChart,
   useIsDownloading,
   useMoveMusicCollageItem,
-  useSelectedChart,
   useSetMusicCollageItem,
 } from "./stores/charts";
 import classNames from "./utils/classNames";
@@ -70,12 +70,13 @@ const HomePageContent = () => {
     })
   );
 
-  const selectedChart = useSelectedChart();
   const moveMusicCollageItem = useMoveMusicCollageItem();
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+
+      const selectedChart = getSelectedChart();
 
       if (!active.id || !over?.id) return;
       if (active.id === over.id) return;
@@ -98,7 +99,7 @@ const HomePageContent = () => {
       const activeIndex = items.findIndex((item) => item.id === active.id);
       moveMusicCollageItem(activeIndex, overIndex);
     },
-    [moveMusicCollageItem, selectedChart, setMusicCollageItem]
+    [moveMusicCollageItem, setMusicCollageItem]
   );
 
   return (

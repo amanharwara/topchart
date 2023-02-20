@@ -225,6 +225,17 @@ const useChartStore = create<ChartStore>()(
   )
 );
 
+export const getSelectedChart = () => {
+  const selectedChartId = useChartStore.getState().selectedChartId;
+  const selectedChart = useChartStore
+    .getState()
+    .charts.find((chart) => chart.id === selectedChartId);
+  if (!selectedChart) {
+    throw new Error("Could not find selected chart");
+  }
+  return selectedChart;
+};
+
 export const addNewChart = () => {
   const newChart = getNewChartWithDefaults({
     title: `Untitled ${useChartStore.getState().charts.length + 1}`,
