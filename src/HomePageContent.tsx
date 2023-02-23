@@ -62,7 +62,7 @@ const ResponsiveContainer = ({ children }: { children: ReactNode }) => {
         {children}
       </div>
       <section
-        className="md:hidden flex w-full bg-slate-800 text-white"
+        className="md:hidden flex w-full border-t-2 border-slate-800 bg-slate-800 text-white"
         aria-label="Navigation"
       >
         <button

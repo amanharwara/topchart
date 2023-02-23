@@ -16,7 +16,7 @@ main {
   @apply bg-slate-200 dark:bg-slate-700;
 }
 
-*:focus,
+*:focus-visible,
 .focus-within-ring:focus-within {
   @apply shadow-none outline-none ring-2 ring-blue-500 ring-offset-1 dark:ring-offset-slate-900;
 }
