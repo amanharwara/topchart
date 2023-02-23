@@ -55,7 +55,8 @@ const ResponsiveContainer = ({ children }: { children: ReactNode }) => {
         ref={mergeRefs([containerRef, fixContainerScroll])}
         className={classNames(
           "w-full [&>*]:w-screen [&>*]:md:w-auto min-h-0 flex-grow flex flex-row-reverse overflow-x-visible md:grid md:grid-cols-[1fr_2.5fr_1fr]",
-          "motion-safe:duration-[100ms] motion-safe:transition-transform motion-safe:ease-in-out motion-safe:will-change-transform"
+          "motion-safe:duration-[100ms] motion-safe:transition-transform motion-safe:ease-in-out motion-safe:will-change-transform",
+          "translate-x-full md:translate-x-0"
         )}
       >
         {children}
