@@ -6,7 +6,7 @@ import SettingsIcon from "../icons/SettingsIcon";
 import SponsorIcon from "../icons/SponsorIcon";
 import Button from "../components/Button";
 import IconButton from "../components/IconButton";
-import { useSelectedChart, useSetIsDownloading } from "../stores/charts";
+import { getSelectedChart, useSetIsDownloading } from "../stores/charts";
 import { toPng } from "html-to-image";
 import { isDev } from "../constants";
 import { useSetSettingsModalOpen } from "../stores/settings";
@@ -74,11 +74,11 @@ const SponsorMenu = () => {
 };
 
 const Header = () => {
-  const selectedChart = useSelectedChart();
   const setIsDownloading = useSetIsDownloading();
   const setSettingsModalOpen = useSetSettingsModalOpen();
 
   const downloadChart = async () => {
+    const selectedChart = getSelectedChart();
     if (!selectedChart) throw new Error("No chart selected");
 
     setIsDownloading(true);
