@@ -40,7 +40,10 @@ const ResponsiveContainer = ({ children }: { children: ReactNode }) => {
   const fixContainerScroll = useCallback(
     (node: HTMLDivElement | null) => {
       if (!node) return;
-      if (!isMobileScreen) return;
+      if (!isMobileScreen) {
+        node.style.transform = "";
+        return;
+      }
 
       node.style.transform = `translateX(${
         activeTab === "chart" ? "100%" : 0
