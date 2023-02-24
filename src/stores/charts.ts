@@ -17,27 +17,29 @@ type MusicCollageBackgroundType = "image" | "color";
 
 export type MusicCollageFontStyle = "sans" | "serif" | "mono" | "custom";
 
+export type MusicCollage = {
+  rows: number;
+  columns: number;
+  gap: MusicCollageSpacing;
+  padding: MusicCollageSpacing;
+  items: MusicCollageItem[];
+  backgroundType: MusicCollageBackgroundType;
+  backgroundColor: string;
+  backgroundImage: string;
+  fontStyle: MusicCollageFontStyle;
+  fontFamily: string;
+  foregroundColor: string;
+  showTitles: boolean;
+  positionTitlesBelowCover: boolean;
+  allowEditingTitles: boolean;
+};
+
 export type Chart = {
   id: string;
   title: string;
   type: ChartType;
   options: {
-    musicCollage: {
-      rows: number;
-      columns: number;
-      gap: MusicCollageSpacing;
-      padding: MusicCollageSpacing;
-      items: MusicCollageItem[];
-      backgroundType: MusicCollageBackgroundType;
-      backgroundColor: string;
-      backgroundImage: string;
-      fontStyle: MusicCollageFontStyle;
-      fontFamily: string;
-      foregroundColor: string;
-      showTitles: boolean;
-      positionTitlesBelowCover: boolean;
-      allowEditingTitles: boolean;
-    };
+    musicCollage: MusicCollage;
   };
 };
 
@@ -462,3 +464,13 @@ export const useIsDownloading = () => useChartStore((s) => s.isDownloading);
 
 export const useSetIsDownloading = () =>
   useChartStore((s) => s.setIsDownloading);
+
+export function useSelectedMusicCollageProperty<
+  Prop extends keyof MusicCollage
+>(prop: Prop): MusicCollage[Prop] {
+  return useChartStore((s) => {
+    const selectedChart = s.charts.find((c) => c.id === s.selectedChartId);
+    if (!selectedChart) throw new Error("No selected chart");
+    return selectedChart.options.musicCollage[prop];
+  });
+}
