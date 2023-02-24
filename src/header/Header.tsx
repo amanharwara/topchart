@@ -194,9 +194,9 @@ const Header = () => {
             <Button icon={ImportExportIcon} hideLabelOnMobile={true}>
               Import/Export
             </Button>
-            <MobileHamburgerMenu />
           </>
         )}
+        <MobileHamburgerMenu />
         <SponsorMenu />
         <Tooltip text="Report an issue">
           <IconButton
