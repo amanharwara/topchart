@@ -16,6 +16,10 @@ import { useRef } from "react";
 import GithubIcon from "../icons/GithubIcon";
 import KofiIcon from "../icons/KofiIcon";
 
+function reportIssue() {
+  window.open("https://github.com/amanharwara/topchart/issues", "_blank");
+}
+
 const SponsorMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
 
@@ -67,6 +71,69 @@ const SponsorMenu = () => {
         >
           <KofiIcon className="w-6 h-6" />
           Donate on Ko-Fi
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};
+
+const MobileHamburgerMenu = () => {
+  const setSettingsModalOpen = useSetSettingsModalOpen();
+
+  const anchorRef = useRef<HTMLButtonElement>(null);
+
+  const menuState = useMenuState({
+    getAnchorRect() {
+      const refRect = anchorRef.current?.getBoundingClientRect();
+
+      return {
+        x: refRect?.x,
+        y: refRect?.y,
+        width: refRect?.width,
+        height: refRect?.height,
+      };
+    },
+  });
+
+  return (
+    <>
+      <IconButton
+        icon={HamburgerMenuIcon}
+        label="App settings"
+        className={"md:hidden"}
+        ref={anchorRef}
+        onClick={menuState.toggle}
+      />
+      <Menu
+        portal={true}
+        state={menuState}
+        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-2 px-2 rounded border border-gray-800 dark:border-0 z-50"
+      >
+        <MenuArrow />
+        <MenuItem
+          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          onClick={() => {
+            window.open("https://ko-fi.com/amanharwara", "_blank");
+          }}
+        >
+          <SponsorIcon className="w-6 h-6" />
+          Donate or Sponsor
+        </MenuItem>
+        <MenuItem
+          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          onClick={reportIssue}
+        >
+          <BugsIcon className="w-6 h-6" />
+          Report an issue
+        </MenuItem>
+        <MenuItem
+          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          onClick={() => {
+            setSettingsModalOpen(true);
+          }}
+        >
+          <SettingsIcon className="w-6 h-6" />
+          App settings
         </MenuItem>
       </Menu>
     </>
@@ -127,11 +194,7 @@ const Header = () => {
             <Button icon={ImportExportIcon} hideLabelOnMobile={true}>
               Import/Export
             </Button>
-            <IconButton
-              icon={HamburgerMenuIcon}
-              label="App settings"
-              className={"md:hidden"}
-            />
+            <MobileHamburgerMenu />
           </>
         )}
         <SponsorMenu />
@@ -140,12 +203,7 @@ const Header = () => {
             icon={BugsIcon}
             label="Report an issue"
             className="hidden md:flex"
-            onClick={() => {
-              window.open(
-                "https://github.com/amanharwara/topchart/issues",
-                "_blank"
-              );
-            }}
+            onClick={reportIssue}
           />
         </Tooltip>
         <Tooltip text="App settings">
