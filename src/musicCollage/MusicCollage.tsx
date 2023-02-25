@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
+  isMusicCollageChart,
   MusicCollageItem,
   useIsDownloading,
   useSelectedChart,
@@ -75,9 +76,9 @@ const CollageItem = ({
     getImage();
   }, [item.image]);
 
-  if (!chart) return null;
+  if (!isMusicCollageChart(chart)) return null;
 
-  const { allowEditingTitles } = chart.options.musicCollage;
+  const { allowEditingTitles } = chart.options;
 
   const editTitleForCurrentItem = () => {
     setEditingTitleFor(index);
@@ -163,9 +164,9 @@ const CollageItem = ({
 const MusicCollage = () => {
   const selectedChart = useSelectedChart();
 
-  if (!selectedChart) return null;
+  if (!isMusicCollageChart(selectedChart)) return null;
 
-  const collage = selectedChart.options.musicCollage;
+  const collage = selectedChart.options;
 
   const gap = () => {
     switch (collage.gap) {

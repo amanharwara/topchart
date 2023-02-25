@@ -22,6 +22,7 @@ import MusicCollage from "./musicCollage/MusicCollage";
 import SettingsModal from "./settings/SettingsModal";
 import {
   getSelectedChart,
+  isMusicCollageChart,
   useIsDownloading,
   useMoveMusicCollageItem,
   useSetMusicCollageItem,
@@ -126,9 +127,9 @@ const HomePageContent = () => {
 
       if (!active.id || !over?.id) return;
       if (active.id === over.id) return;
-      if (!selectedChart) return;
+      if (!isMusicCollageChart(selectedChart)) return;
 
-      const items = selectedChart.options.musicCollage.items;
+      const items = selectedChart.options.items;
       const overIndex = items.findIndex((item) => item.id === over.id);
 
       if (active.id === "cover-art-result") {

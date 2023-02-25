@@ -37,11 +37,43 @@ export type MusicCollage = {
 export type Chart = {
   id: string;
   title: string;
-  type: ChartType;
-  options: {
-    musicCollage: MusicCollage;
-  };
-};
+} & (
+  | {
+      type: "musicCollage";
+      options: MusicCollage;
+    }
+  // @TODO: Add more chart types
+  | {
+      type: "spotify-top-5-artists";
+      options: {
+        //
+      };
+    }
+  | {
+      type: "spotify-top-5-tracks";
+      options: {
+        //
+      };
+    }
+  | {
+      type: "lastfm-top-5";
+      options: {
+        //
+      };
+    }
+  | {
+      type: "lastfm-collage";
+      options: {
+        //
+      };
+    }
+  | {
+      type: "tier-list";
+      options: {
+        //
+      };
+    }
+);
 
 const MaxNumberOfRows = 10;
 const MaxNumberOfColumns = 10;
@@ -57,30 +89,38 @@ const getNewChartWithDefaults = ({
   title: title ?? "Untitled",
   type: "musicCollage",
   options: {
-    musicCollage: {
-      rows: 3,
-      columns: 3,
-      gap: "small",
-      padding: "small",
-      items: new Array(MaxNumberOfRows * MaxNumberOfColumns)
-        .fill(null)
-        .map(() => ({
-          id: nanoid(),
-          title: "",
-          image: null,
-        })),
-      backgroundType: "color",
-      backgroundColor: "#000000",
-      backgroundImage: "",
-      fontStyle: "sans",
-      fontFamily: "Inter",
-      foregroundColor: "#FFFFFF",
-      showTitles: false,
-      positionTitlesBelowCover: false,
-      allowEditingTitles: false,
-    },
+    rows: 3,
+    columns: 3,
+    gap: "small",
+    padding: "small",
+    items: new Array(MaxNumberOfRows * MaxNumberOfColumns)
+      .fill(null)
+      .map(() => ({
+        id: nanoid(),
+        title: "",
+        image: null,
+      })),
+    backgroundType: "color",
+    backgroundColor: "#000000",
+    backgroundImage: "",
+    fontStyle: "sans",
+    fontFamily: "Inter",
+    foregroundColor: "#FFFFFF",
+    showTitles: false,
+    positionTitlesBelowCover: false,
+    allowEditingTitles: false,
   },
 });
+
+export const isMusicCollageChart = (
+  chart: Chart | undefined
+): chart is Chart & {
+  type: "musicCollage";
+  options: MusicCollage;
+} => {
+  if (!chart) return false;
+  return chart.type === "musicCollage";
+};
 
 interface ChartStore {
   selectedChartId: Chart["id"];
@@ -148,14 +188,14 @@ const useChartStore = create<ChartStore>()(
             const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            if (selectedChart) {
-              const existingItem =
-                selectedChart.options.musicCollage.items[index]!;
-              selectedChart.options.musicCollage.items[index] = {
-                ...existingItem,
-                ...item,
-              };
+            if (!isMusicCollageChart(selectedChart)) {
+              return;
             }
+            const existingItem = selectedChart.options.items[index]!;
+            selectedChart.options.items[index] = {
+              ...existingItem,
+              ...item,
+            };
           })
         );
       },
@@ -167,11 +207,11 @@ const useChartStore = create<ChartStore>()(
               (chart) => chart.id === state.selectedChartId
             );
 
-            if (!selectedChart) {
-              throw new Error("Could not find selected chart");
+            if (!isMusicCollageChart(selectedChart)) {
+              return;
             }
 
-            const items = selectedChart.options.musicCollage.items;
+            const items = selectedChart.options.items;
 
             if (
               oldIndex < 0 ||
@@ -277,158 +317,6 @@ export const useSetSelectedChartTitle = () =>
 export const useSetSelectedChartType = () =>
   useChartStore((s) => s.setSelectedChartType);
 
-export const setMusicCollageRows = (rows: number) =>
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart) selectedChart.options.musicCollage.rows = rows;
-    })
-  );
-
-export const setMusicCollageColumns = (columns: number) =>
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart) selectedChart.options.musicCollage.columns = columns;
-    })
-  );
-
-export const setMusicCollageGap = (gap: MusicCollageSpacing) =>
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart) selectedChart.options.musicCollage.gap = gap;
-    })
-  );
-
-export const setMusicCollagePadding = (padding: MusicCollageSpacing) =>
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart) selectedChart.options.musicCollage.padding = padding;
-    })
-  );
-
-export const setMusicCollageForegroundColor = (foregroundColor: string) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.foregroundColor = foregroundColor;
-    })
-  );
-};
-
-export const setShowMusicCollageAlbumTitles = (show: boolean) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart) selectedChart.options.musicCollage.showTitles = show;
-    })
-  );
-};
-
-export const setPositionMusicCollageTitlesBelowCover = (
-  positionBelowCover: boolean
-) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.positionTitlesBelowCover =
-          positionBelowCover;
-    })
-  );
-};
-
-export const setAllowEditingMusicCollageTitles = (allowEditing: boolean) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.allowEditingTitles = allowEditing;
-    })
-  );
-};
-
-export const setMusicCollageBackgroundType = (
-  backgroundType: MusicCollageBackgroundType
-) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.backgroundType = backgroundType;
-    })
-  );
-};
-
-export const setMusicCollageBackgroundColor = (backgroundColor: string) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.backgroundColor = backgroundColor;
-    })
-  );
-};
-
-export const setMusicCollageBackgroundImage = (backgroundImage: string) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.backgroundImage = backgroundImage;
-    })
-  );
-};
-
-export const setMusicCollageFontStyle = (fontStyle: MusicCollageFontStyle) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.fontStyle = fontStyle;
-    })
-  );
-};
-
-export const setMusicCollageFontFamily = (fontFamily: string) => {
-  useChartStore.setState(
-    produce((state: ChartStore) => {
-      const selectedChart = state.charts.find(
-        (chart) => chart.id === state.selectedChartId
-      );
-      if (selectedChart)
-        selectedChart.options.musicCollage.fontFamily = fontFamily;
-    })
-  );
-};
-
 export const useSelectedMusicCollageEditingTitleFor = (): [
   number,
   (itemIndex: number) => void
@@ -456,8 +344,15 @@ export const useMoveMusicCollageItem = () =>
 export const getMusicCollageItem = (index: number) => {
   const state = useChartStore.getState();
 
-  return state.charts.find((c) => c.id === state.selectedChartId)?.options
-    .musicCollage.items[index];
+  const selectedChart = state.charts.find(
+    (chart) => chart.id === state.selectedChartId
+  );
+
+  if (!isMusicCollageChart(selectedChart)) {
+    throw new Error("Selected chart is not a music collage");
+  }
+
+  return selectedChart.options.items[index];
 };
 
 export const useIsDownloading = () => useChartStore((s) => s.isDownloading);
@@ -470,7 +365,25 @@ export function useSelectedMusicCollageProperty<
 >(prop: Prop): MusicCollage[Prop] {
   return useChartStore((s) => {
     const selectedChart = s.charts.find((c) => c.id === s.selectedChartId);
-    if (!selectedChart) throw new Error("No selected chart");
-    return selectedChart.options.musicCollage[prop];
+    if (!isMusicCollageChart(selectedChart)) {
+      throw new Error("Selected chart is not a music collage");
+    }
+    return selectedChart.options[prop];
   });
+}
+
+export function setSelectedMusicCollageProperty<
+  Prop extends keyof MusicCollage
+>(prop: Prop, value: MusicCollage[Prop]) {
+  useChartStore.setState(
+    produce((state: ChartStore) => {
+      const selectedChart = state.charts.find(
+        (c) => c.id === state.selectedChartId
+      );
+      if (!isMusicCollageChart(selectedChart)) {
+        throw new Error("Selected chart is not a music collage");
+      }
+      selectedChart.options[prop] = value;
+    })
+  );
 }

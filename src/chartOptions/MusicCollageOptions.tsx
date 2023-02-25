@@ -9,23 +9,10 @@ import ColorPickerIcon from "../icons/ColorPickerIcon";
 import ImageIcon from "../icons/ImageIcon";
 import LinkIcon from "../icons/LinkIcon";
 import {
-  type MusicCollage,
   type MusicCollageFontStyle,
   type MusicCollageSpacing,
-  setAllowEditingMusicCollageTitles,
-  setMusicCollageBackgroundColor,
-  setMusicCollageBackgroundImage,
-  setMusicCollageBackgroundType,
-  setMusicCollageColumns,
-  setMusicCollageFontFamily,
-  setMusicCollageFontStyle,
-  setMusicCollageForegroundColor,
-  setMusicCollageGap,
-  setMusicCollagePadding,
-  setMusicCollageRows,
-  setPositionMusicCollageTitlesBelowCover,
-  setShowMusicCollageAlbumTitles,
   useSelectedMusicCollageProperty,
+  setSelectedMusicCollageProperty,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
 import SliderOption from "./SliderOption";
@@ -38,7 +25,7 @@ const RowsOption = () => {
       label="Rows"
       value={rows}
       onChange={(value) => {
-        setMusicCollageRows(value);
+        setSelectedMusicCollageProperty("rows", value);
       }}
     />
   );
@@ -52,7 +39,7 @@ const ColumnsOption = () => {
       label="Columns"
       value={columns}
       onChange={(value) => {
-        setMusicCollageColumns(value);
+        setSelectedMusicCollageProperty("columns", value);
       }}
     />
   );
@@ -85,7 +72,7 @@ const GapOption = () => {
         ]}
         value={gap}
         onChange={(value) => {
-          setMusicCollageGap(value as MusicCollageSpacing);
+          setSelectedMusicCollageProperty("gap", value as MusicCollageSpacing);
         }}
       />
     </div>
@@ -119,7 +106,10 @@ const PaddingOption = () => {
         ]}
         value={padding}
         onChange={(value) => {
-          setMusicCollagePadding(value as MusicCollageSpacing);
+          setSelectedMusicCollageProperty(
+            "padding",
+            value as MusicCollageSpacing
+          );
         }}
       />
     </div>
@@ -142,7 +132,7 @@ const AlbumTitleOptions = () => {
           <Toggle
             value={showTitles}
             onChange={(checked) => {
-              setShowMusicCollageAlbumTitles(checked);
+              setSelectedMusicCollageProperty("showTitles", checked);
             }}
           />
           Show album titles
@@ -157,7 +147,10 @@ const AlbumTitleOptions = () => {
             disabled={!showTitles}
             value={positionTitlesBelowCover}
             onChange={(checked) => {
-              setPositionMusicCollageTitlesBelowCover(checked);
+              setSelectedMusicCollageProperty(
+                "positionTitlesBelowCover",
+                checked
+              );
             }}
           />
           Position album titles below cover
@@ -172,7 +165,7 @@ const AlbumTitleOptions = () => {
             disabled={!showTitles}
             value={allowEditingTitles}
             onChange={(checked) => {
-              setAllowEditingMusicCollageTitles(checked);
+              setSelectedMusicCollageProperty("allowEditingTitles", checked);
             }}
           />
           Allow editing titles
@@ -200,7 +193,7 @@ const BackgroundOption = () => {
             icon={ImageIcon}
             label={"Use image instead"}
             onClick={() => {
-              setMusicCollageBackgroundType("image");
+              setSelectedMusicCollageProperty("backgroundType", "image");
             }}
           />
         ) : (
@@ -208,7 +201,7 @@ const BackgroundOption = () => {
             icon={ColorPickerIcon}
             label={"Use color instead"}
             onClick={() => {
-              setMusicCollageBackgroundType("color");
+              setSelectedMusicCollageProperty("backgroundType", "color");
             }}
           />
         )}
@@ -220,13 +213,16 @@ const BackgroundOption = () => {
             placeholder="Enter color..."
             value={backgroundColor}
             onChange={(event) => {
-              setMusicCollageBackgroundColor(event.currentTarget.value);
+              setSelectedMusicCollageProperty(
+                "backgroundColor",
+                event.currentTarget.value
+              );
             }}
           />
           <ColorPickerButton
             value={backgroundColor}
             onChange={(value) => {
-              setMusicCollageBackgroundColor(value);
+              setSelectedMusicCollageProperty("backgroundColor", value);
             }}
             className="px-2.5"
           />
@@ -237,7 +233,10 @@ const BackgroundOption = () => {
           placeholder="Enter image URL..."
           value={backgroundImage}
           onChange={(event) => {
-            setMusicCollageBackgroundImage(event.currentTarget.value);
+            setSelectedMusicCollageProperty(
+              "backgroundImage",
+              event.currentTarget.value
+            );
           }}
         />
       )}
@@ -255,7 +254,10 @@ const FontOption = () => {
       <Select
         value={fontStyle}
         setValue={(value) =>
-          setMusicCollageFontStyle(value as MusicCollageFontStyle)
+          setSelectedMusicCollageProperty(
+            "fontStyle",
+            value as MusicCollageFontStyle
+          )
         }
         options={[
           {
@@ -282,7 +284,10 @@ const FontOption = () => {
           placeholder="Select font"
           value={fontFamily}
           onChange={(event) => {
-            setMusicCollageFontFamily(event.currentTarget.value);
+            setSelectedMusicCollageProperty(
+              "fontFamily",
+              event.currentTarget.value
+            );
           }}
         />
       )}
@@ -302,13 +307,16 @@ const ForegroundColorOption = () => {
           placeholder="Enter color..."
           value={foregroundColor}
           onChange={(event) => {
-            setMusicCollageForegroundColor(event.currentTarget.value);
+            setSelectedMusicCollageProperty(
+              "foregroundColor",
+              event.currentTarget.value
+            );
           }}
         />
         <ColorPickerButton
           value={foregroundColor}
           onChange={(value) => {
-            setMusicCollageForegroundColor(value);
+            setSelectedMusicCollageProperty("foregroundColor", value);
           }}
           className="px-2.5"
         />
