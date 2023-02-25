@@ -26,17 +26,17 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS as CSSUtils } from "@dnd-kit/utilities";
 
-type CollageItemProps = {
-  item: MusicCollageItem;
-  index: number;
-  shouldPositionTitlesBelowCover: boolean;
-};
-
 const CollageItem = ({
   item,
   index,
-  shouldPositionTitlesBelowCover,
-}: CollageItemProps) => {
+  showTitle,
+  shouldPositionTitleBelowCover,
+}: {
+  item: MusicCollageItem;
+  index: number;
+  showTitle: boolean;
+  shouldPositionTitleBelowCover: boolean;
+}) => {
   const [, setEditingTitleFor] = useSelectedMusicCollageEditingTitleFor();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
   const [imageContent, setImageContent] = useState("");
@@ -156,7 +156,9 @@ const CollageItem = ({
           </>
         )}
       </div>
-      {shouldPositionTitlesBelowCover && item.title && <div>{item.title}</div>}
+      {showTitle && shouldPositionTitleBelowCover && item.title && (
+        <div>{item.title}</div>
+      )}
     </div>
   );
 };
@@ -236,7 +238,8 @@ const MusicCollage = () => {
               item={item}
               key={item.id}
               index={index}
-              shouldPositionTitlesBelowCover={shouldPositionTitlesBelowCover}
+              showTitle={collage.showTitles}
+              shouldPositionTitleBelowCover={shouldPositionTitlesBelowCover}
             />
           ))}
         </div>
