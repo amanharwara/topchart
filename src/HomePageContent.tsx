@@ -65,7 +65,7 @@ const ResponsiveContainer = ({ children }: { children: ReactNode }) => {
         {children}
       </div>
       <section
-        className="md:hidden flex w-full border-t-2 border-slate-800 bg-slate-800 text-white"
+        className="md:hidden flex w-full border-t-2 dark:border-slate-800 dark:bg-slate-800 dark:text-white bg-white border-gray-800 divide-x divide-gray-800 dark:divide-slate-800"
         aria-label="Navigation"
       >
         <button
@@ -75,7 +75,7 @@ const ResponsiveContainer = ({ children }: { children: ReactNode }) => {
           }}
           className={classNames(
             "flex flex-col gap-1 items-center p-3 flex-grow",
-            activeTab === "chart" && "bg-slate-700"
+            activeTab === "chart" && "bg-slate-700 text-white"
           )}
         >
           <ImageIcon className="h-6 w-6" />
@@ -88,7 +88,7 @@ const ResponsiveContainer = ({ children }: { children: ReactNode }) => {
           }}
           className={classNames(
             "flex flex-col gap-1 items-center p-3 flex-grow",
-            activeTab === "options" && "bg-slate-700"
+            activeTab === "options" && "bg-slate-700 text-white"
           )}
         >
           <SettingsIcon className="w-6 h-6" />

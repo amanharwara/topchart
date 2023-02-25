@@ -50,7 +50,7 @@ const SliderOption = ({
         </div>
         <div
           {...api.thumbProps}
-          className="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 border-2 dark:border-white"
+          className="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 border-2 dark:border-white border-slate-700"
         >
           <input {...api.hiddenInputProps} />
         </div>
