@@ -23,9 +23,6 @@ const MusicCollageBackgroundTypeParser = z.union([
   z.literal("image"),
   z.literal("color"),
 ]);
-type MusicCollageBackgroundType = z.infer<
-  typeof MusicCollageBackgroundTypeParser
->;
 
 const MusicCollageFontStyleParser = z.union([
   z.literal("sans"),
