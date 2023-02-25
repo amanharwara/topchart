@@ -18,10 +18,13 @@ import { toPng } from "html-to-image";
 import { useSetSettingsModalOpen } from "../stores/settings";
 import Tooltip from "../components/Tooltip";
 import { Menu, MenuArrow, MenuItem, useMenuState } from "ariakit";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import GithubIcon from "../icons/GithubIcon";
 import KofiIcon from "../icons/KofiIcon";
 import ExportIcon from "../icons/ExportIcon";
+import { nanoid } from "nanoid";
+import { useToast } from "../components/Toast";
+import { useStateRef } from "../utils/useStateRef";
 import { saveAsFile } from "../utils/saveAsFile";
 
 function reportIssue() {
@@ -149,30 +152,6 @@ const MobileHamburgerMenu = () => {
   );
 };
 
-const importChartFromFile = async (file: File) => {
-  try {
-    const json = JSON.parse(await file.text());
-    const chart = CommonChartOptionsParser.omit({ id: true })
-      .and(DiscriminatedChartOptionsParser)
-      .parse(json);
-    const chartId = addNewChart(chart);
-    setSelectedChartId(chartId);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-const exportSelectedChart = () => {
-  const selectedChart = getSelectedChart();
-  if (!selectedChart) throw new Error("No chart selected");
-  const chartJSON = JSON.stringify(
-    { ...selectedChart, id: undefined },
-    null,
-    2
-  );
-  saveAsFile(chartJSON, `${selectedChart.title}.json`, "application/json");
-};
-
 const ImportExportMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -189,6 +168,70 @@ const ImportExportMenu = () => {
       };
     },
   });
+
+  const toasts = useToast();
+  const toastsRef = useStateRef(toasts);
+
+  const importChartFromFile = useCallback(
+    async (file: File) => {
+      const toastId = toasts.create({
+        title: "Exporting chart",
+        description: "Please wait...",
+        type: "loading",
+        placement: "bottom-end",
+      });
+      try {
+        const json = JSON.parse(await file.text());
+        const chart = CommonChartOptionsParser.omit({ id: true })
+          .and(DiscriminatedChartOptionsParser)
+          .parse(json);
+        const chartId = addNewChart(chart);
+        setSelectedChartId(chartId);
+        setTimeout(() => {
+          toastsRef.current.dismiss(toastId);
+          toastsRef.current.create({
+            title: `Switched to "${chart.title}"`,
+            description: `Chart "${chart.title}" imported successfully!`,
+            type: "info",
+            placement: "bottom-end",
+          });
+        }, 100);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [toasts, toastsRef]
+  );
+
+  const exportSelectedChart = useCallback(() => {
+    const selectedChart = getSelectedChart();
+    const toastId = toasts.create({
+      title: "Exporting chart",
+      description: "Please wait...",
+      type: "loading",
+      placement: "bottom-end",
+    });
+    try {
+      if (!selectedChart) throw new Error("No chart selected");
+      const chartJSON = JSON.stringify(
+        { ...selectedChart, id: undefined },
+        null,
+        2
+      );
+      saveAsFile(chartJSON, `${selectedChart.title}.json`, "application/json");
+      setTimeout(() => {
+        toastsRef.current.dismiss(toastId);
+        toastsRef.current.create({
+          title: "Exported chart",
+          description: `Chart "${selectedChart.title}" exported successfully!`,
+          type: "info",
+          placement: "bottom-end",
+        });
+      }, 100);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [toasts, toastsRef]);
 
   return (
     <>
