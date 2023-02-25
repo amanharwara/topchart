@@ -20,7 +20,7 @@ const Select = ({ value, setValue, options }: Props) => {
   });
 
   return (
-    <div className="flex flex-grow">
+    <div className="flex flex-grow z-[1]">
       <AriaKitSelect
         state={state}
         className="flex flex-grow appearance-none items-center justify-between rounded border border-slate-600 dark:bg-gray-800 px-2.5 py-2 text-sm dark:text-white"
