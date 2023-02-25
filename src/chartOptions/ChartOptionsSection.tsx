@@ -6,18 +6,17 @@ import EditIcon from "../icons/EditIcon";
 import SaveIcon from "../icons/SaveIcon";
 import TrashIcon from "../icons/TrashIcon";
 import {
-  addNewChart,
+  addNewDefaultChart,
   deleteChart,
   useChartsList,
   useSelectedChart,
-  useSetSelectedChartId,
+  setSelectedChartId,
   useSetSelectedChartTitle,
 } from "../stores/charts";
 import MusicCollageOptions from "./MusicCollageOptions";
 
 const CurrentChartOption = () => {
   const selectedChart = useSelectedChart();
-  const setSelectedChartId = useSetSelectedChartId();
   const setSelectedChartTitle = useSetSelectedChartTitle();
   const charts = useChartsList();
 
@@ -53,7 +52,7 @@ const CurrentChartOption = () => {
               icon={AddIcon}
               label="Add new chart"
               onClick={() => {
-                const id = addNewChart();
+                const id = addNewDefaultChart();
                 setSelectedChartId(id);
               }}
             />

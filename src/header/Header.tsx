@@ -6,7 +6,14 @@ import SettingsIcon from "../icons/SettingsIcon";
 import SponsorIcon from "../icons/SponsorIcon";
 import Button from "../components/Button";
 import IconButton from "../components/IconButton";
-import { getSelectedChart, useSetIsDownloading } from "../stores/charts";
+import {
+  addNewChart,
+  CommonChartOptionsParser,
+  DiscriminatedChartOptionsParser,
+  getSelectedChart,
+  setSelectedChartId,
+  useSetIsDownloading,
+} from "../stores/charts";
 import { toPng } from "html-to-image";
 import { isDev } from "../constants";
 import { useSetSettingsModalOpen } from "../stores/settings";
@@ -146,7 +153,11 @@ const MobileHamburgerMenu = () => {
 const importChartFromFile = async (file: File) => {
   try {
     const json = JSON.parse(await file.text());
-    console.log(json);
+    const chart = CommonChartOptionsParser.omit({ id: true })
+      .and(DiscriminatedChartOptionsParser)
+      .parse(json);
+    const chartId = addNewChart(chart);
+    setSelectedChartId(chartId);
   } catch (e) {
     console.error(e);
   }

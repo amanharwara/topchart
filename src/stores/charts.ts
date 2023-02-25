@@ -2,78 +2,103 @@ import create from "zustand";
 import { persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import produce from "immer";
+import { z } from "zod";
 
-export type ChartType = "musicCollage";
+const MusicCollageSpacingParser = z.union([
+  z.literal("none"),
+  z.literal("small"),
+  z.literal("medium"),
+  z.literal("large"),
+]);
+export type MusicCollageSpacing = z.infer<typeof MusicCollageSpacingParser>;
 
-export type MusicCollageSpacing = "none" | "small" | "medium" | "large";
+const MusicCollageItemParser = z.object({
+  id: z.string(),
+  image: z.string().nullable(),
+  title: z.string(),
+});
+export type MusicCollageItem = z.infer<typeof MusicCollageItemParser>;
 
-export type MusicCollageItem = {
-  id: string;
-  image: string | null;
-  title: string;
-};
+const MusicCollageBackgroundTypeParser = z.union([
+  z.literal("image"),
+  z.literal("color"),
+]);
+type MusicCollageBackgroundType = z.infer<
+  typeof MusicCollageBackgroundTypeParser
+>;
 
-type MusicCollageBackgroundType = "image" | "color";
+const MusicCollageFontStyleParser = z.union([
+  z.literal("sans"),
+  z.literal("serif"),
+  z.literal("mono"),
+  z.literal("custom"),
+]);
+export type MusicCollageFontStyle = z.infer<typeof MusicCollageFontStyleParser>;
 
-export type MusicCollageFontStyle = "sans" | "serif" | "mono" | "custom";
+const MusicCollageDimensionParser = z.number().min(1).max(10);
 
-export type MusicCollage = {
-  rows: number;
-  columns: number;
-  gap: MusicCollageSpacing;
-  padding: MusicCollageSpacing;
-  items: MusicCollageItem[];
-  backgroundType: MusicCollageBackgroundType;
-  backgroundColor: string;
-  backgroundImage: string;
-  fontStyle: MusicCollageFontStyle;
-  fontFamily: string;
-  foregroundColor: string;
-  showTitles: boolean;
-  positionTitlesBelowCover: boolean;
-  allowEditingTitles: boolean;
-};
+const MusicCollageParser = z.object({
+  rows: MusicCollageDimensionParser,
+  columns: MusicCollageDimensionParser,
+  gap: MusicCollageSpacingParser,
+  padding: MusicCollageSpacingParser,
+  items: z.array(MusicCollageItemParser),
+  backgroundType: MusicCollageBackgroundTypeParser,
+  backgroundColor: z.string(),
+  backgroundImage: z.string(),
+  fontStyle: MusicCollageFontStyleParser,
+  fontFamily: z.string(),
+  foregroundColor: z.string(),
+  showTitles: z.boolean(),
+  positionTitlesBelowCover: z.boolean(),
+  allowEditingTitles: z.boolean(),
+});
+export type MusicCollage = z.infer<typeof MusicCollageParser>;
 
-export type Chart = {
-  id: string;
-  title: string;
-} & (
-  | {
-      type: "musicCollage";
-      options: MusicCollage;
-    }
-  // @TODO: Add more chart types
-  | {
-      type: "spotify-top-5-artists";
-      options: {
-        //
-      };
-    }
-  | {
-      type: "spotify-top-5-tracks";
-      options: {
-        //
-      };
-    }
-  | {
-      type: "lastfm-top-5";
-      options: {
-        //
-      };
-    }
-  | {
-      type: "lastfm-collage";
-      options: {
-        //
-      };
-    }
-  | {
-      type: "tier-list";
-      options: {
-        //
-      };
-    }
+const ChartTypeParser = z.union([
+  z.literal("musicCollage"),
+  z.literal("spotify-top-5-artists"),
+  z.literal("spotify-top-5-tracks"),
+  z.literal("lastfm-top-5"),
+  z.literal("lastfm-collage"),
+  z.literal("tier-list"),
+]);
+export type ChartType = z.infer<typeof ChartTypeParser>;
+
+export const CommonChartOptionsParser = z.object({
+  id: z.string(),
+  title: z.string(),
+});
+export const DiscriminatedChartOptionsParser = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("musicCollage"),
+    options: MusicCollageParser,
+  }),
+  z.object({
+    type: z.literal("spotify-top-5-artists"),
+    options: z.object({}),
+  }),
+  z.object({
+    type: z.literal("spotify-top-5-tracks"),
+    options: z.object({}),
+  }),
+  z.object({
+    type: z.literal("lastfm-top-5"),
+    options: z.object({}),
+  }),
+  z.object({
+    type: z.literal("lastfm-collage"),
+    options: z.object({}),
+  }),
+  z.object({
+    type: z.literal("tier-list"),
+    options: z.object({}),
+  }),
+]);
+const ChartParser = CommonChartOptionsParser.and(
+  DiscriminatedChartOptionsParser
 );
+export type Chart = z.infer<typeof ChartParser>;
 
 const MaxNumberOfRows = 10;
 const MaxNumberOfColumns = 10;
@@ -278,7 +303,7 @@ export const getSelectedChart = () => {
   return selectedChart;
 };
 
-export const addNewChart = () => {
+export const addNewDefaultChart = () => {
   const newChart = getNewChartWithDefaults({
     title: `Untitled ${useChartStore.getState().charts.length + 1}`,
   });
@@ -286,6 +311,16 @@ export const addNewChart = () => {
     charts: [...state.charts, newChart],
   }));
   return newChart.id;
+};
+
+export const addNewChart = (chart: Omit<Chart, "id">) => {
+  const id = nanoid();
+  const newChart: Chart = Object.create(chart);
+  newChart.id = id;
+  useChartStore.setState((state) => ({
+    charts: [...state.charts, newChart],
+  }));
+  return id;
 };
 
 export const deleteChart = (id: string) => {
@@ -298,7 +333,7 @@ export const deleteChart = (id: string) => {
   if (nextChart) {
     useChartStore.getState().setSelectedChartId(nextChart.id);
   } else {
-    const id = addNewChart();
+    const id = addNewDefaultChart();
     useChartStore.getState().setSelectedChartId(id);
   }
 };
@@ -308,8 +343,8 @@ export const useChartsList = () => useChartStore((s) => s.charts);
 export const useSelectedChart = () =>
   useChartStore((s) => s.charts.find((c) => c.id === s.selectedChartId));
 
-export const useSetSelectedChartId = () =>
-  useChartStore((s) => s.setSelectedChartId);
+export const setSelectedChartId = (id: string) =>
+  useChartStore.getState().setSelectedChartId(id);
 
 export const useSetSelectedChartTitle = () =>
   useChartStore((s) => s.setSelectedChartTitle);
