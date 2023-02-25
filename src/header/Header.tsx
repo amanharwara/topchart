@@ -52,6 +52,7 @@ const SponsorMenu = () => {
       <Menu
         state={menuState}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-2 px-2 rounded border border-gray-800 dark:border-0"
+        portal={true}
       >
         <MenuArrow />
         <MenuItem
