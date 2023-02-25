@@ -9,7 +9,7 @@ const Spinner = ({
 }) => (
   <div
     className={classNames(
-      "animate-spin rounded-full border-solid border-info border-r-transparent",
+      "animate-spin rounded-full border-solid border-slate-700 dark:border-gray-100 dark:border-r-transparent border-r-transparent",
       width === 1 ? "border" : `border-${width}`,
       className
     )}

@@ -14,6 +14,7 @@ import AddCoverArt from "./addCoverArt/AddCoverArt";
 import ChartOptionsSection from "./chartOptions/ChartOptionsSection";
 import Button from "./components/Button";
 import Spinner from "./components/Spinner";
+import { ToastProvider } from "./components/Toast";
 import { isDev } from "./constants";
 import Header from "./header/Header";
 import ImageIcon from "./icons/ImageIcon";
@@ -150,7 +151,7 @@ const HomePageContent = () => {
   );
 
   return (
-    <>
+    <ToastProvider>
       <Header />
       <DndContext
         sensors={dndSensors}
@@ -194,12 +195,7 @@ const HomePageContent = () => {
         </ResponsiveContainer>
       </DndContext>
       <SettingsModal />
-      {/* <AddCoverArtModal
-    isOpen={isCoverArtModalOpen()}
-    closeModal={() => toggleCoverArtModal(false)}
-  />
-  <ToastContainer /> */}
-    </>
+    </ToastProvider>
   );
 };
 

@@ -404,51 +404,97 @@
   resolved "https://registry.yarnpkg.com/@zag-js/anatomy/-/anatomy-0.1.4.tgz#61c5434eaa4e2a8fd2e09ac6fc22b83a74e46052"
   integrity sha512-Xc5QmQwY0W3VdkukYVaoujuCmgf0Y2ZbXhIBi0CJ0d8wWRwjkphhJu8l9kDyX4ElpyzvExYbrpTuQoI4BspaVQ==
 
-"@zag-js/core@0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@zag-js/core/-/core-0.2.9.tgz#783b8057c906c1c6e0f1407f5dbc41e464f22e98"
-  integrity sha512-589ZsU6JYX7HSz0+JHm2k6uPu0XawSzi8KW+N/zGap4OrwjDK6tZb3tEKAdTITQA9Fyu1UdSfI67cFbOG3zYsw==
+"@zag-js/core@0.2.10":
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/@zag-js/core/-/core-0.2.10.tgz#713829fd47613661d3b58a3192397df313b95687"
+  integrity sha512-Hc8a8KF+5VpSlLkeKFqFTRvlBtBOL+yjUEy0/pD5jTOPOwKyEHz+Yt/nCaGW5L3rzNkALpiAfrKHkXdhYKNOVg==
   dependencies:
-    "@zag-js/store" "0.2.7"
+    "@zag-js/store" "0.2.8"
     klona "2.0.6"
+
+"@zag-js/dom-event@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@zag-js/dom-event/-/dom-event-0.0.1.tgz#a6864a582a3e318349577e2ab2aca5d0aef495cb"
+  integrity sha512-oRDWn/31JUwTc9nIUG/Ingug6FNBkhXUnd2dh3vEcqfk+NVHPZ9Lgx5tauiEDyiRKeWr9PS5GJpBQVNc2YDo3Q==
+  dependencies:
+    "@zag-js/text-selection" "0.0.1"
+    "@zag-js/types" "0.3.4"
+
+"@zag-js/dom-query@0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@zag-js/dom-query/-/dom-query-0.1.4.tgz#942602800d81f2d38264ce1e879831329e51a6a1"
+  integrity sha512-s2q18k3z3ABAkySc6xK1NLPVIdgZGTLSZxok7yzpCYoywEeCnFvP6K63Q4ONElk74XgO7Eq8KMzIj702LDS+Mg==
 
 "@zag-js/element-size@0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@zag-js/element-size/-/element-size-0.3.2.tgz#ebb76af2a024230482406db41344598d1a9f54f4"
   integrity sha512-bVvvigUGvAuj7PCkE5AbzvTJDTw5f3bg9nQdv+ErhVN8SfPPppLJEmmWdxqsRzrHXgx8ypJt/+Ty0kjtISVDsQ==
 
+"@zag-js/form-utils@0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@zag-js/form-utils/-/form-utils-0.2.5.tgz#0f8e6cfa36560735a1f7e9d2dca651db8be43310"
+  integrity sha512-aqdj+M4lvczDITrfkZqQxGkfHbFn084ONRkDylaPNx8xQKoRbsy+crDga10QDOUkgSMtVOB8XZ+VyJHQAzRErQ==
+  dependencies:
+    "@zag-js/mutation-observer" "0.0.1"
+
+"@zag-js/mutation-observer@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@zag-js/mutation-observer/-/mutation-observer-0.0.1.tgz#55fb919b9c2cf07fb9255caea5ae698b82d8df18"
+  integrity sha512-HasPzt6LyVWsu1jwx3lFNKuV3nlaJQ918rU1wUnhqMD8ZVSKvNBxCoz0NswiKZWTR/6eNwFwvHrewJiWKXivrw==
+
 "@zag-js/numeric-range@0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@zag-js/numeric-range/-/numeric-range-0.1.1.tgz#c2a6419edf1d50c81ebef612f84b1f8e0366bf0f"
   integrity sha512-TVOUG6aXfzUaSrigFeTdN/pGlKBInMRTYhYfPWGg3UOACkRVSyiUc8I3W1j4a66JHE5urzB35jQCU8Y4EcGuIw==
 
-"@zag-js/react@^0.3.9":
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/@zag-js/react/-/react-0.3.9.tgz#816803be1673f923eb338dfaaf9aab0296793def"
-  integrity sha512-3RoXDlGaDyqvVu/lGNNhzrbC530sfbDGXicoDSQeNQl/jOVGpShxNrd6RFJnBJIbG8yqaLe1HDJnYFZwV84JCQ==
+"@zag-js/react@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@zag-js/react/-/react-0.3.10.tgz#79fe0b5fa26e2ad3278e8be7567386b064c87a7d"
+  integrity sha512-H/Yb0bpyZDiio4EXN76Huns00qzTAjfnaizo9j4B19E6iFXkA0XZ3acMrc2IQmUKtA6MPs5Xn2c2HZFkGKqeDQ==
   dependencies:
-    "@zag-js/core" "0.2.9"
-    "@zag-js/store" "0.2.7"
+    "@zag-js/core" "0.2.10"
+    "@zag-js/store" "0.2.8"
     "@zag-js/types" "0.3.4"
-    proxy-compare "2.4.0"
+    proxy-compare "2.5.0"
 
-"@zag-js/slider@^0.2.13":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@zag-js/slider/-/slider-0.2.13.tgz#dfbe3b85328ff23f22d9619a2a9fda3f44e3eb44"
-  integrity sha512-0cPj0+ouSR00qIY2542urzWehb9dtbgaaZeVi/wrf2qBy9rX4HssjCSjU8ScHQrHqIxQVYO+qvAUGwwChOgcTg==
+"@zag-js/slider@^0.2.15":
+  version "0.2.15"
+  resolved "https://registry.yarnpkg.com/@zag-js/slider/-/slider-0.2.15.tgz#449681ee7428c5c6df74869c0924a555f1dac7ed"
+  integrity sha512-qnJ6vWXPr6nydSGDn+omwo2eRTp7AAkHwQEtXK1Yhckv3LtXL96EejJVx/Ono1BMalnclM/ti/nmn+/qBoyeVQ==
   dependencies:
     "@zag-js/anatomy" "0.1.4"
-    "@zag-js/core" "0.2.9"
+    "@zag-js/core" "0.2.10"
+    "@zag-js/dom-event" "0.0.1"
+    "@zag-js/dom-query" "0.1.4"
     "@zag-js/element-size" "0.3.2"
+    "@zag-js/form-utils" "0.2.5"
     "@zag-js/numeric-range" "0.1.1"
     "@zag-js/types" "0.3.4"
+    "@zag-js/utils" "0.3.3"
 
-"@zag-js/store@0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@zag-js/store/-/store-0.2.7.tgz#2bc271c40cc556f22d2ff8d6beaca8ef7a2f08f4"
-  integrity sha512-uGuqfOR06wZiNGHxTIUmw4Ywdz6rsPfP/H8DRh+y6LVgtfBQSLdptHEK6UOgCCr0OdyKh0tSrY09SVB30WKaDA==
+"@zag-js/store@0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@zag-js/store/-/store-0.2.8.tgz#b7b477c56e688043ed3f1c7a8ebb12cb6e994639"
+  integrity sha512-QgBnbYjb5jvcTt0+JCoPJ9YKM9vP1/RR78mkT6fWCIM0N8hnZu4MzQPVKxiopxZ8XIrDbUjFWlJLzL83uiYv2g==
   dependencies:
-    proxy-compare "2.4.0"
+    proxy-compare "2.5.0"
+
+"@zag-js/text-selection@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@zag-js/text-selection/-/text-selection-0.0.1.tgz#7eeeb32a23d4936d3a4f1c1f5d5bbc03cbf462cb"
+  integrity sha512-l8Im0FkMw63BPXocHRbtFgMIz3SkVpc4HI/S/wV0FqKgWMzOZzd/avHljCNfoXyhjhKauwR5xPivAwsOcye8CA==
+
+"@zag-js/toast@^0.2.14":
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@zag-js/toast/-/toast-0.2.14.tgz#1ea2ab4c77ea2fc688565f6c282e9601d058a9bf"
+  integrity sha512-3S9WtvHhHt8Mfi3BZyGf2rCV/Kzxb3YMsM5EJml6RHLwyDwoGomrwNcd/YdXoyBs5NdrGFOnUONCTRqJw6mPhA==
+  dependencies:
+    "@zag-js/anatomy" "0.1.4"
+    "@zag-js/core" "0.2.10"
+    "@zag-js/dom-event" "0.0.1"
+    "@zag-js/dom-query" "0.1.4"
+    "@zag-js/types" "0.3.4"
+    "@zag-js/utils" "0.3.3"
 
 "@zag-js/types@0.3.4":
   version "0.3.4"
@@ -456,6 +502,11 @@
   integrity sha512-KkZOMNqFZA0TaVF70O6WIRJPWTcDyRQjhXLDkLVfo99gwJdsC1bMZWfjrCiR8g1CfzvCyGNSWzdArIgzTJVEMA==
   dependencies:
     csstype "3.1.1"
+
+"@zag-js/utils@0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@zag-js/utils/-/utils-0.3.3.tgz#d7687494629f37fdede6d13e2f80bf8f5e546814"
+  integrity sha512-INNuBcu1+Y5Nxo/PGW51qqkVwBzUCjzO0WjUJDBoqNo8hRs5KsWLcGKdrCayRPaDjNvQetXsUH54LGImUjUHTQ==
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -1936,10 +1987,10 @@ prop-types@^15.8.1:
     object-assign "^4.1.1"
     react-is "^16.13.1"
 
-proxy-compare@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-2.4.0.tgz#90f6abffe734ef86d8e37428c5026268606a9c1b"
-  integrity sha512-FD8KmQUQD6Mfpd0hywCOzcon/dbkFP8XBd9F1ycbKtvVsfv6TsFUKJ2eC0Iz2y+KzlkdT1Z8SY6ZSgm07zOyqg==
+proxy-compare@2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-2.5.0.tgz#0387c5e4d283ba9b1c0353bb20def4449b06bbd2"
+  integrity sha512-f1us0OsVAJ3tdIMXGQx2lmseYS4YXe4W+sKF5g5ww/jV+5ogMadPt+sIZ+88Ga9kvMJsrRNWzCrKPpr6pMWYbA==
 
 punycode@^2.1.0:
   version "2.1.1"
