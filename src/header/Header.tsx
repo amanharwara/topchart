@@ -1,7 +1,7 @@
 import BugsIcon from "../icons/BugsIcon";
 import DownloadIcon from "../icons/DownloadIcon";
 import HamburgerMenuIcon from "../icons/HamburgerMenuIcon";
-import ImportExportIcon from "../icons/ImportExportIcon";
+import ImportIcon from "../icons/ImportIcon";
 import SettingsIcon from "../icons/SettingsIcon";
 import SponsorIcon from "../icons/SponsorIcon";
 import Button from "../components/Button";
@@ -15,6 +15,8 @@ import { Menu, MenuArrow, MenuItem, useMenuState } from "ariakit";
 import { useRef } from "react";
 import GithubIcon from "../icons/GithubIcon";
 import KofiIcon from "../icons/KofiIcon";
+import ExportIcon from "../icons/ExportIcon";
+import { saveAsFile } from "../utils/saveAsFile";
 
 function reportIssue() {
   window.open("https://github.com/amanharwara/topchart/issues", "_blank");
@@ -51,26 +53,26 @@ const SponsorMenu = () => {
       </Tooltip>
       <Menu
         state={menuState}
-        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-2 px-2 rounded border border-gray-800 dark:border-0"
+        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 dark:border-0 z-50"
         portal={true}
       >
         <MenuArrow />
         <MenuItem
-          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
             window.open("https://github.com/sponsors/amanharwara", "_blank");
           }}
         >
-          <GithubIcon className="w-6 h-6" />
+          <GithubIcon className="w-5 h-5" />
           Sponsor on GitHub
         </MenuItem>
         <MenuItem
-          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
             window.open("https://ko-fi.com/amanharwara", "_blank");
           }}
         >
-          <KofiIcon className="w-6 h-6" />
+          <KofiIcon className="w-5 h-5" />
           Donate on Ko-Fi
         </MenuItem>
       </Menu>
@@ -108,33 +110,118 @@ const MobileHamburgerMenu = () => {
       <Menu
         portal={true}
         state={menuState}
-        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-2 px-2 rounded border border-gray-800 dark:border-0 z-50"
+        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 dark:border-0 z-50"
       >
         <MenuArrow />
         <MenuItem
-          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
             window.open("https://ko-fi.com/amanharwara", "_blank");
           }}
         >
-          <SponsorIcon className="w-6 h-6" />
+          <SponsorIcon className="w-5 h-5" />
           Donate or Sponsor
         </MenuItem>
         <MenuItem
-          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={reportIssue}
         >
-          <BugsIcon className="w-6 h-6" />
+          <BugsIcon className="w-5 h-5" />
           Report an issue
         </MenuItem>
         <MenuItem
-          className="flex items-center gap-3 py-2 px-3 cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 rounded"
+          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
             setSettingsModalOpen(true);
           }}
         >
-          <SettingsIcon className="w-6 h-6" />
+          <SettingsIcon className="w-5 h-5" />
           App settings
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};
+
+const importChartFromFile = async (file: File) => {
+  try {
+    const json = JSON.parse(await file.text());
+    console.log(json);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const exportSelectedChart = () => {
+  const selectedChart = getSelectedChart();
+  if (!selectedChart) throw new Error("No chart selected");
+  const chartJSON = JSON.stringify(
+    { ...selectedChart, id: undefined },
+    null,
+    2
+  );
+  saveAsFile(chartJSON, `${selectedChart.title}.json`, "application/json");
+};
+
+const ImportExportMenu = () => {
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const menuState = useMenuState({
+    getAnchorRect() {
+      const refRect = anchorRef.current?.getBoundingClientRect();
+
+      return {
+        x: refRect?.x,
+        y: refRect?.y,
+        width: refRect?.width,
+        height: refRect?.height,
+      };
+    },
+  });
+
+  return (
+    <>
+      <IconButton
+        icon={ImportIcon}
+        label="Import/Export"
+        ref={anchorRef}
+        onClick={menuState.toggle}
+      />
+      <input
+        type="file"
+        accept="application/json"
+        className="invisible absolute w-px h-px"
+        ref={fileInputRef}
+        onChange={() => {
+          if (!fileInputRef.current || !fileInputRef.current.files) return;
+          const file = fileInputRef.current.files[0];
+          if (!file) return;
+          importChartFromFile(file);
+        }}
+      />
+      <Menu
+        portal={true}
+        state={menuState}
+        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 dark:border-0 z-50"
+      >
+        <MenuArrow />
+        <MenuItem
+          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
+          onClick={() => {
+            if (!fileInputRef.current) return;
+            fileInputRef.current.click();
+          }}
+        >
+          <ImportIcon className="w-5 h-5" />
+          Import chart
+        </MenuItem>
+        <MenuItem
+          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
+          onClick={exportSelectedChart}
+        >
+          <ExportIcon className="w-5 h-5" />
+          Export chart
         </MenuItem>
       </Menu>
     </>
@@ -192,9 +279,7 @@ const Header = () => {
         </Button>
         {isDev && (
           <>
-            <Button icon={ImportExportIcon} hideLabelOnMobile={true}>
-              Import/Export
-            </Button>
+            <ImportExportMenu />
           </>
         )}
         <MobileHamburgerMenu />

@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef } from "react";
 
-const ImportExportIcon = (props: ComponentPropsWithoutRef<"svg">) => (
+const ImportIcon = (props: ComponentPropsWithoutRef<"svg">) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
@@ -32,4 +32,4 @@ const ImportExportIcon = (props: ComponentPropsWithoutRef<"svg">) => (
   </svg>
 );
 
-export default ImportExportIcon;
+export default ImportIcon;
