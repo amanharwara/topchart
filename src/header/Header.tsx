@@ -15,7 +15,6 @@ import {
   useSetIsDownloading,
 } from "../stores/charts";
 import { toPng } from "html-to-image";
-import { isDev } from "../constants";
 import { useSetSettingsModalOpen } from "../stores/settings";
 import Tooltip from "../components/Tooltip";
 import { Menu, MenuArrow, MenuItem, useMenuState } from "ariakit";
@@ -288,11 +287,7 @@ const Header = () => {
         <Button icon={DownloadIcon} onClick={downloadChart}>
           Download
         </Button>
-        {isDev && (
-          <>
-            <ImportExportMenu />
-          </>
-        )}
+        <ImportExportMenu />
         <MobileHamburgerMenu />
         <SponsorMenu />
         <Tooltip text="Report an issue">
