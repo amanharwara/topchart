@@ -191,6 +191,8 @@ export const ImportExportMenu = () => {
             })
           )
           .parse(json);
+        const images = chart.images;
+        delete chart["images"];
         const chartId = addNewChart(chart);
         setSelectedChartId(chartId);
         setTimeout(() => {
@@ -202,14 +204,14 @@ export const ImportExportMenu = () => {
             placement: "bottom-end",
           });
         });
-        if (chart.images && typeof chart.images === "object") {
+        if (images && typeof images === "object") {
           const toastId = toastsRef.current.create({
             title: "Importing images...",
             type: "loading",
             placement: "bottom-end",
           });
           await Promise.all(
-            Object.entries(chart.images).map(async ([key, value]) => {
+            Object.entries(images).map(async ([key, value]) => {
               await storeImageToDB({
                 id: key,
                 content: value,

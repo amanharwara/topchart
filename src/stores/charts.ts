@@ -312,7 +312,9 @@ export const addNewDefaultChart = () => {
 
 export const addNewChart = (chart: Omit<Chart, "id">) => {
   const id = nanoid();
-  const newChart: Chart = Object.create(chart);
+  const newChart = {
+    ...chart,
+  } as Chart;
   newChart.id = id;
   useChartStore.setState((state) => ({
     charts: [...state.charts, newChart],
