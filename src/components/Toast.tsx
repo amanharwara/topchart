@@ -2,6 +2,7 @@ import { normalizeProps, useActor, useMachine } from "@zag-js/react";
 import * as toast from "@zag-js/toast";
 import { createContext, ReactNode, useContext, useId } from "react";
 import CloseIcon from "../icons/CloseIcon";
+import ErrorIcon from "../icons/ErrorIcon";
 import classNames from "../utils/classNames";
 import Spinner from "./Spinner";
 
@@ -33,6 +34,9 @@ const Toast = ({ actor }: { actor: toast.Service }) => {
         >
           {api.type === "loading" && (
             <Spinner className="w-4 h-4 flex-shrink-0" />
+          )}
+          {api.type === "error" && (
+            <ErrorIcon className="w-4 h-4 flex-shrink-0" />
           )}
           <div className="whitespace-nowrap text-ellipsis overflow-hidden">
             {api.title}

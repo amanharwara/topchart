@@ -249,6 +249,15 @@ const ImportExportMenu = () => {
         }
       } catch (e) {
         console.error(e);
+        setTimeout(() => {
+          toastsRef.current.dismiss(toastId);
+          toastsRef.current.create({
+            title: "Could not import chart",
+            description: "There was an error while importing the chart...",
+            type: "error",
+            placement: "bottom-end",
+          });
+        });
       }
     },
     [toasts, toastsRef]
