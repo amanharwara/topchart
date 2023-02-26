@@ -8,9 +8,11 @@ import Button from "../components/Button";
 import IconButton from "../components/IconButton";
 import {
   addNewChart,
+  Chart,
   CommonChartOptionsParser,
   DiscriminatedChartOptionsParser,
   getSelectedChart,
+  isMusicCollageChart,
   setSelectedChartId,
   useSetIsDownloading,
 } from "../stores/charts";
@@ -25,6 +27,8 @@ import ExportIcon from "../icons/ExportIcon";
 import { useToast } from "../components/Toast";
 import { useStateRef } from "../utils/useStateRef";
 import { saveAsFile } from "../utils/saveAsFile";
+import { getImageFromDB, storeImageToDB } from "../stores/imageDB";
+import { z } from "zod";
 
 function reportIssue() {
   window.open("https://github.com/amanharwara/topchart/issues", "_blank");
@@ -151,6 +155,26 @@ const MobileHamburgerMenu = () => {
   );
 };
 
+const getImagesFromChart = async (chart: Chart) => {
+  const images: {
+    [key in string]: string;
+  } = {};
+  if (isMusicCollageChart(chart)) {
+    await Promise.all(
+      chart.options.items.map(async (item) => {
+        if (!item.image) return;
+
+        const image = await getImageFromDB(item.image);
+
+        if (!image) return;
+
+        images[item.image] = image;
+      })
+    );
+  }
+  return images;
+};
+
 const ImportExportMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -183,6 +207,11 @@ const ImportExportMenu = () => {
         const json = JSON.parse(await file.text());
         const chart = CommonChartOptionsParser.omit({ id: true })
           .and(DiscriminatedChartOptionsParser)
+          .and(
+            z.object({
+              images: z.unknown(),
+            })
+          )
           .parse(json);
         const chartId = addNewChart(chart);
         setSelectedChartId(chartId);
@@ -194,7 +223,30 @@ const ImportExportMenu = () => {
             type: "info",
             placement: "bottom-end",
           });
-        }, 100);
+        });
+        if (chart.images && typeof chart.images === "object") {
+          const toastId = toastsRef.current.create({
+            title: "Importing images...",
+            type: "loading",
+            placement: "bottom-end",
+          });
+          await Promise.all(
+            Object.entries(chart.images).map(async ([key, value]) => {
+              await storeImageToDB({
+                id: key,
+                content: value,
+              });
+            })
+          );
+          setTimeout(() => {
+            toastsRef.current.dismiss(toastId);
+            toastsRef.current.create({
+              title: "Imported all images from chart",
+              type: "info",
+              placement: "bottom-end",
+            });
+          });
+        }
       } catch (e) {
         console.error(e);
       }
@@ -202,7 +254,7 @@ const ImportExportMenu = () => {
     [toasts, toastsRef]
   );
 
-  const exportSelectedChart = useCallback(() => {
+  const exportSelectedChart = useCallback(async () => {
     const selectedChart = getSelectedChart();
     const toastId = toasts.create({
       title: "Exporting chart",
@@ -212,11 +264,12 @@ const ImportExportMenu = () => {
     });
     try {
       if (!selectedChart) throw new Error("No chart selected");
-      const chartJSON = JSON.stringify(
-        { ...selectedChart, id: undefined },
-        null,
-        2
-      );
+      const images = await getImagesFromChart(selectedChart);
+      const chartJSON = JSON.stringify({
+        ...selectedChart,
+        id: undefined,
+        images,
+      });
       saveAsFile(chartJSON, `${selectedChart.title}.json`, "application/json");
       setTimeout(() => {
         toastsRef.current.dismiss(toastId);
@@ -226,7 +279,7 @@ const ImportExportMenu = () => {
           type: "info",
           placement: "bottom-end",
         });
-      }, 100);
+      });
     } catch (error) {
       console.error(error);
     }
