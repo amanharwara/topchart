@@ -1,4 +1,10 @@
-import { Dialog, DialogDismiss, DialogHeading, useDialogState } from "ariakit";
+import {
+  Dialog,
+  DialogDismiss,
+  DialogHeading,
+  DialogOptions,
+  useDialogState,
+} from "ariakit";
 import { ReactNode } from "react";
 import CloseIcon from "../icons/CloseIcon";
 
@@ -7,9 +13,9 @@ type Props = {
   isOpen: boolean;
   setOpen: (open: boolean) => void;
   children: ReactNode;
-};
+} & Omit<DialogOptions<"div">, "state">;
 
-const Modal = ({ title, isOpen, setOpen, children }: Props) => {
+const Modal = ({ title, isOpen, setOpen, children, ...props }: Props) => {
   const state = useDialogState({
     open: isOpen,
     setOpen,
@@ -19,6 +25,7 @@ const Modal = ({ title, isOpen, setOpen, children }: Props) => {
     <Dialog
       state={state}
       className="absolute top-1/2 left-1/2 flex max-h-[95vh] min-w-full -translate-y-1/2 -translate-x-1/2 flex-col rounded-sm dark:bg-slate-700 bg-slate-100 dark:text-white shadow sm:min-w-96"
+      {...props}
     >
       <div className="flex w-full items-center border-b border-gray-800 dark:border-slate-600">
         <DialogHeading className="flex-grow px-3 text-sm font-semibold">

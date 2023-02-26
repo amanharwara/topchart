@@ -5,9 +5,10 @@ import classNames from "../utils/classNames";
 type Props = {
   value: boolean;
   onChange: (checked: boolean) => void;
+  className?: string;
 } & Omit<ComponentPropsWithoutRef<"input">, "value" | "onChange">;
 
-const Toggle = ({ value, onChange, ...props }: Props) => {
+const Toggle = ({ value, onChange, className, ...props }: Props) => {
   const state = useCheckboxState<boolean>({
     value,
     setValue(value) {
@@ -20,7 +21,8 @@ const Toggle = ({ value, onChange, ...props }: Props) => {
       className={classNames(
         "focus-within-ring relative min-h-5 min-w-10 rounded-xl border border-slate-700 dark:border-slate-100 transition-colors duration-150 ease-out",
         value ? "bg-slate-100" : "",
-        props.disabled && "border-gray-500"
+        props.disabled && "border-gray-500",
+        className
       )}
     >
       <VisuallyHidden>

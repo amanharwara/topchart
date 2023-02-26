@@ -24,5 +24,7 @@ export const getImageFromDB = async (id: Image["id"]) => {
 };
 
 export const storeImageToDB = async (image: Image) => {
+  if (image.content.indexOf("data:image") === -1)
+    throw new Error("Content is not an image");
   return (await imageDB()).put("images", image.content, image.id);
 };

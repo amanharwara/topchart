@@ -1,34 +1,25 @@
 import BugsIcon from "../icons/BugsIcon";
 import DownloadIcon from "../icons/DownloadIcon";
 import HamburgerMenuIcon from "../icons/HamburgerMenuIcon";
-import ImportIcon from "../icons/ImportIcon";
 import SettingsIcon from "../icons/SettingsIcon";
 import SponsorIcon from "../icons/SponsorIcon";
 import Button from "../components/Button";
 import IconButton from "../components/IconButton";
 import {
-  addNewChart,
   Chart,
-  CommonChartOptionsParser,
-  DiscriminatedChartOptionsParser,
   getSelectedChart,
   isMusicCollageChart,
-  setSelectedChartId,
   useSetIsDownloading,
 } from "../stores/charts";
 import { toPng } from "html-to-image";
 import { useSetSettingsModalOpen } from "../stores/settings";
 import Tooltip from "../components/Tooltip";
 import { Menu, MenuArrow, MenuItem, useMenuState } from "ariakit";
-import { useCallback, useRef } from "react";
+import { useRef } from "react";
 import GithubIcon from "../icons/GithubIcon";
 import KofiIcon from "../icons/KofiIcon";
-import ExportIcon from "../icons/ExportIcon";
-import { useToast } from "../components/Toast";
-import { useStateRef } from "../utils/useStateRef";
-import { saveAsFile } from "../utils/saveAsFile";
-import { getImageFromDB, storeImageToDB } from "../stores/imageDB";
-import { z } from "zod";
+import { getImageFromDB } from "../stores/imageDB";
+import { ImportExportMenu } from "./ImportExportMenu";
 
 function reportIssue() {
   window.open("https://github.com/amanharwara/topchart/issues", "_blank");
@@ -65,7 +56,7 @@ const SponsorMenu = () => {
       </Tooltip>
       <Menu
         state={menuState}
-        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 dark:border-0 z-50"
+        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
         portal={true}
       >
         <MenuArrow />
@@ -122,7 +113,7 @@ const MobileHamburgerMenu = () => {
       <Menu
         portal={true}
         state={menuState}
-        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 dark:border-0 z-50"
+        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
       >
         <MenuArrow />
         <MenuItem
@@ -149,193 +140,6 @@ const MobileHamburgerMenu = () => {
         >
           <SettingsIcon className="w-5 h-5" />
           App settings
-        </MenuItem>
-      </Menu>
-    </>
-  );
-};
-
-const getImagesFromChart = async (chart: Chart) => {
-  const images: {
-    [key in string]: string;
-  } = {};
-  if (isMusicCollageChart(chart)) {
-    await Promise.all(
-      chart.options.items.map(async (item) => {
-        if (!item.image) return;
-
-        const image = await getImageFromDB(item.image);
-
-        if (!image) return;
-
-        images[item.image] = image;
-      })
-    );
-  }
-  return images;
-};
-
-const ImportExportMenu = () => {
-  const anchorRef = useRef<HTMLButtonElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const menuState = useMenuState({
-    getAnchorRect() {
-      const refRect = anchorRef.current?.getBoundingClientRect();
-
-      return {
-        x: refRect?.x,
-        y: refRect?.y,
-        width: refRect?.width,
-        height: refRect?.height,
-      };
-    },
-  });
-
-  const toasts = useToast();
-  const toastsRef = useStateRef(toasts);
-
-  const importChartFromFile = useCallback(
-    async (file: File) => {
-      const toastId = toasts.create({
-        title: "Importing chart",
-        description: "Please wait...",
-        type: "loading",
-        placement: "bottom-end",
-      });
-      try {
-        const json = JSON.parse(await file.text());
-        const chart = CommonChartOptionsParser.omit({ id: true })
-          .and(DiscriminatedChartOptionsParser)
-          .and(
-            z.object({
-              images: z.unknown(),
-            })
-          )
-          .parse(json);
-        const chartId = addNewChart(chart);
-        setSelectedChartId(chartId);
-        setTimeout(() => {
-          toastsRef.current.dismiss(toastId);
-          toastsRef.current.create({
-            title: `Switched to "${chart.title}"`,
-            description: `Chart "${chart.title}" imported successfully!`,
-            type: "info",
-            placement: "bottom-end",
-          });
-        });
-        if (chart.images && typeof chart.images === "object") {
-          const toastId = toastsRef.current.create({
-            title: "Importing images...",
-            type: "loading",
-            placement: "bottom-end",
-          });
-          await Promise.all(
-            Object.entries(chart.images).map(async ([key, value]) => {
-              await storeImageToDB({
-                id: key,
-                content: value,
-              });
-            })
-          );
-          setTimeout(() => {
-            toastsRef.current.dismiss(toastId);
-            toastsRef.current.create({
-              title: "Imported all images from chart",
-              type: "info",
-              placement: "bottom-end",
-            });
-          });
-        }
-      } catch (e) {
-        console.error(e);
-        setTimeout(() => {
-          toastsRef.current.dismiss(toastId);
-          toastsRef.current.create({
-            title: "Could not import chart",
-            description: "There was an error while importing the chart...",
-            type: "error",
-            placement: "bottom-end",
-          });
-        });
-      }
-    },
-    [toasts, toastsRef]
-  );
-
-  const exportSelectedChart = useCallback(async () => {
-    const selectedChart = getSelectedChart();
-    const toastId = toasts.create({
-      title: "Exporting chart",
-      description: "Please wait...",
-      type: "loading",
-      placement: "bottom-end",
-    });
-    try {
-      if (!selectedChart) throw new Error("No chart selected");
-      const images = await getImagesFromChart(selectedChart);
-      const chartJSON = JSON.stringify({
-        ...selectedChart,
-        id: undefined,
-        images,
-      });
-      saveAsFile(chartJSON, `${selectedChart.title}.json`, "application/json");
-      setTimeout(() => {
-        toastsRef.current.dismiss(toastId);
-        toastsRef.current.create({
-          title: "Exported chart",
-          description: `Chart "${selectedChart.title}" exported successfully!`,
-          type: "info",
-          placement: "bottom-end",
-        });
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, [toasts, toastsRef]);
-
-  return (
-    <>
-      <IconButton
-        icon={ImportIcon}
-        label="Import/Export"
-        ref={anchorRef}
-        onClick={menuState.toggle}
-      />
-      <input
-        type="file"
-        accept="application/json"
-        className="invisible absolute w-px h-px"
-        ref={fileInputRef}
-        onChange={() => {
-          if (!fileInputRef.current || !fileInputRef.current.files) return;
-          const file = fileInputRef.current.files[0];
-          if (!file) return;
-          importChartFromFile(file);
-        }}
-      />
-      <Menu
-        portal={true}
-        state={menuState}
-        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 dark:border-0 z-50"
-      >
-        <MenuArrow />
-        <MenuItem
-          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
-          onClick={() => {
-            if (!fileInputRef.current) return;
-            fileInputRef.current.click();
-          }}
-        >
-          <ImportIcon className="w-5 h-5" />
-          Import chart
-        </MenuItem>
-        <MenuItem
-          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
-          onClick={exportSelectedChart}
-        >
-          <ExportIcon className="w-5 h-5" />
-          Export chart
         </MenuItem>
       </Menu>
     </>
