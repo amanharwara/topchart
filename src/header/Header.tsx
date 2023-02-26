@@ -22,7 +22,6 @@ import { useCallback, useRef } from "react";
 import GithubIcon from "../icons/GithubIcon";
 import KofiIcon from "../icons/KofiIcon";
 import ExportIcon from "../icons/ExportIcon";
-import { nanoid } from "nanoid";
 import { useToast } from "../components/Toast";
 import { useStateRef } from "../utils/useStateRef";
 import { saveAsFile } from "../utils/saveAsFile";
@@ -175,7 +174,7 @@ const ImportExportMenu = () => {
   const importChartFromFile = useCallback(
     async (file: File) => {
       const toastId = toasts.create({
-        title: "Exporting chart",
+        title: "Importing chart",
         description: "Please wait...",
         type: "loading",
         placement: "bottom-end",

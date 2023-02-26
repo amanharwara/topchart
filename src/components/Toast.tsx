@@ -26,9 +26,9 @@ const Toast = ({ actor }: { actor: toast.Service }) => {
       )}
       {...api.rootProps}
     >
-      <div className="flex flex-col gap-0.5 overflow-hidden">
+      <div className="flex flex-col gap-0.5 max-w-[30ch] overflow-hidden">
         <div
-          className="flex items-center gap-2 text-base font-semibold max-w-[30ch] overflow-hidden"
+          className="flex items-center gap-2 text-base font-semibold overflow-hidden"
           {...api.titleProps}
         >
           {api.type === "loading" && (
@@ -62,8 +62,6 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const api = toast.group.connect(state, send, normalizeProps);
-
-  // console.log(api);
 
   return (
     <ToastContext.Provider value={api}>
