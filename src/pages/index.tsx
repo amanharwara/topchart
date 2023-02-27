@@ -18,6 +18,22 @@ const Home: NextPage = () => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
+  useEffect(() => {
+    if (!CSS.supports("height: 100svh")) {
+      if (visualViewport) {
+        document.documentElement.style.setProperty(
+          "--viewport-height",
+          `${visualViewport.height}px`
+        );
+      } else {
+        document.documentElement.style.setProperty(
+          "--viewport-height",
+          `${window.innerHeight}px`
+        );
+      }
+    }
+  }, []);
+
   return (
     <>
       <Head>
