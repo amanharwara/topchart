@@ -9,7 +9,13 @@ const DynamicContent = dynamic(() => import("../HomePageContent"), {
   ssr: false,
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const Home: NextPage = () => {
   const darkMode = useDarkMode();

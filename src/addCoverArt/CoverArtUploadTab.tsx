@@ -45,7 +45,6 @@ const RecentlyUploadedImage = ({
     },
     {
       networkMode: "always",
-      refetchOnWindowFocus: false,
     }
   );
 
