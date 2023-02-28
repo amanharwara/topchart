@@ -5,7 +5,6 @@ import {
   TouchSensor,
   KeyboardSensor,
   DndContext,
-  closestCenter,
   DragEndEvent,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
@@ -153,11 +152,7 @@ const HomePageContent = () => {
   return (
     <ToastProvider>
       <Header />
-      <DndContext
-        sensors={dndSensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
+      <DndContext sensors={dndSensors} onDragEnd={handleDragEnd}>
         <ResponsiveContainer>
           <ChartOptionsSection />
           <main

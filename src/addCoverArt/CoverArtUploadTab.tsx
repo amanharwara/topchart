@@ -4,7 +4,11 @@
 import classNames from "../utils/classNames";
 import ImageIcon from "../icons/ImageIcon";
 import { DragEventHandler, useRef, useState } from "react";
-import { Image, storeImageToDB } from "../stores/imageDB";
+import {
+  getImageEntriesFromDB,
+  Image,
+  storeImageToDB,
+} from "../stores/imageDB";
 import { blobToDataURL } from "./blobToDataURL";
 import Button from "../components/Button";
 import {
@@ -12,6 +16,11 @@ import {
   useSetMusicCollageItem,
 } from "../stores/charts";
 import { useResultDrag } from "./useResultDrag";
+import { Disclosure, DisclosureContent, useDisclosureState } from "ariakit";
+import CaretDownIcon from "../icons/CaretDownIcon";
+import { useQuery } from "@tanstack/react-query";
+import { recentsStore } from "../stores/recents";
+import { useStore } from "zustand";
 
 export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,20 +68,22 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
 
   const handleFileInput = async (files: File[]) => {
     const image = getFirstImageFile(files);
-    if (image) {
-      try {
-        const content = await blobToDataURL(image);
+    if (!image) {
+      return;
+    }
+    try {
+      const content = await blobToDataURL(image);
 
-        const imageToStore = {
-          id: image.name,
-          content,
-        };
+      const imageToStore = {
+        id: image.name,
+        content,
+      };
 
-        storeImageToDB(imageToStore);
-        setCurrentImage(imageToStore);
-      } catch (error) {
-        console.error(error);
-      }
+      await storeImageToDB(imageToStore);
+      setCurrentImage(imageToStore);
+      recentsStore.getState().addRecentlyUploadedImage(imageToStore.id);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -102,6 +113,25 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
     title: currentImage?.id,
     image: currentImage?.id,
   });
+
+  const recentlyUploadedImageIds = useStore(
+    recentsStore,
+    (s) => s.recentlyUploadedImages
+  );
+  const showRecentDisclosureState = useDisclosureState();
+  const { data: recentlyUploadedImages = [] } = useQuery(
+    recentlyUploadedImageIds,
+    async () => {
+      try {
+        return await getImageEntriesFromDB(recentlyUploadedImageIds);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    {
+      networkMode: "always",
+    }
+  );
 
   return (
     <div className="flex flex-col gap-2.5 p-4">
@@ -135,6 +165,45 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
         <div className="font-semibold">Click to browse images</div>
         <div className="hidden md:block text-sm">Or drop your files here</div>
       </button>
+      {recentlyUploadedImages && recentlyUploadedImages.length > 0 && (
+        <div className="rounded px-2 py-1 border border-slate-600 dark:bg-slate-600 max-w-sm">
+          <Disclosure
+            className="w-full flex items-center justify-between text-sm font-semibold"
+            state={showRecentDisclosureState}
+          >
+            <div>Recently uploaded</div>
+            <CaretDownIcon
+              className={classNames(
+                "w-4 h-4 transition-transform",
+                showRecentDisclosureState.open && "rotate-180"
+              )}
+            />
+          </Disclosure>
+          <DisclosureContent
+            className="grid grid-cols-3 gap-2 pt-1.5 pb-1"
+            state={showRecentDisclosureState}
+          >
+            {recentlyUploadedImages.map(([key, image]) => {
+              if (!image) return null;
+              return (
+                <button
+                  className="aspect-square rounded border-0 bg-slate-600 overflow-hidden"
+                  key={key}
+                  onClick={() => {
+                    setCurrentImage({
+                      id: key,
+                      content: image,
+                    });
+                    showRecentDisclosureState.toggle();
+                  }}
+                >
+                  <img src={image} className="w-full h-full" />
+                </button>
+              );
+            })}
+          </DisclosureContent>
+        </div>
+      )}
       {currentImage && (
         <div className="flex flex-col items-center gap-2 px-2.5 pb-5">
           <div className="text-sm">

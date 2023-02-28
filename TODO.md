@@ -1,8 +1,6 @@
 ## High Priority
 
-- Rip out everything and start again with mobile-first markup
-- Implement download
-- Implement backup/restore
+-
 
 ## Medium Priority
 
@@ -12,4 +10,4 @@
 
 - List 10 recently used colors for background/foreground color
 - Randomize search suggestions
-- Potentially rewrite chart store using Jotai
+-
