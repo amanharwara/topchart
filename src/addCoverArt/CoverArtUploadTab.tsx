@@ -215,17 +215,27 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
             />
           </Disclosure>
           <DisclosureContent
-            className="grid grid-cols-3 gap-2 pt-1.5 pb-1"
+            className="flex flex-col gap-2.5 pt-1.5 pb-1"
             state={showRecentDisclosureState}
           >
-            {recentlyUploadedImageIds.map((id) => (
-              <RecentlyUploadedImage
-                id={id}
-                key={id}
-                setCurrentImage={setCurrentImage}
-                toggleDisclosure={showRecentDisclosureState.toggle}
-              />
-            ))}
+            <div className="grid grid-cols-3 gap-2">
+              {recentlyUploadedImageIds.map((id) => (
+                <RecentlyUploadedImage
+                  id={id}
+                  key={id}
+                  setCurrentImage={setCurrentImage}
+                  toggleDisclosure={showRecentDisclosureState.toggle}
+                />
+              ))}
+            </div>
+            <Button
+              className="border-slate-500 hover:!bg-slate-500 justify-center"
+              onClick={() => {
+                recentsStore.getState().clearRecentlyUploadedImages();
+              }}
+            >
+              Clear recents
+            </Button>
           </DisclosureContent>
         </div>
       )}
