@@ -3,12 +3,14 @@
 
 import classNames from "../utils/classNames";
 import ImageIcon from "../icons/ImageIcon";
-import { DragEventHandler, useRef, useState } from "react";
 import {
-  getImageEntriesFromDB,
-  Image,
-  storeImageToDB,
-} from "../stores/imageDB";
+  Dispatch,
+  DragEventHandler,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
+import { getImageFromDB, Image, storeImageToDB } from "../stores/imageDB";
 import { blobToDataURL } from "./blobToDataURL";
 import Button from "../components/Button";
 import {
@@ -21,6 +23,53 @@ import CaretDownIcon from "../icons/CaretDownIcon";
 import { useQuery } from "@tanstack/react-query";
 import { recentsStore } from "../stores/recents";
 import { useStore } from "zustand";
+import Spinner from "../components/Spinner";
+
+const RecentlyUploadedImage = ({
+  id,
+  setCurrentImage,
+  toggleDisclosure,
+}: {
+  id: string;
+  setCurrentImage: Dispatch<SetStateAction<Image | undefined>>;
+  toggleDisclosure: () => void;
+}) => {
+  const { data: image, isFetching } = useQuery(
+    [id],
+    async () => {
+      try {
+        return await getImageFromDB(id);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    {
+      networkMode: "always",
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  if (!isFetching && !image) return null;
+
+  return (
+    <button
+      className="relative aspect-square rounded border-0 bg-slate-600 overflow-hidden"
+      onClick={() => {
+        if (!image) return;
+        setCurrentImage({
+          id,
+          content: image,
+        });
+        toggleDisclosure();
+      }}
+    >
+      {isFetching && (
+        <Spinner className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5" />
+      )}
+      {image && <img src={image} className="w-full h-full" />}
+    </button>
+  );
+};
 
 export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,19 +168,6 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
     (s) => s.recentlyUploadedImages
   );
   const showRecentDisclosureState = useDisclosureState();
-  const { data: recentlyUploadedImages = [] } = useQuery(
-    recentlyUploadedImageIds,
-    async () => {
-      try {
-        return await getImageEntriesFromDB(recentlyUploadedImageIds);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    {
-      networkMode: "always",
-    }
-  );
 
   return (
     <div className="flex flex-col gap-2.5 p-4">
@@ -165,7 +201,7 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
         <div className="font-semibold">Click to browse images</div>
         <div className="hidden md:block text-sm">Or drop your files here</div>
       </button>
-      {recentlyUploadedImages && recentlyUploadedImages.length > 0 && (
+      {recentlyUploadedImageIds.length > 0 && (
         <div className="rounded px-2 py-1 border border-slate-600 dark:bg-slate-600 max-w-sm">
           <Disclosure
             className="w-full flex items-center justify-between text-sm font-semibold"
@@ -183,24 +219,14 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
             className="grid grid-cols-3 gap-2 pt-1.5 pb-1"
             state={showRecentDisclosureState}
           >
-            {recentlyUploadedImages.map(([key, image]) => {
-              if (!image) return null;
-              return (
-                <button
-                  className="aspect-square rounded border-0 bg-slate-600 overflow-hidden"
-                  key={key}
-                  onClick={() => {
-                    setCurrentImage({
-                      id: key,
-                      content: image,
-                    });
-                    showRecentDisclosureState.toggle();
-                  }}
-                >
-                  <img src={image} className="w-full h-full" />
-                </button>
-              );
-            })}
+            {recentlyUploadedImageIds.map((id) => (
+              <RecentlyUploadedImage
+                id={id}
+                key={id}
+                setCurrentImage={setCurrentImage}
+                toggleDisclosure={showRecentDisclosureState.toggle}
+              />
+            ))}
           </DisclosureContent>
         </div>
       )}
