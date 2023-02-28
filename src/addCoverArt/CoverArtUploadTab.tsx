@@ -200,6 +200,36 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
         <div className="font-semibold">Click to browse images</div>
         <div className="hidden md:block text-sm">Or drop your files here</div>
       </button>
+      {currentImage && (
+        <div className="flex flex-col items-center gap-2 px-2.5 pb-5">
+          <div className="text-sm">
+            {!isAddingToSpecificItem
+              ? "Drag this to your desired cell:"
+              : "Preview:"}
+          </div>
+          <div className="h-36 w-36 rounded border-0 bg-slate-600">
+            <img
+              {...dragAttributes}
+              className="h-36 w-36 rounded border-0"
+              src={currentImage.content}
+            />
+          </div>
+          {isAddingToSpecificItem && (
+            <Button
+              className="mt-1 text-base"
+              onClick={() => {
+                setMusicCollageItem(itemIndex, {
+                  title: currentImage.id,
+                  image: currentImage.id,
+                });
+                setAddingCoverTo(-1);
+              }}
+            >
+              Add cover
+            </Button>
+          )}
+        </div>
+      )}
       {recentlyUploadedImageIds.length > 0 && (
         <div className="rounded px-2 py-1 border border-slate-600 dark:bg-slate-600 max-w-sm">
           <Disclosure
@@ -237,36 +267,6 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
               Clear recents
             </Button>
           </DisclosureContent>
-        </div>
-      )}
-      {currentImage && (
-        <div className="flex flex-col items-center gap-2 px-2.5 pb-5">
-          <div className="text-sm">
-            {!isAddingToSpecificItem
-              ? "Drag this to your desired cell:"
-              : "Preview:"}
-          </div>
-          <div className="h-36 w-36 rounded border-0 bg-slate-600">
-            <img
-              {...dragAttributes}
-              className="h-36 w-36 rounded border-0"
-              src={currentImage.content}
-            />
-          </div>
-          {isAddingToSpecificItem && (
-            <Button
-              className="mt-1 text-base"
-              onClick={() => {
-                setMusicCollageItem(itemIndex, {
-                  title: currentImage.id,
-                  image: currentImage.id,
-                });
-                setAddingCoverTo(-1);
-              }}
-            >
-              Add cover
-            </Button>
-          )}
         </div>
       )}
     </div>
