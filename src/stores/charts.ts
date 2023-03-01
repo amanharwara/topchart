@@ -282,7 +282,11 @@ const useChartStore = create<ChartStore>()(
         Object.fromEntries(
           Object.entries(state).filter(
             ([key]) =>
-              !["musicCollageEditingTitleFor", "isDownloading"].includes(key)
+              ![
+                "musicCollageEditingTitleFor",
+                "musicCollageAddingCoverTo",
+                "isDownloading",
+              ].includes(key)
           )
         ),
     }

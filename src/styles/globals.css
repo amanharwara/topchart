@@ -28,3 +28,21 @@ main {
 [data-backdrop] {
   @apply bg-gray-600/75 dark:bg-gray-900/75;
 }
+
+.square-aspect-ratio {
+  aspect-ratio: square;
+}
+
+@supports not (aspect-ratio: 1 / 1) {
+  .square-aspect-ratio::before {
+    float: left;
+    padding-top: 100%;
+    content: "";
+  }
+
+  .square-aspect-ratio::after {
+    display: block;
+    content: "";
+    clear: both;
+  }
+}

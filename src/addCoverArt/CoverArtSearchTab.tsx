@@ -97,7 +97,7 @@ const SearchResult = ({
   return (
     <div
       className={classNames(
-        "flex items-center justify-center rounded select-none bg-slate-600",
+        "flex items-center justify-center rounded select-none bg-slate-600 square-aspect-ratio",
         isAddingToSpecificItem && "cursor-pointer"
       )}
       {...dragAttributes}

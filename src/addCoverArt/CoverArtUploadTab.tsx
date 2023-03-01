@@ -52,7 +52,7 @@ const RecentlyUploadedImage = ({
 
   return (
     <button
-      className="relative aspect-square rounded border-0 bg-slate-600 overflow-hidden"
+      className="relative square-aspect-ratio rounded border-0 bg-slate-600 overflow-hidden"
       onClick={() => {
         if (!image) return;
         setCurrentImage({
