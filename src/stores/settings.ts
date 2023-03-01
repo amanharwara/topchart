@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface SettingsStore {
@@ -20,7 +20,6 @@ const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: "settings",
-      getStorage: () => localStorage,
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
