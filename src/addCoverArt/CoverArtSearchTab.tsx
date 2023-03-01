@@ -18,6 +18,7 @@ import {
 } from "../stores/charts";
 import classNames from "../utils/classNames";
 import { useResultDrag } from "./useResultDrag";
+import { recentsStore } from "../stores/recents";
 
 const LastFmImage = z.object({
   "#text": z.string(),
@@ -97,7 +98,7 @@ const SearchResult = ({
   return (
     <div
       className={classNames(
-        "flex items-center justify-center rounded select-none bg-slate-600 square-aspect-ratio",
+        "relative square-aspect-ratio rounded select-none bg-slate-600",
         isAddingToSpecificItem && "cursor-pointer"
       )}
       {...dragAttributes}
@@ -112,7 +113,9 @@ const SearchResult = ({
         setAddingCoverTo(-1);
       }}
     >
-      {isFetching && <Spinner className="w-7 h-7" />}
+      {isFetching && (
+        <Spinner className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7" />
+      )}
       {image && (
         <img alt={alt} src={image.content} className="rounded h-full w-full" />
       )}
@@ -122,7 +125,11 @@ const SearchResult = ({
 
 export const CoverArtSearchTab = ({ itemIndex }: { itemIndex: number }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(() =>
+    itemIndex > -1 && recentsStore.getState().lastSearchQuery
+      ? recentsStore.getState().lastSearchQuery
+      : ""
+  );
 
   const {
     isFetching,
@@ -151,6 +158,12 @@ export const CoverArtSearchTab = ({ itemIndex }: { itemIndex: number }) => {
             ...album,
             image: album.image[3]?.["#text"],
           }));
+
+        if (itemIndex > -1) {
+          recentsStore.setState({
+            lastSearchQuery: searchQuery,
+          });
+        }
 
         return results;
       } catch (error) {
@@ -228,11 +241,11 @@ export const CoverArtSearchTab = ({ itemIndex }: { itemIndex: number }) => {
               <span
                 className="cursor-pointer border-b border-dotted dark:border-slate-300 border-slate-400 font-semibold"
                 onClick={() => {
-                  setSearchQuery("It's Almost Dry by Pusha T");
+                  setSearchQuery("Another Green World");
                   searchInputRef.current?.focus();
                 }}
               >
-                It&apos;s Almost Dry by Pusha T
+                Another Green World
               </span>
               &quot;
             </div>

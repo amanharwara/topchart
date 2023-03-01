@@ -6,6 +6,8 @@ type RecentsStore = {
   recentlyUploadedImages: string[];
   addRecentlyUploadedImage: (id: string) => void;
   clearRecentlyUploadedImages: () => void;
+
+  lastSearchQuery: string;
 };
 
 export const recentsStore = createStore<RecentsStore>()(
@@ -31,9 +33,17 @@ export const recentsStore = createStore<RecentsStore>()(
           recentlyUploadedImages: [],
         });
       },
+
+      lastSearchQuery: "",
     }),
     {
       name: "recents",
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(
+            ([key]) => !["lastSearchQuery"].includes(key)
+          )
+        ),
     }
   )
 );
