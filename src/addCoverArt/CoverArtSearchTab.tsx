@@ -116,7 +116,7 @@ const SearchResult = ({
         setAddingCoverTo(-1);
       }}
     >
-      {isFetching && <Spinner className="w-7 h-7" />}
+      {isFetching && !image && <Spinner className="w-7 h-7" />}
       {image && (
         <img
           {...dragAttributes}
