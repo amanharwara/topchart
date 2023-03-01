@@ -159,7 +159,9 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const dragAttributes = useResultDrag({
     isDraggable: !!currentImage && !isAddingToSpecificItem,
     title: currentImage?.id,
-    image: currentImage?.id,
+    image: {
+      id: currentImage?.id,
+    },
   });
 
   const recentlyUploadedImageIds = useStore(

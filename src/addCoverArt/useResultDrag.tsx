@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS as CSSUtils } from "@dnd-kit/utilities";
+import { useId } from "react";
 
 export const useResultDrag = ({
   isDraggable,
@@ -7,11 +8,15 @@ export const useResultDrag = ({
   image,
 }: {
   isDraggable: boolean;
+  image: {
+    id: string | undefined;
+    content?: string;
+  };
   title?: string;
-  image?: string;
 }) => {
+  const id = useId();
   const { attributes, listeners, transform, setNodeRef } = useDraggable({
-    id: "cover-art-result",
+    id: `cover-art-result-${id}`,
     data: {
       title,
       image,

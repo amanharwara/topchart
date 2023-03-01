@@ -27,6 +27,7 @@ import {
   useMoveMusicCollageItem,
   useSetMusicCollageItem,
 } from "./stores/charts";
+import { storeImageToDB } from "./stores/imageDB";
 import classNames from "./utils/classNames";
 import { mergeRefs } from "./utils/mergeRefs";
 import { useMediaQuery } from "./utils/useMediaQuery";
@@ -132,13 +133,22 @@ const HomePageContent = () => {
       const items = selectedChart.options.items;
       const overIndex = items.findIndex((item) => item.id === over.id);
 
-      if (active.id === "cover-art-result") {
+      if (
+        typeof active.id === "string" &&
+        active.id.startsWith("cover-art-result")
+      ) {
         const data = active.data.current;
-        if (!data || !data.image || !data.title) return;
+        if (!data || !data.image || !data.image.id || !data.title) return;
         if (overIndex === -1) return;
+        if (data.image.content) {
+          storeImageToDB({
+            id: data.image.id,
+            content: data.image.content,
+          });
+        }
         setMusicCollageItem(overIndex, {
           title: data.title,
-          image: data.image,
+          image: data.image.id,
         });
         return;
       }

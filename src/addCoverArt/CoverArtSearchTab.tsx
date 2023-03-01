@@ -70,7 +70,6 @@ const SearchResult = ({
         content,
       };
 
-      await storeImageToDB(imageToStore);
       return imageToStore;
     },
     {
@@ -90,7 +89,10 @@ const SearchResult = ({
   const dragAttributes = useResultDrag({
     isDraggable: !!image && !isAddingToSpecificItem,
     title: alt,
-    image: image?.id,
+    image: {
+      id: image?.id,
+      content: image?.content,
+    },
   });
 
   if (error) return null;
@@ -98,12 +100,13 @@ const SearchResult = ({
   return (
     <div
       className={classNames(
-        "relative square-aspect-ratio rounded select-none bg-slate-600",
+        "flex items-center justify-center square-aspect-ratio rounded select-none bg-slate-600",
         isAddingToSpecificItem && "cursor-pointer"
       )}
-      {...dragAttributes}
       onClick={() => {
         if (!isAddingToSpecificItem || !image) return;
+
+        storeImageToDB(image);
 
         setMusicCollageItem(itemIndex, {
           title: alt,
@@ -113,11 +116,14 @@ const SearchResult = ({
         setAddingCoverTo(-1);
       }}
     >
-      {isFetching && (
-        <Spinner className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7" />
-      )}
+      {isFetching && <Spinner className="w-7 h-7" />}
       {image && (
-        <img alt={alt} src={image.content} className="rounded h-full w-full" />
+        <img
+          {...dragAttributes}
+          alt={alt}
+          src={image.content}
+          className="rounded h-full w-full"
+        />
       )}
     </div>
   );

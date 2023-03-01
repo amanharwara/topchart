@@ -64,7 +64,9 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
   const dragAttributes = useResultDrag({
     isDraggable: !!image && !isAddingToSpecificItem,
     title: image?.id,
-    image: image?.id,
+    image: {
+      id: image?.id,
+    },
   });
 
   return (
