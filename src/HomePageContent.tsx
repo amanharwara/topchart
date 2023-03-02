@@ -11,10 +11,8 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { memo, ReactNode, useCallback, useRef, useState } from "react";
 import AddCoverArt from "./addCoverArt/AddCoverArt";
 import ChartOptionsSection from "./chartOptions/ChartOptionsSection";
-import Button from "./components/Button";
 import Spinner from "./components/Spinner";
 import { ToastProvider } from "./components/Toast";
-import { isDev } from "./constants";
 import Header from "./header/Header";
 import ImageIcon from "./icons/ImageIcon";
 import SettingsIcon from "./icons/SettingsIcon";
@@ -178,21 +176,6 @@ const HomePageContent = () => {
               </div>
             )}
             <MusicCollage />
-            {isDev && (
-              <div className="mt-5 flex items-center gap-4 dark:text-white">
-                DevTools:
-                <Button
-                  onClick={() => {
-                    setMusicCollageItem(0, {
-                      title: "Brian Eno",
-                      image: "eno.jpg",
-                    });
-                  }}
-                >
-                  Add image to first
-                </Button>
-              </div>
-            )}
           </main>
           <section className="hidden md:flex min-h-0 flex-col border-l border-gray-800 dark:border-0 dark:bg-gray-800 bg-slate-100">
             <AddCoverArt />
