@@ -156,9 +156,10 @@ const CollageItem = ({
           </>
         )}
       </div>
-      {showTitle && shouldPositionTitleBelowCover && item.title && (
-        <div>{item.title}</div>
-      )}
+      {showTitle &&
+        shouldPositionTitleBelowCover &&
+        item.title &&
+        !isDragging && <div>{item.title}</div>}
     </div>
   );
 };
