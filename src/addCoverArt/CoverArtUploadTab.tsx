@@ -70,8 +70,48 @@ const RecentlyUploadedImage = ({
   );
 };
 
+const FileInputId = "classic-reader-file-input";
+function createFileInputOrReturnExisting(): HTMLInputElement {
+  let fileInput = document.getElementById(FileInputId) as HTMLInputElement;
+  if (fileInput) {
+    return fileInput;
+  }
+
+  fileInput = document.createElement("input");
+  fileInput.id = FileInputId;
+  fileInput.type = "file";
+  fileInput.style.position = "absolute";
+  fileInput.style.top = "0";
+  fileInput.style.left = "0";
+  fileInput.style.height = "1px";
+  fileInput.style.width = "1px";
+  fileInput.style.opacity = "0";
+  fileInput.style.zIndex = "-50";
+  fileInput.multiple = true;
+  document.body.appendChild(fileInput);
+
+  return fileInput;
+}
+
+function selectFiles(): Promise<File[]> {
+  const input = createFileInputOrReturnExisting();
+
+  return new Promise((resolve) => {
+    input.onchange = async (event) => {
+      const target = event.target as HTMLInputElement;
+      const files = [];
+      for (const file of Array.from(target.files as FileList)) {
+        files.push(file);
+      }
+      resolve(files);
+      // Reset input value so that onchange is triggered again if the same file is selected
+      input.value = "";
+    };
+    input.click();
+  });
+}
+
 export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounterRef = useRef(0);
 
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
@@ -171,24 +211,16 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const showRecentDisclosureState = useDisclosureState();
 
   return (
-    <div className="flex flex-col gap-2.5 p-4 overflow-y-auto max-h-[70vh]">
-      <input
-        type="file"
-        className="hidden"
-        accept="image/*"
-        ref={fileInputRef}
-        onChange={() => {
-          if (!fileInputRef.current || !fileInputRef.current.files) return;
-          handleFileInput(Array.from(fileInputRef.current.files));
-        }}
-      />
+    <div className="flex flex-col gap-2.5 p-4 overflow-y-auto max-h-[70vh] relative">
       <button
         className={classNames(
           "flex w-full cursor-pointer flex-col items-center gap-1 rounded border-2 border-dashed border-slate-600 py-6 transition-colors duration-150 hover:border-slate-500",
           isDraggingFiles && "border-slate-500"
         )}
         onClick={() => {
-          fileInputRef.current?.click();
+          selectFiles().then((files) => {
+            handleFileInput(files);
+          });
         }}
         onDrag={preventDefaultOnDrag}
         onDragEnter={handleDragEnter}
