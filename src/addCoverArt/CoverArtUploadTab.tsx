@@ -171,7 +171,7 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
   const showRecentDisclosureState = useDisclosureState();
 
   return (
-    <div className="flex flex-col gap-2.5 p-4">
+    <div className="flex flex-col gap-2.5 p-4 overflow-y-auto max-h-[70vh]">
       <input
         type="file"
         className="hidden"
