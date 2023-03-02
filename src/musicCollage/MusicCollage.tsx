@@ -95,12 +95,14 @@ const CollageItem = ({
       }}
       onBlur={(event) => {
         event.stopPropagation();
-        setIsFocusWithinItem(false);
+        if (!itemRef.current?.contains(event.relatedTarget)) {
+          setIsFocusWithinItem(false);
+        }
       }}
       ref={itemRef}
     >
       <div className="absolute right-3 top-3 flex items-center gap-2 z-[1]">
-        {item.image && !shouldHideButtons && (
+        {item.image && !shouldHideButtons && isFocusWithinItem && (
           <>
             {allowEditingTitles && (
               <IconButton
