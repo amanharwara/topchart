@@ -10,7 +10,7 @@ import {
   setSelectedChartId,
   useSelectedChart,
 } from "../stores/charts";
-import { Menu, MenuArrow, MenuItem, useMenuState } from "ariakit";
+import { Menu, MenuArrow, MenuItem, useMenuStore } from "@ariakit/react";
 import { useCallback, useRef, useState } from "react";
 import ExportIcon from "../icons/ExportIcon";
 import { useToast } from "../components/Toast";
@@ -122,7 +122,7 @@ const ExportModal = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       title={`Export chart "${selectedChart?.title}"`}
       isOpen={true}
       setOpen={setOpen}
-      initialFocusRef={exportButtonRef}
+      initialFocus={exportButtonRef}
     >
       <div className="px-2.5 py-3">
         <div className="flex flex-col gap-1">
@@ -157,7 +157,7 @@ export const ImportExportMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const menuState = useMenuState({
+  const menuState = useMenuStore({
     getAnchorRect() {
       const refRect = anchorRef.current?.getBoundingClientRect();
 
@@ -267,7 +267,7 @@ export const ImportExportMenu = () => {
       />
       <Menu
         portal={true}
-        state={menuState}
+        store={menuState}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
       >
         <MenuArrow />

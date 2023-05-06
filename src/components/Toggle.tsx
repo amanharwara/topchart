@@ -1,4 +1,4 @@
-import { Checkbox, useCheckboxState, VisuallyHidden } from "ariakit";
+import { Checkbox, useCheckboxStore, VisuallyHidden } from "@ariakit/react";
 import { ComponentPropsWithoutRef } from "react";
 import classNames from "../utils/classNames";
 
@@ -9,7 +9,7 @@ type Props = {
 } & Omit<ComponentPropsWithoutRef<"input">, "value" | "onChange">;
 
 const Toggle = ({ value, onChange, className, ...props }: Props) => {
-  const state = useCheckboxState<boolean>({
+  const state = useCheckboxStore<boolean>({
     value,
     setValue(value) {
       onChange(value);
@@ -26,7 +26,7 @@ const Toggle = ({ value, onChange, className, ...props }: Props) => {
       )}
     >
       <VisuallyHidden>
-        <Checkbox state={state} {...props} />
+        <Checkbox store={state} {...props} />
       </VisuallyHidden>
       <span
         aria-hidden

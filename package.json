@@ -16,7 +16,7 @@
     "@zag-js/react": "^0.3.10",
     "@zag-js/slider": "^0.2.15",
     "@zag-js/toast": "^0.2.14",
-    "ariakit": "^2.0.0-next.43",
+    "@ariakit/react": "^0.1.7",
     "html-to-image": "^1.11.11",
     "idb": "^7.1.1",
     "immer": "^9.0.19",

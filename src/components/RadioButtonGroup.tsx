@@ -1,5 +1,9 @@
-import { VisuallyHidden } from "ariakit/visually-hidden";
-import { Radio, RadioGroup, useRadioState } from "ariakit/radio";
+import {
+  VisuallyHidden,
+  Radio,
+  RadioGroup,
+  useRadioStore,
+} from "@ariakit/react";
 import classNames from "../utils/classNames";
 
 type Props = {
@@ -9,7 +13,7 @@ type Props = {
 };
 
 const RadioButtonGroup = ({ value, items, onChange }: Props) => {
-  const radio = useRadioState({
+  const radio = useRadioStore({
     value,
     orientation: "horizontal",
     setValue(value) {
@@ -19,7 +23,7 @@ const RadioButtonGroup = ({ value, items, onChange }: Props) => {
 
   return (
     <RadioGroup
-      state={radio}
+      store={radio}
       className="flex divide-x divide-slate-600 rounded border border-slate-600"
     >
       {items.map(({ label, value: itemValue }) => (

@@ -18,7 +18,11 @@ import {
   useSetMusicCollageItem,
 } from "../stores/charts";
 import { useResultDrag } from "./useResultDrag";
-import { Disclosure, DisclosureContent, useDisclosureState } from "ariakit";
+import {
+  Disclosure,
+  DisclosureContent,
+  useDisclosureStore,
+} from "@ariakit/react";
 import CaretDownIcon from "../icons/CaretDownIcon";
 import { useQuery } from "@tanstack/react-query";
 import { recentsStore } from "../stores/recents";
@@ -208,7 +212,8 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
     recentsStore,
     (s) => s.recentlyUploadedImages
   );
-  const showRecentDisclosureState = useDisclosureState();
+  const showRecentDisclosureState = useDisclosureStore();
+  const isShowingRecentDisclosure = showRecentDisclosureState.useState("open");
 
   return (
     <div className="flex flex-col gap-2.5 p-4 overflow-y-auto max-h-[70vh] relative">
@@ -268,19 +273,19 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
         <div className="rounded px-2 py-1 border border-slate-600 dark:bg-slate-600 max-w-sm">
           <Disclosure
             className="w-full flex items-center justify-between text-sm font-semibold"
-            state={showRecentDisclosureState}
+            store={showRecentDisclosureState}
           >
             <div>Recently uploaded</div>
             <CaretDownIcon
               className={classNames(
                 "w-4 h-4 transition-transform",
-                showRecentDisclosureState.open && "rotate-180"
+                isShowingRecentDisclosure && "rotate-180"
               )}
             />
           </Disclosure>
           <DisclosureContent
             className="flex flex-col gap-2.5 pt-1.5 pb-1"
-            state={showRecentDisclosureState}
+            store={showRecentDisclosureState}
           >
             <div className="grid grid-cols-3 gap-2">
               {recentlyUploadedImageIds.map((id) => (
