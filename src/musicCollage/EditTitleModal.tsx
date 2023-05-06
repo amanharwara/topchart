@@ -64,7 +64,7 @@ const EditTitleModal = () => {
           onChange={(event) => {
             setTitle(event.currentTarget.value);
           }}
-          // ref={inputElementRef}
+          ref={inputElementRef}
           placeholder="Add title..."
         />
         <Button type="submit" icon={SaveIcon}>

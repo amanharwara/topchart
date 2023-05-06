@@ -134,15 +134,26 @@ const DefaultOptionsForChartType: Partial<{ [key in ChartType]: () => any }> = {
 const getNewChartWithDefaults = ({
   id,
   title,
+  type,
 }: {
   id?: string;
   title?: string;
-}): Chart => ({
-  id: id ?? nanoid(),
-  title: title ?? "Untitled",
-  type: "musicCollage",
-  options: getMusicCollageDefaultOptions(),
-});
+  type?: ChartType;
+}): Chart => {
+  const typeToUse = type ?? "musicCollage";
+  const defaultOptions = typeToUse
+    ? DefaultOptionsForChartType[typeToUse]
+    : undefined;
+
+  return {
+    id: id ?? nanoid(),
+    title: title ?? "Untitled",
+    type: typeToUse,
+    options: defaultOptions
+      ? defaultOptions()
+      : getMusicCollageDefaultOptions(),
+  };
+};
 
 export const isMusicCollageChart = (
   chart: Chart | undefined
@@ -327,9 +338,10 @@ export const getSelectedChart = () => {
   return selectedChart;
 };
 
-export const addNewDefaultChart = () => {
+export const addNewDefaultChart = (title?: string, type?: ChartType) => {
   const newChart = getNewChartWithDefaults({
-    title: `Untitled ${useChartStore.getState().charts.length + 1}`,
+    title: title || `Untitled ${useChartStore.getState().charts.length + 1}`,
+    type: type,
   });
   useChartStore.setState((state) => ({
     charts: [...state.charts, newChart],
