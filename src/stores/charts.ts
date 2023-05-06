@@ -207,6 +207,12 @@ const useChartStore = create<ChartStore>()(
               (chart) => chart.id === state.selectedChartId
             );
             if (!selectedChart) return;
+            if (
+              !confirm(
+                "Changing the chart type will reset all options. Are you sure?"
+              )
+            )
+              return;
             selectedChart.type = type;
             const defaultsOptionsFunction = DefaultOptionsForChartType[type];
             if (defaultsOptionsFunction) {
