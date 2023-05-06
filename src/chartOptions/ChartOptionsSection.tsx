@@ -12,6 +12,10 @@ import {
   useSelectedChart,
   setSelectedChartId,
   useSetSelectedChartTitle,
+  EnabledChartTypes,
+  useSetSelectedChartType,
+  ChartType,
+  useSelectedChartType,
 } from "../stores/charts";
 import MusicCollageOptions from "./MusicCollageOptions";
 
@@ -120,24 +124,44 @@ const CurrentChartOption = () => {
   );
 };
 
+const ChartTypeOption = () => {
+  const chartType = useSelectedChartType();
+  const setSelectedChartType = useSetSelectedChartType();
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Chart type:</div>
+      <div className="flex gap-3">
+        <Select
+          value={chartType}
+          setValue={(type) => setSelectedChartType(type as ChartType)}
+          options={Object.entries(EnabledChartTypes).map(([value, label]) => ({
+            value,
+            label,
+          }))}
+        />
+      </div>
+    </div>
+  );
+};
+
+const OptionsForCurrentType = () => {
+  const chartType = useSelectedChartType();
+
+  switch (chartType) {
+    case "musicCollage":
+      return <MusicCollageOptions />;
+    default:
+      return null;
+  }
+};
+
 const ChartOptionsSection = () => {
   return (
     <section className="h-full flex flex-col flex-shrink-0 gap-6 overflow-y-auto border-r border-gray-800 dark:border-0 dark:md:bg-gray-800 dark:bg-slate-700 bg-slate-100 py-4 px-5 dark:text-white">
       <CurrentChartOption />
-      {/* <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Chart type:</div>
-        <div className="flex gap-3">
-          <Select
-            options={Object.entries({
-              musicCollage: "Music Collage",
-            }).map(([value, label]) => ({
-              value,
-              label,
-            }))}
-          />
-        </div>
-      </div> */}
-      <MusicCollageOptions />
+      <ChartTypeOption />
+      <OptionsForCurrentType />
     </section>
   );
 };

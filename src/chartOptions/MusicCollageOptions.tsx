@@ -50,7 +50,7 @@ const GapOption = () => {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="text-lg font-semibold">Gap Between Items:</div>
+      <div className="text-lg font-semibold">Gap Between Items</div>
       <RadioButtonGroup
         items={[
           {
@@ -84,7 +84,7 @@ const PaddingOption = () => {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="text-lg font-semibold">Padding:</div>
+      <div className="text-lg font-semibold">Padding</div>
       <RadioButtonGroup
         items={[
           {
@@ -127,7 +127,7 @@ const AlbumTitleOptions = () => {
   return (
     <>
       <div className="flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">Album Titles:</div>
+        <div className="text-lg font-semibold">Album Titles</div>
         <label className="flex select-none items-center gap-3">
           <Toggle
             value={showTitles}
@@ -186,7 +186,7 @@ const BackgroundOption = () => {
     <div className="flex flex-col gap-2.5">
       <div className="flex items-center justify-between">
         <div className="text-lg font-semibold">
-          Background {shouldUseColorForBg ? "Color" : "Image"}:
+          Background {shouldUseColorForBg ? "Color" : "Image"}
         </div>
         {shouldUseColorForBg ? (
           <IconButton
@@ -250,7 +250,7 @@ const FontOption = () => {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="text-lg font-semibold">Font style:</div>
+      <div className="text-lg font-semibold">Font style</div>
       <Select
         value={fontStyle}
         setValue={(value) =>
@@ -300,7 +300,7 @@ const ForegroundColorOption = () => {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="text-lg font-semibold">Text color:</div>
+      <div className="text-lg font-semibold">Text color</div>
       <div className="flex flex-grow gap-1.5">
         <Input
           className="min-w-0"
