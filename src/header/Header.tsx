@@ -5,20 +5,14 @@ import SettingsIcon from "../icons/SettingsIcon";
 import SponsorIcon from "../icons/SponsorIcon";
 import Button from "../components/Button";
 import IconButton from "../components/IconButton";
-import {
-  Chart,
-  getSelectedChart,
-  isMusicCollageChart,
-  useSetIsDownloading,
-} from "../stores/charts";
+import { getSelectedChart, useSetIsDownloading } from "../stores/charts";
 import { toPng } from "html-to-image";
 import { useSetSettingsModalOpen } from "../stores/settings";
 import Tooltip from "../components/Tooltip";
-import { Menu, MenuArrow, MenuItem, useMenuState } from "ariakit";
+import { Menu, MenuArrow, MenuItem, useMenuStore } from "@ariakit/react";
 import { useRef } from "react";
 import GithubIcon from "../icons/GithubIcon";
 import KofiIcon from "../icons/KofiIcon";
-import { getImageFromDB } from "../stores/imageDB";
 import { ImportExportMenu } from "./ImportExportMenu";
 
 function reportIssue() {
@@ -28,7 +22,7 @@ function reportIssue() {
 const SponsorMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
 
-  const menuState = useMenuState({
+  const menuState = useMenuStore({
     getAnchorRect() {
       const refRect = anchorRef.current?.getBoundingClientRect();
 
@@ -41,9 +35,11 @@ const SponsorMenu = () => {
     },
   });
 
+  const open = menuState.useState("open");
+
   return (
     <>
-      <Tooltip text="Donate or Sponsor" forceHide={menuState.open}>
+      <Tooltip text="Donate or Sponsor" forceHide={open}>
         <IconButton
           icon={SponsorIcon}
           label="Donate or Sponsor"
@@ -55,7 +51,7 @@ const SponsorMenu = () => {
         />
       </Tooltip>
       <Menu
-        state={menuState}
+        store={menuState}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
         portal={true}
       >
@@ -88,7 +84,7 @@ const MobileHamburgerMenu = () => {
 
   const anchorRef = useRef<HTMLButtonElement>(null);
 
-  const menuState = useMenuState({
+  const menuState = useMenuStore({
     getAnchorRect() {
       const refRect = anchorRef.current?.getBoundingClientRect();
 
@@ -112,7 +108,7 @@ const MobileHamburgerMenu = () => {
       />
       <Menu
         portal={true}
-        state={menuState}
+        store={menuState}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
       >
         <MenuArrow />

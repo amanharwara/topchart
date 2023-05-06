@@ -2,8 +2,8 @@ import {
   Tooltip as AriakitTooltip,
   TooltipAnchor,
   TooltipArrow,
-  useTooltipState,
-} from "ariakit";
+  useTooltipStore,
+} from "@ariakit/react";
 
 const Tooltip = ({
   text,
@@ -14,18 +14,18 @@ const Tooltip = ({
   children: React.ReactNode;
   forceHide?: boolean;
 }) => {
-  const state = useTooltipState({
+  const state = useTooltipStore({
     gutter: -1,
     open: forceHide ? false : undefined,
   });
 
   return (
     <>
-      <TooltipAnchor className="hidden md:block" state={state}>
+      <TooltipAnchor className="hidden md:block" store={state}>
         {children}
       </TooltipAnchor>
       <AriakitTooltip
-        state={state}
+        store={state}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 px-2.5 rounded border border-gray-800 dark:border-0"
       >
         <TooltipArrow />

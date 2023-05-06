@@ -3,8 +3,8 @@ import {
   SelectArrow,
   SelectItem,
   SelectPopover,
-  useSelectState,
-} from "ariakit/select";
+  useSelectStore,
+} from "@ariakit/react";
 
 type Props = {
   value?: string;
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const Select = ({ value, setValue, options }: Props) => {
-  const state = useSelectState({
+  const state = useSelectStore({
     defaultValue: value ? value : options[0]?.value,
     value,
     setValue,
@@ -22,14 +22,14 @@ const Select = ({ value, setValue, options }: Props) => {
   return (
     <div className="flex flex-grow z-[1]">
       <AriaKitSelect
-        state={state}
+        store={state}
         className="flex flex-grow appearance-none items-center justify-between rounded border border-slate-600 dark:bg-gray-800 px-2.5 py-2 text-sm dark:text-white"
       >
-        {options.find((option) => option.value === state.value)?.label}
+        {options.find((option) => option.value === value)?.label}
         <SelectArrow />
       </AriaKitSelect>
       <SelectPopover
-        state={state}
+        store={state}
         className="w-[var(--popover-anchor-width)] rounded border border-slate-600 dark:bg-gray-800 bg-slate-100 p-1"
       >
         {options.map(({ value, label }) => (

@@ -2,6 +2,28 @@
 # yarn lockfile v1
 
 
+"@ariakit/core@0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@ariakit/core/-/core-0.1.5.tgz#5139e2efb3eebb10f27ed4fb80ad43b8bc09ebbe"
+  integrity sha512-80qGSlyw+HU6vZ+ra3F9QdH01VWPd5Oz0PIZw1HfBDQcTGIvkETZJ+KuNipNF3qz2nsGb1MpRDv/mkuILVpHNw==
+
+"@ariakit/react-core@0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@ariakit/react-core/-/react-core-0.1.7.tgz#be510112b2a73a852881c617d801cda39a32d83f"
+  integrity sha512-/SgwxtDS9WxMok8/AUq1s7elWCBTthDLgcsL6j/7hoschnf2EbJjYmy9d46IIeAXng0SB72yQXUIBfORkH26Ig==
+  dependencies:
+    "@ariakit/core" "0.1.5"
+    use-sync-external-store "^1.2.0"
+
+"@ariakit/react@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@ariakit/react/-/react-0.1.7.tgz#23c6ba71b61c38959e86ab392173e13acde223f7"
+  integrity sha512-Fof9a8jKjPvYVd34+OcOpz+H+vOoBgm6Z/VYo9TnR3Ttlrl+FQeMmMII/QP/6auYzjjlNTZc1fo6f8GLDjtzSA==
+  dependencies:
+    "@ariakit/core" "0.1.5"
+    "@ariakit/react-core" "0.1.7"
+    "@floating-ui/dom" "^1.0.0"
+
 "@babel/runtime-corejs3@^7.10.2":
   version "7.18.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.18.9.tgz#7bacecd1cb2dd694eacd32a91fcf7021c20770ae"
@@ -602,27 +624,6 @@ aria-query@^4.2.2:
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@babel/runtime-corejs3" "^7.10.2"
-
-ariakit-react-utils@0.17.0-next.27:
-  version "0.17.0-next.27"
-  resolved "https://registry.yarnpkg.com/ariakit-react-utils/-/ariakit-react-utils-0.17.0-next.27.tgz#6749587a659ec9806439fe28209d155aff19f20e"
-  integrity sha512-YyL3sEowwaw6r8wRjENB9S4Hjz/ppyv5nJNeFkb6xaEX/QYUYmqL+lQch50LW04vj9oa8RGHlY2SmyQX3d7g3w==
-  dependencies:
-    ariakit-utils "0.17.0-next.27"
-
-ariakit-utils@0.17.0-next.27:
-  version "0.17.0-next.27"
-  resolved "https://registry.yarnpkg.com/ariakit-utils/-/ariakit-utils-0.17.0-next.27.tgz#c9971d41526f5f8afa9e8ae7596d15ed22b2f977"
-  integrity sha512-IcjtuHl7FZP5mGrpvTSXqPUj+jRuIuBHlJAlxr3y4pxRgYpsYVpyZOClU3yrOoG7KUVApfmJjPOGWy00y+Gi+Q==
-
-ariakit@^2.0.0-next.43:
-  version "2.0.0-next.43"
-  resolved "https://registry.yarnpkg.com/ariakit/-/ariakit-2.0.0-next.43.tgz#3da7410f72b9f61074cd62ac910a5e51729df7bd"
-  integrity sha512-CatNgIMyurefYTEvp8aF3aQQGR5m9bZxYQXuqyw/MKwxJ/aJ295SSSY5pXyTHbbsgDI28GOKFYa5pfUBvkd7cQ==
-  dependencies:
-    "@floating-ui/dom" "^1.0.0"
-    ariakit-react-utils "0.17.0-next.27"
-    ariakit-utils "0.17.0-next.27"
 
 array-includes@^3.1.4, array-includes@^3.1.5:
   version "3.1.5"
