@@ -54,13 +54,19 @@ export type MusicCollage = z.infer<typeof MusicCollageParser>;
 
 const ChartTypeParser = z.union([
   z.literal("musicCollage"),
-  z.literal("spotify-top-5-artists"),
-  z.literal("spotify-top-5-tracks"),
+  z.literal("spotify-artists"),
+  z.literal("spotify-tracks"),
   z.literal("lastfm-top-5"),
   z.literal("lastfm-collage"),
   z.literal("tier-list"),
 ]);
 export type ChartType = z.infer<typeof ChartTypeParser>;
+
+export const EnabledChartTypes: Partial<{ [key in ChartType]: string }> = {
+  musicCollage: "Music Collage",
+  "spotify-artists": "Spotify: Top Artists",
+  "spotify-tracks": "Spotify: Top Tracks",
+};
 
 export const CommonChartOptionsParser = z.object({
   id: z.string(),
@@ -72,11 +78,11 @@ export const DiscriminatedChartOptionsParser = z.discriminatedUnion("type", [
     options: MusicCollageParser,
   }),
   z.object({
-    type: z.literal("spotify-top-5-artists"),
+    type: z.literal("spotify-artists"),
     options: z.object({}),
   }),
   z.object({
-    type: z.literal("spotify-top-5-tracks"),
+    type: z.literal("spotify-tracks"),
     options: z.object({}),
   }),
   z.object({
@@ -100,39 +106,54 @@ export type Chart = z.infer<typeof ChartParser>;
 const MaxNumberOfRows = 10;
 const MaxNumberOfColumns = 10;
 
+const getMusicCollageDefaultOptions = (): MusicCollage => ({
+  rows: 3,
+  columns: 3,
+  gap: "small",
+  padding: "small",
+  items: new Array(MaxNumberOfRows * MaxNumberOfColumns).fill(null).map(() => ({
+    id: nanoid(),
+    title: "",
+    image: null,
+  })),
+  backgroundType: "color",
+  backgroundColor: "#000000",
+  backgroundImage: "",
+  fontStyle: "sans",
+  fontFamily: "Inter",
+  foregroundColor: "#FFFFFF",
+  showTitles: false,
+  positionTitlesBelowCover: false,
+  allowEditingTitles: false,
+});
+
+const DefaultOptionsForChartType: Partial<{ [key in ChartType]: () => any }> = {
+  musicCollage: getMusicCollageDefaultOptions,
+};
+
 const getNewChartWithDefaults = ({
   id,
   title,
+  type,
 }: {
   id?: string;
   title?: string;
-}): Chart => ({
-  id: id ?? nanoid(),
-  title: title ?? "Untitled",
-  type: "musicCollage",
-  options: {
-    rows: 3,
-    columns: 3,
-    gap: "small",
-    padding: "small",
-    items: new Array(MaxNumberOfRows * MaxNumberOfColumns)
-      .fill(null)
-      .map(() => ({
-        id: nanoid(),
-        title: "",
-        image: null,
-      })),
-    backgroundType: "color",
-    backgroundColor: "#000000",
-    backgroundImage: "",
-    fontStyle: "sans",
-    fontFamily: "Inter",
-    foregroundColor: "#FFFFFF",
-    showTitles: false,
-    positionTitlesBelowCover: false,
-    allowEditingTitles: false,
-  },
-});
+  type?: ChartType;
+}): Chart => {
+  const typeToUse = type ?? "musicCollage";
+  const defaultOptions = typeToUse
+    ? DefaultOptionsForChartType[typeToUse]
+    : undefined;
+
+  return {
+    id: id ?? nanoid(),
+    title: title ?? "Untitled",
+    type: typeToUse,
+    options: defaultOptions
+      ? defaultOptions()
+      : getMusicCollageDefaultOptions(),
+  };
+};
 
 export const isMusicCollageChart = (
   chart: Chart | undefined
@@ -196,7 +217,20 @@ const useChartStore = create<ChartStore>()(
             const selectedChart = state.charts.find(
               (chart) => chart.id === state.selectedChartId
             );
-            if (selectedChart) selectedChart.type = type;
+            if (!selectedChart) return;
+            if (
+              !confirm(
+                "Changing the chart type will reset all options. Are you sure?"
+              )
+            )
+              return;
+            selectedChart.type = type;
+            const defaultsOptionsFunction = DefaultOptionsForChartType[type];
+            if (defaultsOptionsFunction) {
+              selectedChart.options = defaultsOptionsFunction();
+            } else {
+              selectedChart.options = {};
+            }
           })
         );
       },
@@ -304,9 +338,10 @@ export const getSelectedChart = () => {
   return selectedChart;
 };
 
-export const addNewDefaultChart = () => {
+export const addNewDefaultChart = (title?: string, type?: ChartType) => {
   const newChart = getNewChartWithDefaults({
-    title: `Untitled ${useChartStore.getState().charts.length + 1}`,
+    title: title || `Untitled ${useChartStore.getState().charts.length + 1}`,
+    type: type,
   });
   useChartStore.setState((state) => ({
     charts: [...state.charts, newChart],
@@ -345,6 +380,15 @@ export const useChartsList = () => useChartStore((s) => s.charts);
 
 export const useSelectedChart = () =>
   useChartStore((s) => s.charts.find((c) => c.id === s.selectedChartId));
+
+export const useSelectedChartType = () =>
+  useChartStore((s) => {
+    const selectedChart = s.charts.find((c) => c.id === s.selectedChartId);
+    if (!selectedChart) {
+      throw new Error("Could not find selected chart");
+    }
+    return selectedChart.type;
+  });
 
 export const setSelectedChartId = (id: string) =>
   useChartStore.getState().setSelectedChartId(id);
