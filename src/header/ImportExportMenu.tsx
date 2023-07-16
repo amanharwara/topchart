@@ -157,18 +157,7 @@ export const ImportExportMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const menuState = useMenuStore({
-    getAnchorRect() {
-      const refRect = anchorRef.current?.getBoundingClientRect();
-
-      return {
-        x: refRect?.x,
-        y: refRect?.y,
-        width: refRect?.width,
-        height: refRect?.height,
-      };
-    },
-  });
+  const menuStore = useMenuStore();
 
   const toasts = useToast();
   const toastsRef = useStateRef(toasts);
@@ -251,7 +240,7 @@ export const ImportExportMenu = () => {
         icon={ImportIcon}
         label="Import/Export"
         ref={anchorRef}
-        onClick={menuState.toggle}
+        onClick={menuStore.toggle}
       />
       <input
         type="file"
@@ -267,10 +256,21 @@ export const ImportExportMenu = () => {
       />
       <Menu
         portal={true}
-        store={menuState}
+        store={menuStore}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
+        getAnchorRect={() => {
+          const refRect = anchorRef.current?.getBoundingClientRect();
+
+          return {
+            x: refRect?.x,
+            y: refRect?.y,
+            width: refRect?.width,
+            height: refRect?.height,
+          };
+        }}
+        gutter={4}
       >
-        <MenuArrow />
+        <MenuArrow className="hidden" />
         <MenuItem
           className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {

@@ -22,18 +22,7 @@ function reportIssue() {
 const SponsorMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
 
-  const menuState = useMenuStore({
-    getAnchorRect() {
-      const refRect = anchorRef.current?.getBoundingClientRect();
-
-      return {
-        x: refRect?.x,
-        y: refRect?.y,
-        width: refRect?.width,
-        height: refRect?.height,
-      };
-    },
-  });
+  const menuState = useMenuStore();
 
   const open = menuState.useState("open");
 
@@ -54,8 +43,19 @@ const SponsorMenu = () => {
         store={menuState}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
         portal={true}
+        getAnchorRect={() => {
+          const refRect = anchorRef.current?.getBoundingClientRect();
+
+          return {
+            x: refRect?.x,
+            y: refRect?.y,
+            width: refRect?.width,
+            height: refRect?.height,
+          };
+        }}
+        gutter={4}
       >
-        <MenuArrow />
+        <MenuArrow className="hidden" />
         <MenuItem
           className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
@@ -84,18 +84,7 @@ const MobileHamburgerMenu = () => {
 
   const anchorRef = useRef<HTMLButtonElement>(null);
 
-  const menuState = useMenuStore({
-    getAnchorRect() {
-      const refRect = anchorRef.current?.getBoundingClientRect();
-
-      return {
-        x: refRect?.x,
-        y: refRect?.y,
-        width: refRect?.width,
-        height: refRect?.height,
-      };
-    },
-  });
+  const menuState = useMenuStore();
 
   return (
     <>
@@ -110,8 +99,19 @@ const MobileHamburgerMenu = () => {
         portal={true}
         store={menuState}
         className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
+        getAnchorRect={() => {
+          const refRect = anchorRef.current?.getBoundingClientRect();
+
+          return {
+            x: refRect?.x,
+            y: refRect?.y,
+            width: refRect?.width,
+            height: refRect?.height,
+          };
+        }}
+        gutter={4}
       >
-        <MenuArrow />
+        <MenuArrow className="hidden" />
         <MenuItem
           className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
