@@ -1,5 +1,6 @@
 import {
   Select as AriaKitSelect,
+  PopoverArrow,
   SelectArrow,
   SelectItem,
   SelectPopover,
@@ -30,9 +31,10 @@ const Select = ({ value, setValue, options }: Props) => {
       </AriaKitSelect>
       <SelectPopover
         store={state}
-        className="w-[var(--popover-anchor-width)] rounded border border-slate-600 dark:bg-gray-800 bg-slate-100 p-1"
+        className="w-[--popover-anchor-width] rounded border border-slate-600 dark:bg-gray-800 bg-slate-100 p-1"
         portal={true}
       >
+        <PopoverArrow className="hidden" />
         {options.map(({ value, label }) => (
           <SelectItem
             value={value}
