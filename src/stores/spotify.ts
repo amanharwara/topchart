@@ -1,0 +1,260 @@
+import { z } from "zod";
+import { env } from "../env/client.mjs";
+import { useQuery } from "@tanstack/react-query";
+
+const SpotifyClientId = env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
+const SpotifyCodeVerifierKey = "spotify-code-verifier";
+const SpotifyAccessTokenKey = "spotify-access-token";
+const SpotifyAccessTokenExpiresAtKey = "spotify-access-token-expires-at";
+const SpotifyRefreshTokenKey = "spotify-refresh-token";
+const SpotifyUserKey = "spotify-user";
+
+const GetRedirectUri = () => `${window.location.origin}/?authorizeSpotify=true`;
+
+const SpotifyUserParser = z.object({
+  id: z.string(),
+  display_name: z.string().nullable(),
+});
+type SpotifyUser = z.infer<typeof SpotifyUserParser>;
+
+function generateRandomString(length: number) {
+  let text = "";
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
+
+function base64encode(string: ArrayBuffer) {
+  return btoa(
+    String.fromCharCode.apply(null, Array.from(new Uint8Array(string)))
+  )
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+async function generateCodeChallenge(codeVerifier: string) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await window.crypto.subtle.digest("SHA-256", data);
+
+  return base64encode(digest);
+}
+
+export function spotifyLogIn() {
+  const codeVerifier = generateRandomString(128);
+
+  generateCodeChallenge(codeVerifier)
+    .then((codeChallenge) => {
+      const state = generateRandomString(16);
+
+      localStorage.setItem(SpotifyCodeVerifierKey, codeVerifier);
+
+      const args = new URLSearchParams({
+        response_type: "code",
+        client_id: SpotifyClientId,
+        redirect_uri: GetRedirectUri(),
+        code_challenge_method: "S256",
+        code_challenge: codeChallenge,
+        scope: "user-top-read",
+        state,
+      });
+
+      window.location.href = `https://accounts.spotify.com/authorize?${args}`;
+    })
+    .catch(console.error);
+}
+
+export function spotifyLogOut() {
+  localStorage.removeItem(SpotifyAccessTokenKey);
+  localStorage.removeItem(SpotifyAccessTokenExpiresAtKey);
+  localStorage.removeItem(SpotifyRefreshTokenKey);
+  localStorage.removeItem(SpotifyUserKey);
+  window.location.reload();
+}
+
+export async function handleSpotifyAuthorization() {
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if (urlParams.get("authorizeSpotify") !== "true") {
+    return;
+  }
+
+  const code = urlParams.get("code");
+
+  if (!code) {
+    throw new Error("Missing spotify authorization code");
+  }
+
+  fetchAndSetSpotifyAccessToken(code)
+    .then(fetchSpotifyUser)
+    .catch(console.error)
+    .finally(() => {
+      window.location.href = window.location.origin;
+    });
+}
+
+async function fetchAndSetSpotifyAccessToken(code: string) {
+  const codeVerifier = localStorage.getItem(SpotifyCodeVerifierKey);
+
+  if (!codeVerifier) {
+    throw new Error("Missing spotify code verifier");
+  }
+
+  const body = new URLSearchParams({
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: GetRedirectUri(),
+    client_id: SpotifyClientId,
+    code_verifier: codeVerifier,
+  });
+
+  const response = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    body,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch spotify access token (HTTP Status: ${response.status})`
+    );
+  }
+
+  const { access_token, refresh_token, expires_in } = await response.json();
+
+  if (!access_token) {
+    throw new Error("Access token not found in spotify response");
+  }
+
+  localStorage.setItem(SpotifyAccessTokenKey, access_token);
+  localStorage.setItem(SpotifyRefreshTokenKey, refresh_token);
+
+  const expiresAt = Date.now() + expires_in * 1000;
+  localStorage.setItem(SpotifyAccessTokenExpiresAtKey, expiresAt.toString());
+}
+
+async function refreshSpotifyAccessToken() {
+  const refreshToken = localStorage.getItem(SpotifyRefreshTokenKey);
+
+  if (!refreshToken) {
+    throw new Error("Missing spotify refresh token");
+  }
+
+  const body = new URLSearchParams({
+    grant_type: "refresh_token",
+    refresh_token: refreshToken,
+    client_id: SpotifyClientId,
+  });
+
+  const response = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    body,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to refresh spotify access token (HTTP Status: ${response.status})`
+    );
+  }
+
+  const { access_token, refresh_token, expires_in } = await response.json();
+
+  if (!access_token) {
+    throw new Error("Access token not found in spotify response");
+  }
+
+  localStorage.setItem(SpotifyAccessTokenKey, access_token);
+
+  const expiresAt = Date.now() + expires_in * 1000;
+  localStorage.setItem(SpotifyAccessTokenExpiresAtKey, expiresAt.toString());
+
+  if (refresh_token) {
+    localStorage.setItem(SpotifyRefreshTokenKey, refresh_token);
+  }
+}
+
+async function getLatestSpotifyAccessToken() {
+  const accessToken = localStorage.getItem(SpotifyAccessTokenKey);
+  const accessTokenExpiresAt = localStorage.getItem(
+    SpotifyAccessTokenExpiresAtKey
+  );
+
+  if (!accessToken || !accessTokenExpiresAt) {
+    return null;
+  }
+
+  const expiresAt = parseInt(accessTokenExpiresAt);
+
+  if (expiresAt < Date.now()) {
+    await refreshSpotifyAccessToken();
+  }
+
+  return localStorage.getItem(SpotifyAccessTokenKey);
+}
+
+async function fetchSpotifyUser() {
+  const accessToken = await getLatestSpotifyAccessToken();
+
+  if (!accessToken) {
+    throw new Error("Missing spotify access token");
+  }
+
+  const response = await fetch("https://api.spotify.com/v1/me", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch spotify user (HTTP Status: ${response.status})`
+    );
+  }
+
+  const user = await response.json();
+
+  if (!SpotifyUserParser.safeParse(user).success) {
+    throw new Error("Failed to parse spotify user");
+  }
+
+  localStorage.setItem(SpotifyUserKey, JSON.stringify(user));
+}
+
+function getSpotifyUser(): SpotifyUser | null {
+  const user = localStorage.getItem(SpotifyUserKey);
+
+  if (!user) {
+    return null;
+  }
+
+  return JSON.parse(user) as SpotifyUser;
+}
+
+export function useSpotifyUser(): {
+  user: SpotifyUser | null | undefined;
+  isFetching: boolean;
+} {
+  const { data, isFetching } = useQuery(["spotify-user"], async () => {
+    const user = getSpotifyUser();
+
+    if (user) {
+      return user;
+    }
+
+    await fetchSpotifyUser();
+
+    return getSpotifyUser();
+  });
+
+  return { user: data, isFetching };
+}

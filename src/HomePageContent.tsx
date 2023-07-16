@@ -8,7 +8,14 @@ import {
   DragEndEvent,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { memo, ReactNode, useCallback, useRef, useState } from "react";
+import {
+  memo,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import AddCoverArt from "./addCoverArt/AddCoverArt";
 import ChartOptionsSection from "./chartOptions/ChartOptionsSection";
 import Spinner from "./components/Spinner";
@@ -29,6 +36,7 @@ import { storeImageToDB } from "./stores/imageDB";
 import classNames from "./utils/classNames";
 import { mergeRefs } from "./utils/mergeRefs";
 import { useMediaQuery } from "./utils/useMediaQuery";
+import { handleSpotifyAuthorization } from "./stores/spotify";
 
 const ResponsiveContainer = ({ children }: { children: ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -156,6 +164,10 @@ const HomePageContent = () => {
     },
     [moveMusicCollageItem, setMusicCollageItem]
   );
+
+  useEffect(() => {
+    handleSpotifyAuthorization().catch(console.error);
+  }, []);
 
   return (
     <ToastProvider>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Toggle from "../components/Toggle";
@@ -10,28 +9,36 @@ import {
   useSetDarkMode,
   useSetSettingsModalOpen,
 } from "../stores/settings";
+import { spotifyLogIn, spotifyLogOut, useSpotifyUser } from "../stores/spotify";
+import Spinner from "../components/Spinner";
 
 const SpotifySettings = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, isFetching } = useSpotifyUser();
 
   return (
     <div className="p-4 pt-2.5">
       <div className="flex flex-col gap-2.5">
         <div className="text-sm font-bold">Spotify Account</div>
-        {!isLoggedIn ? (
-          <Button onClick={() => setIsLoggedIn(true)} icon={SpotifyIcon}>
-            Login to Spotify
+        {isFetching ? (
+          <Spinner className="w-4 h-4" width={2} />
+        ) : !user ? (
+          <Button onClick={() => spotifyLogIn()} icon={SpotifyIcon}>
+            Log in to Spotify
           </Button>
         ) : (
           <div className="flex items-center gap-2">
-            <UserIcon className="h-8 w-8 text-slate-300" />
+            <UserIcon className="h-8 w-8 dark:text-slate-300 text-slate-600" />
             <div className="flex flex-col">
-              <div className="text-sm font-bold">Aman Harwara</div>
-              <div className="text-xs dark:text-gray-400 text-gray-600">
-                aman@proton.me
+              <div className="text-sm font-bold">
+                {user.display_name || user.id}
               </div>
+              {user.display_name && (
+                <div className="text-xs dark:text-gray-400 text-gray-600">
+                  {user.id}
+                </div>
+              )}
             </div>
-            <Button onClick={() => setIsLoggedIn(false)} className="ml-auto">
+            <Button onClick={() => spotifyLogOut()} className="ml-auto">
               Log out
             </Button>
           </div>
