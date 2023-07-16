@@ -21,6 +21,8 @@ const Modal = ({ title, isOpen, setOpen, children, ...props }: Props) => {
     setOpen,
   });
 
+  const mounted = state.useState("mounted");
+
   return (
     <Dialog
       store={state}
@@ -38,7 +40,7 @@ const Modal = ({ title, isOpen, setOpen, children, ...props }: Props) => {
           <CloseIcon className="h-4 w-4 dark:text-white " />
         </DialogDismiss>
       </div>
-      {children}
+      {mounted ? children : null}
     </Dialog>
   );
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import IconButton from "../components/IconButton";
 import Select from "../components/Select";
 import AddIcon from "../icons/AddIcon";
@@ -32,6 +32,14 @@ const NewChartModal = ({
   const [title, setTitle] = useState("");
   const [chartType, setChartType] = useState<ChartType>("musicCollage");
 
+  const focusInput = useCallback((element: HTMLInputElement | null) => {
+    if (element) {
+      setTimeout(() => {
+        element.focus();
+      });
+    }
+  }, []);
+
   return (
     <Modal title="Create new chart" isOpen={isOpen} setOpen={setOpen}>
       <div className="flex flex-col gap-3.5 py-3 px-3">
@@ -44,9 +52,10 @@ const NewChartModal = ({
               setTitle(event.currentTarget.value);
             }}
             placeholder="Add title..."
+            ref={focusInput}
           />
         </label>
-        <label>
+        {/* <label>
           <div className="text-sm font-bold mb-1">Chart type</div>
           <Select
             value={chartType}
@@ -58,7 +67,7 @@ const NewChartModal = ({
               })
             )}
           />
-        </label>
+        </label> */}
       </div>
       <div className="border-t border-gray-800 dark:border-slate-600 px-3 py-2 mt-0.5">
         <Button
@@ -226,7 +235,7 @@ const ChartOptionsSection = () => {
   return (
     <section className="h-full flex flex-col flex-shrink-0 gap-6 overflow-y-auto border-r border-gray-800 dark:border-0 dark:md:bg-gray-800 dark:bg-slate-700 bg-slate-100 py-4 px-5 dark:text-white">
       <CurrentChartOption />
-      <ChartTypeOption />
+      {/* <ChartTypeOption /> */}
       <OptionsForCurrentType />
     </section>
   );
