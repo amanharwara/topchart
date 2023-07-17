@@ -10,13 +10,14 @@
     "prettify": "prettier --write src/"
   },
   "dependencies": {
+    "@ariakit/react": "^0.2.12",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
     "@tanstack/react-query": "^4.24.10",
     "@zag-js/react": "^0.11.2",
     "@zag-js/slider": "^0.11.2",
     "@zag-js/toast": "^0.11.2",
-    "@ariakit/react": "^0.2.12",
+    "clsx": "^2.0.0",
     "html-to-image": "^1.11.11",
     "idb": "^7.1.1",
     "immer": "^9.0.19",
@@ -24,6 +25,7 @@
     "next": "13.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "tailwind-merge": "^1.14.0",
     "zod": "^3.21.4",
     "zustand": "^4.3.9"
   },

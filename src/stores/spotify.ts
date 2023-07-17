@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { env } from "../env/client.mjs";
 import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
 
 const SpotifyClientId = env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 const SpotifyCodeVerifierKey = "spotify-code-verifier";
@@ -11,9 +12,15 @@ const SpotifyUserKey = "spotify-user";
 
 const GetRedirectUri = () => `${window.location.origin}/?authorizeSpotify=true`;
 
+const SpotifyImageParser = z.object({
+  url: z.string(),
+});
+type SpotifyImage = z.infer<typeof SpotifyImageParser>;
+
 const SpotifyUserParser = z.object({
   id: z.string(),
   display_name: z.string().nullable(),
+  images: z.array(SpotifyImageParser),
 });
 type SpotifyUser = z.infer<typeof SpotifyUserParser>;
 
@@ -243,8 +250,9 @@ function getSpotifyUser(): SpotifyUser | null {
 export function useSpotifyUser(): {
   user: SpotifyUser | null | undefined;
   isFetching: boolean;
+  reload: () => void;
 } {
-  const { data, isFetching } = useQuery(["spotify-user"], async () => {
+  const { data, isFetching, refetch } = useQuery(["spotify-user"], async () => {
     const user = getSpotifyUser();
 
     if (user) {
@@ -256,5 +264,34 @@ export function useSpotifyUser(): {
     return getSpotifyUser();
   });
 
-  return { user: data, isFetching };
+  const reload = useCallback(() => {
+    localStorage.removeItem(SpotifyUserKey);
+    refetch();
+  }, [refetch]);
+
+  return { user: data, isFetching, reload };
+}
+
+export type SpotifyTopType = "artists" | "tracks";
+export type SpotifyTimeRange = "short_term" | "medium_term" | "long_term";
+
+const SpotifyArtistParser = z.object({
+  id: z.string(),
+  name: z.string(),
+  images: z.array(SpotifyImageParser),
+});
+
+export function useSpotifyTopItems(
+  type: SpotifyTopType,
+  range: SpotifyTimeRange
+) {
+  return useQuery(
+    [type, range],
+    async () => {
+      throw new Error("Not implemented");
+    },
+    {
+      retry: 0,
+    }
+  );
 }

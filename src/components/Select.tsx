@@ -7,13 +7,17 @@ import {
   useSelectStore,
 } from "@ariakit/react";
 
-type Props = {
-  value?: string;
-  setValue?: (value: string) => void;
-  options: { value: string; label: string }[];
+type Props<Value> = {
+  value?: Value;
+  setValue?: (value: Value) => void;
+  options: { value: Value; label: string }[];
 };
 
-const Select = ({ value, setValue, options }: Props) => {
+function Select<Value extends string>({
+  value,
+  setValue,
+  options,
+}: Props<Value>) {
   const state = useSelectStore({
     defaultValue: value ? value : options[0]?.value,
     value,
@@ -47,6 +51,6 @@ const Select = ({ value, setValue, options }: Props) => {
       </SelectPopover>
     </div>
   );
-};
+}
 
 export default Select;

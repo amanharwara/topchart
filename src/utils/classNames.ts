@@ -1,15 +1,6 @@
-export default function classNames(
-  ...values: (string | boolean | (() => string) | undefined)[]
-): string {
-  return values
-    .map((value) => {
-      if (typeof value === "string") {
-        return value;
-      } else if (typeof value === "function") {
-        return value();
-      } else {
-        return null;
-      }
-    })
-    .join(" ");
+import clsx, { type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export default function classNames(...values: ClassValue[]): string {
+  return twMerge(clsx(...values));
 }

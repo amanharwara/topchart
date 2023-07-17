@@ -11,9 +11,11 @@ import {
 } from "../stores/settings";
 import { spotifyLogIn, spotifyLogOut, useSpotifyUser } from "../stores/spotify";
 import Spinner from "../components/Spinner";
+import IconButton from "../components/IconButton";
+import RefreshIcon from "../icons/RefreshIcon";
 
 const SpotifySettings = () => {
-  const { user, isFetching } = useSpotifyUser();
+  const { user, isFetching, reload } = useSpotifyUser();
 
   return (
     <div className="p-4 pt-2.5">
@@ -27,7 +29,16 @@ const SpotifySettings = () => {
           </Button>
         ) : (
           <div className="flex items-center gap-2">
-            <UserIcon className="h-8 w-8 dark:text-slate-300 text-slate-600" />
+            {user.images[0] ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                className="w-8 h-8 rounded-full"
+                src={user.images[0].url}
+                alt={user.display_name || user.id}
+              />
+            ) : (
+              <UserIcon className="h-8 w-8 dark:text-slate-300 text-slate-600" />
+            )}
             <div className="flex flex-col">
               <div className="text-sm font-bold">
                 {user.display_name || user.id}
@@ -38,9 +49,14 @@ const SpotifySettings = () => {
                 </div>
               )}
             </div>
-            <Button onClick={() => spotifyLogOut()} className="ml-auto">
-              Log out
-            </Button>
+            <IconButton
+              icon={RefreshIcon}
+              iconClassName="w-3.5 h-3.5"
+              label="Retry"
+              onClick={reload}
+              className="ml-auto"
+            />
+            <Button onClick={() => spotifyLogOut()}>Log out</Button>
           </div>
         )}
       </div>

@@ -6,18 +6,22 @@ import {
 } from "@ariakit/react";
 import classNames from "../utils/classNames";
 
-type Props = {
-  items: { label: string; value: string }[];
-  value: string;
-  onChange: (value: string) => void;
+type Props<Value> = {
+  items: { label: string; value: Value }[];
+  value: Value;
+  onChange: (value: Value) => void;
 };
 
-const RadioButtonGroup = ({ value, items, onChange }: Props) => {
+function RadioButtonGroup<Value extends string>({
+  value,
+  items,
+  onChange,
+}: Props<Value>) {
   const radio = useRadioStore({
     value,
     orientation: "horizontal",
     setValue(value) {
-      onChange(value as string);
+      onChange(value as Value);
     },
   });
 
@@ -42,6 +46,6 @@ const RadioButtonGroup = ({ value, items, onChange }: Props) => {
       ))}
     </RadioGroup>
   );
-};
+}
 
 export default RadioButtonGroup;

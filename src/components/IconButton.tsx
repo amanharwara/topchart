@@ -10,10 +10,11 @@ type Props = {
   icon: ComponentType<ComponentPropsWithoutRef<"svg">>;
   label: string;
   className?: string;
+  iconClassName?: string;
 } & ComponentPropsWithoutRef<"button">;
 
 const IconButton = forwardRef(function IconButton(
-  { icon: Icon, label, className, disabled, ...props }: Props,
+  { icon: Icon, label, className, iconClassName, disabled, ...props }: Props,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   return (
@@ -31,7 +32,7 @@ const IconButton = forwardRef(function IconButton(
       ref={ref}
       {...props}
     >
-      {<Icon className="h-4 w-4" />}
+      {<Icon className={classNames("h-4 w-4", iconClassName)} />}
     </button>
   );
 });
