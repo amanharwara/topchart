@@ -210,6 +210,7 @@ function Result({
 export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
   const queryClient = useQueryClient();
   const setMusicCollageItem = useSetMusicCollageItem();
+  const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
   const [topType, setTopType] = useState<SpotifyTopType>("artists");
   const [timeRange, setTimeRange] = useState<SpotifyTimeRange>("short_term");
@@ -266,35 +267,39 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
           onClick={async () => {
             if (!data || !data.length) return;
 
-            data.forEach(async (item, index) => {
-              const imageLink = getResultImageLink(item);
-              if (!imageLink) return;
+            await Promise.all(
+              data.map(async (item, index) => {
+                const imageLink = getResultImageLink(item);
+                if (!imageLink) return;
 
-              const image = await queryClient.fetchQuery({
-                queryKey: [item.id],
-                queryFn: async () => {
-                  const response = await fetch(imageLink);
-                  const imageBlob = await response.blob();
-                  const content = await blobToDataURL(imageBlob);
+                const image = await queryClient.fetchQuery({
+                  queryKey: [item.id],
+                  queryFn: async () => {
+                    const response = await fetch(imageLink);
+                    const imageBlob = await response.blob();
+                    const content = await blobToDataURL(imageBlob);
 
-                  const imageToStore: Image = {
-                    id: imageLink,
-                    content,
-                  };
+                    const imageToStore: Image = {
+                      id: imageLink,
+                      content,
+                    };
 
-                  return imageToStore;
-                },
-              });
+                    return imageToStore;
+                  },
+                });
 
-              storeImageToDB(image);
+                storeImageToDB(image);
 
-              const title = getResultTitle(item);
+                const title = getResultTitle(item);
 
-              setMusicCollageItem(index, {
-                title,
-                image: image.id,
-              });
-            });
+                setMusicCollageItem(index, {
+                  title,
+                  image: image.id,
+                });
+              })
+            );
+
+            setAddingCoverTo(-1);
           }}
         >
           Add all to chart
