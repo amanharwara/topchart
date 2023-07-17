@@ -8,6 +8,7 @@ import { CoverArtLinkTab } from "./CoverArtLinkTab";
 import { CoverArtUploadTab } from "./CoverArtUploadTab";
 import SpotifyIcon from "../icons/SpotifyIcon";
 import { CoverArtSpotifyTab } from "./CoverArtSpotifyTab";
+import { getSpotifyUser } from "../stores/spotify";
 
 type Tab = "Search" | "Link" | "Upload" | "Spotify";
 
@@ -31,6 +32,7 @@ const TabButton = (props: {
 
 const AddCoverArt = ({ itemIndex = -1 }: { itemIndex?: number }) => {
   const [currentTab, setCurrentTab] = useState<Tab>("Search");
+  const hasSpotifyLogin = !!getSpotifyUser();
 
   return (
     <div className="flex h-full min-h-0 flex-col dark:text-white">
@@ -53,13 +55,15 @@ const AddCoverArt = ({ itemIndex = -1 }: { itemIndex?: number }) => {
         >
           Upload
         </TabButton>
-        <TabButton
-          className="flex-grow-0 px-3"
-          onClick={() => setCurrentTab("Spotify")}
-          selected={currentTab === "Spotify"}
-        >
-          <SpotifyIcon className="w-6 h-6" />
-        </TabButton>
+        {hasSpotifyLogin && (
+          <TabButton
+            className="flex-grow-0 px-3"
+            onClick={() => setCurrentTab("Spotify")}
+            selected={currentTab === "Spotify"}
+          >
+            <SpotifyIcon className="w-6 h-6" />
+          </TabButton>
+        )}
       </div>
       {currentTab === "Search" ? (
         <CoverArtSearchTab itemIndex={itemIndex} />

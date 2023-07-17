@@ -9,22 +9,17 @@ import {
   useSetDarkMode,
   useSetSettingsModalOpen,
 } from "../stores/settings";
-import { spotifyLogIn, spotifyLogOut, useSpotifyUser } from "../stores/spotify";
-import Spinner from "../components/Spinner";
-import IconButton from "../components/IconButton";
-import RefreshIcon from "../icons/RefreshIcon";
+import { spotifyLogIn, spotifyLogOut, getSpotifyUser } from "../stores/spotify";
 
 const SpotifySettings = () => {
-  const { user, isFetching, reload } = useSpotifyUser();
+  const user = getSpotifyUser();
 
   return (
     <div className="p-4 pt-2.5">
       <div className="flex flex-col gap-2.5">
         <div className="text-sm font-bold">Spotify Account</div>
-        {isFetching ? (
-          <Spinner className="w-4 h-4" width={2} />
-        ) : !user ? (
-          <Button onClick={() => spotifyLogIn()} icon={SpotifyIcon}>
+        {!user ? (
+          <Button onClick={spotifyLogIn} icon={SpotifyIcon}>
             Log in to Spotify
           </Button>
         ) : (
@@ -49,14 +44,9 @@ const SpotifySettings = () => {
                 </div>
               )}
             </div>
-            <IconButton
-              icon={RefreshIcon}
-              iconClassName="w-3.5 h-3.5"
-              label="Retry"
-              onClick={reload}
-              className="ml-auto"
-            />
-            <Button onClick={() => spotifyLogOut()}>Log out</Button>
+            <Button className="ml-auto" onClick={spotifyLogOut}>
+              Log out
+            </Button>
           </div>
         )}
       </div>

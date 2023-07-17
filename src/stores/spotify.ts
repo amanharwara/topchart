@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { env } from "../env/client.mjs";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
 
 const SpotifyClientId = env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 const SpotifyCodeVerifierKey = "spotify-code-verifier";
@@ -236,7 +235,7 @@ async function fetchSpotifyUser() {
   localStorage.setItem(SpotifyUserKey, JSON.stringify(user));
 }
 
-function getSpotifyUser(): SpotifyUser | null {
+export function getSpotifyUser(): SpotifyUser | null {
   const user = localStorage.getItem(SpotifyUserKey);
 
   if (!user) {
@@ -244,31 +243,6 @@ function getSpotifyUser(): SpotifyUser | null {
   }
 
   return JSON.parse(user) as SpotifyUser;
-}
-
-export function useSpotifyUser(): {
-  user: SpotifyUser | null | undefined;
-  isFetching: boolean;
-  reload: () => void;
-} {
-  const { data, isFetching, refetch } = useQuery(["spotify-user"], async () => {
-    const user = getSpotifyUser();
-
-    if (user) {
-      return user;
-    }
-
-    await fetchSpotifyUser();
-
-    return getSpotifyUser();
-  });
-
-  const reload = useCallback(() => {
-    localStorage.removeItem(SpotifyUserKey);
-    refetch();
-  }, [refetch]);
-
-  return { user: data, isFetching, reload };
 }
 
 export type SpotifyTopType = "artists" | "tracks";
