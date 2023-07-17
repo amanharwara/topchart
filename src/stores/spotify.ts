@@ -265,11 +265,22 @@ const SpotifyTrackAlbumParser = z.object({
 const SpotifyTrackParser = z.object({
   id: z.string(),
   name: z.string(),
-  artists: z.array(SpotifyArtistParser),
+  artists: z.array(
+    SpotifyArtistParser.omit({
+      images: true,
+    })
+  ),
   album: SpotifyTrackAlbumParser,
   type: z.literal("track"),
 });
 export type SpotifyTrack = z.infer<typeof SpotifyTrackParser>;
+
+const SpotifyTopItemsListParser = z.object({
+  items: z
+    .discriminatedUnion("type", [SpotifyArtistParser, SpotifyTrackParser])
+    .array(),
+});
+type SpotifyTopItemsList = z.infer<typeof SpotifyTopItemsListParser>;
 
 export function useSpotifyTopItems(
   type: SpotifyTopType,
@@ -278,7 +289,32 @@ export function useSpotifyTopItems(
   return useQuery(
     [type, range],
     async () => {
-      throw new Error("Not implemented");
+      const accessToken = await getLatestSpotifyAccessToken();
+
+      if (!accessToken) {
+        throw new Error("Missing spotify access token");
+      }
+
+      const response = await fetch(
+        `https://api.spotify.com/v1/me/top/${type}?time_range=${range}&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch spotify top items (HTTP Status: ${response.status})`
+        );
+      }
+
+      const json = await response.json();
+
+      const { items } = SpotifyTopItemsListParser.parse(json);
+
+      return items;
     },
     {
       retry: 0,
