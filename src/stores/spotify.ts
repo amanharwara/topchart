@@ -15,7 +15,6 @@ const GetRedirectUri = () => `${window.location.origin}/?authorizeSpotify=true`;
 const SpotifyImageParser = z.object({
   url: z.string(),
 });
-type SpotifyImage = z.infer<typeof SpotifyImageParser>;
 
 const SpotifyUserParser = z.object({
   id: z.string(),
@@ -279,7 +278,24 @@ const SpotifyArtistParser = z.object({
   id: z.string(),
   name: z.string(),
   images: z.array(SpotifyImageParser),
+  type: z.literal("artist"),
 });
+export type SpotifyArtist = z.infer<typeof SpotifyArtistParser>;
+
+const SpotifyTrackAlbumParser = z.object({
+  id: z.string(),
+  name: z.string(),
+  images: z.array(SpotifyImageParser),
+});
+
+const SpotifyTrackParser = z.object({
+  id: z.string(),
+  name: z.string(),
+  artists: z.array(SpotifyArtistParser),
+  album: SpotifyTrackAlbumParser,
+  type: z.literal("track"),
+});
+export type SpotifyTrack = z.infer<typeof SpotifyTrackParser>;
 
 export function useSpotifyTopItems(
   type: SpotifyTopType,
