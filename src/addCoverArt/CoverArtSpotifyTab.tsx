@@ -16,7 +16,7 @@ import RefreshIcon from "../icons/RefreshIcon";
 import Button from "../components/Button";
 import DragIcon from "../icons/DragIcon";
 import classNames from "../utils/classNames";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { blobToDataURL } from "./blobToDataURL";
 import { storeImageToDB, type Image } from "../stores/imageDB";
 import { useDraggable } from "@dnd-kit/core";
@@ -53,6 +53,30 @@ const TimeRangeOptions = [
   },
 ];
 
+function getResultImageLink(item: SpotifyArtist | SpotifyTrack) {
+  if (item.type === "artist") {
+    return item.images[0]?.url;
+  } else {
+    return item.album.images[0]?.url;
+  }
+}
+
+function getResultArtist(item: SpotifyArtist | SpotifyTrack) {
+  if (item.type === "artist") {
+    return item.name;
+  } else {
+    return item.artists.map((artist) => artist.name).join(", ");
+  }
+}
+
+function getResultTitle(item: SpotifyArtist | SpotifyTrack) {
+  if (item.type === "artist") {
+    return item.name;
+  } else {
+    return `${item.name} - ${getResultArtist(item)}`;
+  }
+}
+
 function Result({
   item,
   indexOfChartItem,
@@ -63,13 +87,8 @@ function Result({
   const setMusicCollageItem = useSetMusicCollageItem();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
-  const imageToUse =
-    item.type === "artist" ? item.images[0] : item.album.images[0];
-  const imageLink = imageToUse ? imageToUse.url : null;
-  const artist =
-    item.type === "artist"
-      ? item.name
-      : item.artists.map((artist) => artist.name).join(", ");
+  const imageLink = getResultImageLink(item);
+  const artist = getResultArtist(item);
 
   const {
     isLoading,
@@ -103,7 +122,7 @@ function Result({
     }
   }, [error]);
 
-  const title = `${artist} ${item.type === "track" ? "- " + item.name : ""}`;
+  const title = getResultTitle(item);
   const isAddingToSpecificItem = indexOfChartItem > -1;
   const isDraggable = !isAddingToSpecificItem && !!image;
   const { isDragging, attributes, listeners, transform, setNodeRef } =
@@ -189,6 +208,9 @@ function Result({
 }
 
 export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
+  const queryClient = useQueryClient();
+  const setMusicCollageItem = useSetMusicCollageItem();
+
   const [topType, setTopType] = useState<SpotifyTopType>("artists");
   const [timeRange, setTimeRange] = useState<SpotifyTimeRange>("short_term");
 
@@ -242,7 +264,44 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
       )}
       {!isAddingToSpecificItem && (
         <div className="py-2">
-          <Button className="mx-auto">Add all to chart</Button>
+          <Button
+            className="mx-auto"
+            onClick={async () => {
+              if (!data || !data.length) return;
+
+              data.forEach(async (item, index) => {
+                const imageLink = getResultImageLink(item);
+                if (!imageLink) return;
+
+                const image = await queryClient.fetchQuery({
+                  queryKey: [item.id],
+                  queryFn: async () => {
+                    const response = await fetch(imageLink);
+                    const imageBlob = await response.blob();
+                    const content = await blobToDataURL(imageBlob);
+
+                    const imageToStore: Image = {
+                      id: imageLink,
+                      content,
+                    };
+
+                    return imageToStore;
+                  },
+                });
+
+                storeImageToDB(image);
+
+                const title = getResultTitle(item);
+
+                setMusicCollageItem(index, {
+                  title,
+                  image: image.id,
+                });
+              });
+            }}
+          >
+            Add all to chart
+          </Button>
         </div>
       )}
     </div>
