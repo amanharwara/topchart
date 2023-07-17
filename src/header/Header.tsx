@@ -57,7 +57,7 @@ const SponsorMenu = () => {
       >
         <MenuArrow className="hidden" />
         <MenuItem
-          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
+          className="flex items-center gap-3 py-1.5 px-5 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
             window.open("https://github.com/sponsors/amanharwara", "_blank");
           }}
@@ -66,7 +66,7 @@ const SponsorMenu = () => {
           Sponsor on GitHub
         </MenuItem>
         <MenuItem
-          className="flex items-center gap-3 py-1.5 px-4 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
+          className="flex items-center gap-3 py-1.5 px-5 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
           onClick={() => {
             window.open("https://ko-fi.com/amanharwara", "_blank");
           }}

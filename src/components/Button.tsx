@@ -19,7 +19,7 @@ const Button = forwardRef(function Button(
     <button
       type="button"
       className={classNames(
-        "flex items-center gap-1.5 rounded border border-solid border-slate-600 dark:text-white focus:bg-slate-600 hover:bg-slate-600 hover:text-white",
+        "flex items-center gap-1.5 rounded border border-solid border-slate-600 dark:text-white focus:bg-slate-600 focus:text-white hover:bg-slate-600 hover:text-white",
         hideLabelOnMobile ? "p-1.5 md:px-2 md:py-1.5" : "px-2 py-1.5",
         className
       )}
