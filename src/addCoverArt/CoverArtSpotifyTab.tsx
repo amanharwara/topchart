@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import RadioButtonGroup from "../components/RadioButtonGroup";
 import Select from "../components/Select";
 import Spinner from "../components/Spinner";
@@ -25,6 +25,7 @@ import {
   useSetMusicCollageItem,
   useSelectedMusicCollageAddingCoverTo,
 } from "../stores/charts";
+import { mergeRefs } from "../utils/mergeRefs";
 
 const TopTypeOptions = [
   {
@@ -117,9 +118,23 @@ function Result({
     transform: CSSUtils.Transform.toString(transform),
   };
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const draggableRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!containerRef.current || !draggableRef.current) return;
+
+    if (isDragging) {
+      const draggableRect = draggableRef.current.getBoundingClientRect();
+      containerRef.current.style.height = `${draggableRect.height}px`;
+    } else {
+      containerRef.current.style.height = "";
+    }
+  }, [isDragging]);
+
   const dragAttributes = isDraggable
     ? {
-        ref: setNodeRef,
+        ref: mergeRefs([setNodeRef, draggableRef]),
         style: dragImageStyle,
         ...attributes,
         ...listeners,
@@ -129,47 +144,46 @@ function Result({
   if (error) return null;
 
   return (
-    <div
-      className={classNames(
-        "flex items-center p-2 gap-4 select-none hover:cursor-grab hover:bg-slate-200 hover:dark:bg-slate-700 rounded",
-        isAddingToSpecificItem && "hover:cursor-pointer",
-        isLoading && "justify-center cursor-wait",
-        isDragging && "cursor-grabbing"
-      )}
-      onClick={() => {
-        if (!isAddingToSpecificItem || !image) return;
-
-        storeImageToDB(image);
-
-        setMusicCollageItem(indexOfChartItem, {
-          title,
-          image: image.id,
-        });
-
-        setAddingCoverTo(-1);
-      }}
-      {...dragAttributes}
-    >
-      {isLoading ? (
-        <div className="flex items-center justify-center w-20 h-20">
-          <Spinner className="w-10 h-10" width={2} />
-        </div>
-      ) : (
-        <>
-          {!isAddingToSpecificItem && <DragIcon className="w-5 h-5" />}
-          <img
-            className="w-20 h-20 bg-slate-400"
-            src={image?.content}
-            alt={item.name}
-          />
-          <div className="flex flex-col">
-            <div className="text-lg font-semibold">{item.name}</div>
-            {item.type === "track" && (
-              <div className="text-xs dark:text-slate-300">{artist}</div>
-            )}
+    <div ref={containerRef}>
+      <div
+        className={classNames(
+          "flex items-center p-2 gap-4 select-none hover:cursor-grab hover:bg-slate-200 hover:dark:bg-slate-700 rounded",
+          isAddingToSpecificItem && "hover:cursor-pointer",
+          isLoading && "justify-center cursor-wait",
+          isDragging && "cursor-grabbing fixed [&>*:not(img)]:hidden"
+        )}
+        onClick={() => {
+          if (!isAddingToSpecificItem || !image) return;
+          storeImageToDB(image);
+          setMusicCollageItem(indexOfChartItem, {
+            title,
+            image: image.id,
+          });
+          setAddingCoverTo(-1);
+        }}
+        {...dragAttributes}
+      >
+        {isLoading ? (
+          <div className="flex items-center justify-center w-20 h-20">
+            <Spinner className="w-10 h-10" width={2} />
           </div>
-        </>
-      )}
+        ) : (
+          <>
+            {!isAddingToSpecificItem && <DragIcon className="w-5 h-5" />}
+            <img
+              className="w-20 h-20 bg-slate-400"
+              src={image?.content}
+              alt={item.name}
+            />
+            <div className="flex flex-col">
+              <div className="text-lg font-semibold">{item.name}</div>
+              {item.type === "track" && (
+                <div className="text-xs dark:text-slate-300">{artist}</div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

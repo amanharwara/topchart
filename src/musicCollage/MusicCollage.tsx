@@ -5,7 +5,7 @@ import classNames from "../utils/classNames";
 import IconButton from "../components/IconButton";
 import TrashIcon from "../icons/TrashIcon";
 import EditIcon from "../icons/EditIcon";
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import EditTitleModal from "./EditTitleModal";
 import { getImageFromDB } from "../stores/imageDB";
 import {
@@ -64,7 +64,7 @@ const CollageItem = ({
     willChange: "transform",
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const getImage = async () => {
       if (!item.image) {
         setImageContent("");
