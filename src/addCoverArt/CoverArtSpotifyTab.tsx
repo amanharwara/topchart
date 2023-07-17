@@ -219,8 +219,6 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
     timeRange
   );
 
-  const isAddingToSpecificItem = itemIndex > -1;
-
   return (
     <div className="flex flex-col gap-4 p-4 min-h-0 overflow-y-auto">
       <RadioButtonGroup
@@ -262,48 +260,46 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
           ))}
         </div>
       )}
-      {!isAddingToSpecificItem && (
-        <div className="py-2">
-          <Button
-            className="mx-auto"
-            onClick={async () => {
-              if (!data || !data.length) return;
+      <div className="py-2">
+        <Button
+          className="mx-auto"
+          onClick={async () => {
+            if (!data || !data.length) return;
 
-              data.forEach(async (item, index) => {
-                const imageLink = getResultImageLink(item);
-                if (!imageLink) return;
+            data.forEach(async (item, index) => {
+              const imageLink = getResultImageLink(item);
+              if (!imageLink) return;
 
-                const image = await queryClient.fetchQuery({
-                  queryKey: [item.id],
-                  queryFn: async () => {
-                    const response = await fetch(imageLink);
-                    const imageBlob = await response.blob();
-                    const content = await blobToDataURL(imageBlob);
+              const image = await queryClient.fetchQuery({
+                queryKey: [item.id],
+                queryFn: async () => {
+                  const response = await fetch(imageLink);
+                  const imageBlob = await response.blob();
+                  const content = await blobToDataURL(imageBlob);
 
-                    const imageToStore: Image = {
-                      id: imageLink,
-                      content,
-                    };
+                  const imageToStore: Image = {
+                    id: imageLink,
+                    content,
+                  };
 
-                    return imageToStore;
-                  },
-                });
-
-                storeImageToDB(image);
-
-                const title = getResultTitle(item);
-
-                setMusicCollageItem(index, {
-                  title,
-                  image: image.id,
-                });
+                  return imageToStore;
+                },
               });
-            }}
-          >
-            Add all to chart
-          </Button>
-        </div>
-      )}
+
+              storeImageToDB(image);
+
+              const title = getResultTitle(item);
+
+              setMusicCollageItem(index, {
+                title,
+                image: image.id,
+              });
+            });
+          }}
+        >
+          Add all to chart
+        </Button>
+      </div>
     </div>
   );
 }
