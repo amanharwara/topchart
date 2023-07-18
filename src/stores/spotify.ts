@@ -96,11 +96,14 @@ export async function handleSpotifyAuthorization() {
   }
 
   fetchAndSetSpotifyAccessToken(code)
-    .then(fetchSpotifyUser)
-    .catch(console.error)
-    .finally(() => {
-      window.location.href = window.location.origin;
-    });
+    .then(() => {
+      fetchSpotifyUser()
+        .then(() => {
+          window.location.href = window.location.origin;
+        })
+        .catch(console.error);
+    })
+    .catch(console.error);
 }
 
 async function fetchAndSetSpotifyAccessToken(code: string) {

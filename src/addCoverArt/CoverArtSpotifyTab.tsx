@@ -188,14 +188,21 @@ function Result({
           </div>
         ) : (
           <>
-            {!isAddingToSpecificItem && <DragIcon className="w-5 h-5" />}
+            {!isAddingToSpecificItem && (
+              <DragIcon className="w-5 h-5 flex-shrink-0" />
+            )}
             <img
               className="w-20 h-20 bg-slate-400"
               src={image?.content}
               alt={item.name}
             />
             <div className="flex flex-col">
-              <div className="text-lg font-semibold">{item.name}</div>
+              <div
+                className="text-lg font-semibold line-clamp-2"
+                title={item.name}
+              >
+                {item.name}
+              </div>
               {item.type === "track" && (
                 <div className="text-xs dark:text-slate-300">{artist}</div>
               )}
