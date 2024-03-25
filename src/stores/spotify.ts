@@ -287,10 +287,11 @@ type SpotifyTopItemsList = z.infer<typeof SpotifyTopItemsListParser>;
 
 export function useSpotifyTopItems(
   type: SpotifyTopType,
-  range: SpotifyTimeRange
+  range: SpotifyTimeRange,
+  limit = 10
 ) {
   return useQuery(
-    [type, range],
+    [type, range, limit],
     async () => {
       const accessToken = await getLatestSpotifyAccessToken();
 
@@ -299,7 +300,7 @@ export function useSpotifyTopItems(
       }
 
       const response = await fetch(
-        `https://api.spotify.com/v1/me/top/${type}?time_range=${range}&limit=10`,
+        `https://api.spotify.com/v1/me/top/${type}?time_range=${range}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -24,6 +24,7 @@ import { CSS as CSSUtils } from "@dnd-kit/utilities";
 import {
   useSetMusicCollageItem,
   useSelectedMusicCollageAddingCoverTo,
+  useSelectedChart,
 } from "../stores/charts";
 import { mergeRefs } from "../utils/mergeRefs";
 
@@ -216,6 +217,9 @@ function Result({
 
 export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
   const queryClient = useQueryClient();
+
+  const selectedChart = useSelectedChart();
+
   const setMusicCollageItem = useSetMusicCollageItem();
   const [, setAddingCoverTo] = useSelectedMusicCollageAddingCoverTo();
 
@@ -224,7 +228,10 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
 
   const { data, isFetching, error, refetch } = useSpotifyTopItems(
     topType,
-    timeRange
+    timeRange,
+    selectedChart?.type === "musicCollage"
+      ? selectedChart.options.rows * selectedChart.options.columns
+      : 10
   );
 
   return (
