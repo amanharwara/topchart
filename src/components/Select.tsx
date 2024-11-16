@@ -6,17 +6,24 @@ import {
   SelectPopover,
   useSelectStore,
 } from "@ariakit/react";
+import classNames from "../utils/classNames";
 
 type Props<Value> = {
   value?: Value;
   setValue?: (value: Value) => void;
   options: { value: Value; label: string }[];
+  wrapperClassName?: string;
+  selectClassName?: string;
+  popoverClassName?: string;
 };
 
 function Select<Value extends string>({
   value,
   setValue,
   options,
+  wrapperClassName,
+  selectClassName,
+  popoverClassName,
 }: Props<Value>) {
   const state = useSelectStore({
     defaultValue: value ? value : options[0]?.value,
@@ -25,17 +32,27 @@ function Select<Value extends string>({
   });
 
   return (
-    <div className="flex flex-grow">
+    <div
+      className={classNames("flex flex-grow overflow-hidden", wrapperClassName)}
+    >
       <AriaKitSelect
         store={state}
-        className="flex flex-grow appearance-none items-center justify-between rounded border border-slate-600 dark:bg-gray-800 px-2.5 py-2 text-sm dark:text-white"
+        className={classNames(
+          "flex flex-grow appearance-none items-center justify-between rounded border border-slate-600 dark:bg-gray-800 px-2.5 py-2 text-sm dark:text-white overflow-hidden whitespace-nowrap",
+          selectClassName
+        )}
       >
-        {options.find((option) => option.value === value)?.label}
+        <span className="overflow-hidden text-ellipsis">
+          {options.find((option) => option.value === value)?.label}
+        </span>
         <SelectArrow />
       </AriaKitSelect>
       <SelectPopover
         store={state}
-        className="w-[--popover-anchor-width] rounded border border-slate-600 dark:bg-gray-800 bg-slate-100 p-1"
+        className={classNames(
+          "w-[--popover-anchor-width] rounded border border-slate-600 dark:bg-gray-800 bg-slate-100 p-1",
+          popoverClassName
+        )}
         portal={true}
       >
         <PopoverArrow className="hidden" />

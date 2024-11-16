@@ -17,7 +17,7 @@ import {
 import classNames from "../utils/classNames";
 import SliderOption from "./SliderOption";
 
-const RowsOption = () => {
+function RowsOption() {
   const rows = useSelectedMusicCollageProperty("rows");
 
   return (
@@ -29,9 +29,9 @@ const RowsOption = () => {
       }}
     />
   );
-};
+}
 
-const ColumnsOption = () => {
+function ColumnsOption() {
   const columns = useSelectedMusicCollageProperty("columns");
 
   return (
@@ -43,9 +43,9 @@ const ColumnsOption = () => {
       }}
     />
   );
-};
+}
 
-const GapOption = () => {
+function GapOption() {
   const gap = useSelectedMusicCollageProperty("gap");
 
   return (
@@ -77,9 +77,9 @@ const GapOption = () => {
       />
     </div>
   );
-};
+}
 
-const PaddingOption = () => {
+function PaddingOption() {
   const padding = useSelectedMusicCollageProperty("padding");
 
   return (
@@ -114,9 +114,9 @@ const PaddingOption = () => {
       />
     </div>
   );
-};
+}
 
-const AlbumTitleOptions = () => {
+function AlbumTitleOptions() {
   const showTitles = useSelectedMusicCollageProperty("showTitles");
   const positionTitlesBelowCover = useSelectedMusicCollageProperty(
     "positionTitlesBelowCover"
@@ -173,9 +173,9 @@ const AlbumTitleOptions = () => {
       </div>
     </>
   );
-};
+}
 
-const BackgroundOption = () => {
+function BackgroundOption() {
   const backgroundColor = useSelectedMusicCollageProperty("backgroundColor");
   const backgroundImage = useSelectedMusicCollageProperty("backgroundImage");
   const backgroundType = useSelectedMusicCollageProperty("backgroundType");
@@ -242,9 +242,9 @@ const BackgroundOption = () => {
       )}
     </div>
   );
-};
+}
 
-const FontOption = () => {
+function FontOption() {
   const fontStyle = useSelectedMusicCollageProperty("fontStyle");
   const fontFamily = useSelectedMusicCollageProperty("fontFamily");
 
@@ -293,9 +293,9 @@ const FontOption = () => {
       )}
     </div>
   );
-};
+}
 
-const ForegroundColorOption = () => {
+function ForegroundColorOption() {
   const foregroundColor = useSelectedMusicCollageProperty("foregroundColor");
 
   return (
@@ -323,11 +323,31 @@ const ForegroundColorOption = () => {
       </div>
     </div>
   );
-};
+}
 
-const MusicCollageOptions = () => {
+function ChartTitleOptions() {
+  const showChartTitle = useSelectedMusicCollageProperty("showChartTitle");
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Chart title</div>
+      <label className="flex select-none items-center gap-3">
+        <Toggle
+          value={showChartTitle}
+          onChange={(checked) => {
+            setSelectedMusicCollageProperty("showChartTitle", checked);
+          }}
+        />
+        Show chart title
+      </label>
+    </div>
+  );
+}
+
+function MusicCollageOptions() {
   return (
     <>
+      <ChartTitleOptions />
       <RowsOption />
       <ColumnsOption />
       <GapOption />
@@ -338,6 +358,6 @@ const MusicCollageOptions = () => {
       <ForegroundColorOption />
     </>
   );
-};
+}
 
 export default MusicCollageOptions;

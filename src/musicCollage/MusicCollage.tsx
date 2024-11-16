@@ -220,7 +220,11 @@ const MusicCollage = () => {
     <SortableContext items={visibleItems} strategy={rectSortingStrategy}>
       <div
         id="music-collage"
-        className={classNames("flex w-max select-none", padding(), font)}
+        className={classNames(
+          "flex flex-col w-max select-none",
+          padding(),
+          font
+        )}
         style={{
           background: currentBackground,
           color: collage.foregroundColor,
@@ -229,30 +233,33 @@ const MusicCollage = () => {
           }),
         }}
       >
-        <div
-          className={classNames("grid w-min", gap())}
-          style={{
-            gridTemplateColumns: `repeat(${columns}, auto)`,
-            gridTemplateRows: `repeat(${rows}, auto)`,
-          }}
-        >
-          {visibleItems.map((item, index) => (
-            <CollageItem
-              item={item}
-              key={item.id}
-              index={index}
-              showTitle={collage.showTitles}
-              shouldPositionTitleBelowCover={shouldPositionTitlesBelowCover}
-            />
-          ))}
-        </div>
-        {showTitlesColumn ? (
-          <div className="flex flex-col gap-1">
-            {visibleItems.map((item, index) =>
-              item.title ? <div key={index}>{item.title}</div> : null
-            )}
+        {collage.showChartTitle && <div>{selectedChart.title}</div>}
+        <div className={classNames("flex", padding(), "p-0")}>
+          <div
+            className={classNames("grid w-min", gap())}
+            style={{
+              gridTemplateColumns: `repeat(${columns}, auto)`,
+              gridTemplateRows: `repeat(${rows}, auto)`,
+            }}
+          >
+            {visibleItems.map((item, index) => (
+              <CollageItem
+                item={item}
+                key={item.id}
+                index={index}
+                showTitle={collage.showTitles}
+                shouldPositionTitleBelowCover={shouldPositionTitlesBelowCover}
+              />
+            ))}
           </div>
-        ) : null}
+          {showTitlesColumn ? (
+            <div className="flex flex-col gap-1">
+              {visibleItems.map((item, index) =>
+                item.title ? <div key={index}>{item.title}</div> : null
+              )}
+            </div>
+          ) : null}
+        </div>
         <EditTitleModal />
         <AddCoverArtModal />
       </div>

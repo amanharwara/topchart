@@ -49,6 +49,7 @@ const MusicCollageParser = z.object({
   showTitles: z.boolean(),
   positionTitlesBelowCover: z.boolean(),
   allowEditingTitles: z.boolean(),
+  showChartTitle: z.boolean().default(false),
 });
 export type MusicCollage = z.infer<typeof MusicCollageParser>;
 
@@ -125,6 +126,7 @@ const getMusicCollageDefaultOptions = (): MusicCollage => ({
   showTitles: false,
   positionTitlesBelowCover: false,
   allowEditingTitles: false,
+  showChartTitle: false,
 });
 
 const DefaultOptionsForChartType: Partial<{ [key in ChartType]: () => any }> = {
