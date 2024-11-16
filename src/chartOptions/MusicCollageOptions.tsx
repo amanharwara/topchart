@@ -123,6 +123,7 @@ function AlbumTitleOptions() {
   );
   const allowEditingTitles =
     useSelectedMusicCollageProperty("allowEditingTitles");
+  const groupTitles = useSelectedMusicCollageProperty("groupTitles");
 
   return (
     <>
@@ -169,6 +170,22 @@ function AlbumTitleOptions() {
             }}
           />
           Allow editing titles
+        </label>
+        <label
+          className={classNames(
+            "flex items-center gap-3",
+            (!showTitles || positionTitlesBelowCover) &&
+              "cursor-not-allowed text-gray-500"
+          )}
+        >
+          <Toggle
+            disabled={!showTitles || positionTitlesBelowCover}
+            value={groupTitles}
+            onChange={(checked) => {
+              setSelectedMusicCollageProperty("groupTitles", checked);
+            }}
+          />
+          Group titles
         </label>
       </div>
     </>

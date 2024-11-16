@@ -40,6 +40,7 @@ const MusicCollageParser = z.object({
   gap: MusicCollageSpacingParser,
   padding: MusicCollageSpacingParser,
   items: z.array(MusicCollageItemParser),
+  showChartTitle: z.boolean().default(false),
   backgroundType: MusicCollageBackgroundTypeParser,
   backgroundColor: z.string(),
   backgroundImage: z.string(),
@@ -49,7 +50,7 @@ const MusicCollageParser = z.object({
   showTitles: z.boolean(),
   positionTitlesBelowCover: z.boolean(),
   allowEditingTitles: z.boolean(),
-  showChartTitle: z.boolean().default(false),
+  groupTitles: z.boolean().default(true),
 });
 export type MusicCollage = z.infer<typeof MusicCollageParser>;
 
@@ -117,6 +118,7 @@ const getMusicCollageDefaultOptions = (): MusicCollage => ({
     title: "",
     image: null,
   })),
+  showChartTitle: false,
   backgroundType: "color",
   backgroundColor: "#000000",
   backgroundImage: "",
@@ -126,7 +128,7 @@ const getMusicCollageDefaultOptions = (): MusicCollage => ({
   showTitles: false,
   positionTitlesBelowCover: false,
   allowEditingTitles: false,
-  showChartTitle: false,
+  groupTitles: true,
 });
 
 const DefaultOptionsForChartType: Partial<{ [key in ChartType]: () => any }> = {

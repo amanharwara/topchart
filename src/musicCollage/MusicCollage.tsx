@@ -254,9 +254,31 @@ const MusicCollage = () => {
           </div>
           {showTitlesColumn ? (
             <div className="flex flex-col gap-1">
-              {visibleItems.map((item, index) =>
-                item.title ? <div key={index}>{item.title}</div> : null
-              )}
+              {Array(rows)
+                .fill(0)
+                .map((_, row) => {
+                  return (
+                    <div
+                      key={row}
+                      className={classNames(
+                        "h-40",
+                        !collage.groupTitles && "contents"
+                      )}
+                    >
+                      {visibleItems.map((item, index) => {
+                        const rowStart = row * columns;
+                        if (index < rowStart) return null;
+
+                        const rowEnd = rowStart + columns;
+                        if (index >= rowEnd) return null;
+
+                        if (!item.title) return null;
+
+                        return <div key={index}>{item.title}</div>;
+                      })}
+                    </div>
+                  );
+                })}
             </div>
           ) : null}
         </div>
