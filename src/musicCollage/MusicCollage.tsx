@@ -78,7 +78,7 @@ const CollageItem = ({
 
   if (!isMusicCollageChart(chart)) return null;
 
-  const { allowEditingTitles } = chart.options;
+  const { allowEditingTitles, imageFit } = chart.options;
 
   const editTitleForCurrentItem = () => {
     setEditingTitleFor(index);
@@ -154,7 +154,13 @@ const CollageItem = ({
         {imageContent && (
           <>
             <div className="absolute top-0 left-0 h-full w-full z-[1]" />
-            <img src={imageContent} className="h-full w-full select-none" />
+            <img
+              src={imageContent}
+              className="h-full w-full select-none"
+              style={{
+                objectFit: imageFit ?? "cover",
+              }}
+            />
           </>
         )}
       </div>

@@ -13,6 +13,7 @@ import {
   type MusicCollageSpacing,
   useSelectedMusicCollageProperty,
   setSelectedMusicCollageProperty,
+  ImageFit,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
 import SliderOption from "./SliderOption";
@@ -123,7 +124,7 @@ function AlbumTitleOptions() {
   );
   const allowEditingTitles =
     useSelectedMusicCollageProperty("allowEditingTitles");
-  const groupTitles = useSelectedMusicCollageProperty("groupTitles");
+  const groupTitles = useSelectedMusicCollageProperty("groupTitles", true);
 
   return (
     <>
@@ -342,7 +343,7 @@ function ForegroundColorOption() {
   );
 }
 
-function ChartTitleOptions() {
+function ChartTitleOption() {
   const showChartTitle = useSelectedMusicCollageProperty("showChartTitle");
 
   return (
@@ -361,15 +362,44 @@ function ChartTitleOptions() {
   );
 }
 
+function ImageRenderingOptions() {
+  const imageFit = useSelectedMusicCollageProperty("imageFit", "cover");
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="text-lg font-semibold">Image fit</div>
+      <Select<ImageFit>
+        value={imageFit}
+        setValue={(value) => setSelectedMusicCollageProperty("imageFit", value)}
+        options={[
+          {
+            label: "Fit inside",
+            value: "contain",
+          },
+          {
+            label: "Natural",
+            value: "cover",
+          },
+          {
+            label: "Stretch to fill",
+            value: "fill",
+          },
+        ]}
+      />
+    </div>
+  );
+}
+
 function MusicCollageOptions() {
   return (
     <>
-      <ChartTitleOptions />
       <RowsOption />
       <ColumnsOption />
       <GapOption />
       <PaddingOption />
+      <ChartTitleOption />
       <AlbumTitleOptions />
+      <ImageRenderingOptions />
       <BackgroundOption />
       <FontOption />
       <ForegroundColorOption />

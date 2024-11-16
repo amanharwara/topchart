@@ -32,6 +32,13 @@ const MusicCollageFontStyleParser = z.union([
 ]);
 export type MusicCollageFontStyle = z.infer<typeof MusicCollageFontStyleParser>;
 
+const ImageFitParser = z.union([
+  z.literal("fill"), // stretch
+  z.literal("contain"), // fit
+  z.literal("cover"), // natural
+]);
+export type ImageFit = z.infer<typeof ImageFitParser>;
+
 const MusicCollageDimensionParser = z.number().min(1).max(10);
 
 const MusicCollageParser = z.object({
@@ -51,6 +58,7 @@ const MusicCollageParser = z.object({
   positionTitlesBelowCover: z.boolean(),
   allowEditingTitles: z.boolean(),
   groupTitles: z.boolean().default(true),
+  imageFit: ImageFitParser,
 });
 export type MusicCollage = z.infer<typeof MusicCollageParser>;
 
@@ -129,6 +137,7 @@ const getMusicCollageDefaultOptions = (): MusicCollage => ({
   positionTitlesBelowCover: false,
   allowEditingTitles: false,
   groupTitles: true,
+  imageFit: "cover",
 });
 
 const DefaultOptionsForChartType: Partial<{ [key in ChartType]: () => any }> = {
@@ -448,13 +457,14 @@ export const useSetIsDownloading = () =>
 
 export function useSelectedMusicCollageProperty<
   Prop extends keyof MusicCollage
->(prop: Prop): MusicCollage[Prop] {
+>(prop: Prop, defaultValue?: unknown): MusicCollage[Prop] {
   return useChartStore((s) => {
     const selectedChart = s.charts.find((c) => c.id === s.selectedChartId);
     if (!isMusicCollageChart(selectedChart)) {
       throw new Error("Selected chart is not a music collage");
     }
-    return selectedChart.options[prop];
+    const value = selectedChart.options[prop];
+    return value ?? (defaultValue as MusicCollage[Prop]);
   });
 }
 
