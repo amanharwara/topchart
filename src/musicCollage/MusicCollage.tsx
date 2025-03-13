@@ -101,33 +101,6 @@ const CollageItem = ({
       }}
       ref={itemRef}
     >
-      <div className="absolute right-3 top-3 flex items-center gap-2 z-[1]">
-        {item.image && !shouldHideButtons && isFocusWithinItem && (
-          <>
-            {allowEditingTitles && (
-              <IconButton
-                icon={EditIcon}
-                label="Edit title"
-                className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
-                onClick={editTitleForCurrentItem}
-                tabIndex={isFocusWithinItem ? 0 : -1}
-              />
-            )}
-            <IconButton
-              icon={TrashIcon}
-              label="Delete item"
-              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
-              onClick={() => {
-                setMusicCollageItem(index, {
-                  title: "",
-                  image: "",
-                });
-              }}
-              tabIndex={isFocusWithinItem ? 0 : -1}
-            />
-          </>
-        )}
-      </div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1]">
         {!item.image && !shouldHideButtons && (
           <IconButton
@@ -137,7 +110,7 @@ const CollageItem = ({
             onClick={() => {
               setAddingCoverTo(index);
             }}
-            tabIndex={isFocusWithinItem ? 0 : -1}
+            excludeFromTabOrder={!isFocusWithinItem}
           />
         )}
       </div>
@@ -160,6 +133,33 @@ const CollageItem = ({
               style={{
                 objectFit: imageFit ?? "cover",
               }}
+            />
+          </>
+        )}
+      </div>
+      <div className="absolute right-3 top-3 flex items-center gap-2 z-[1]">
+        {item.image && !shouldHideButtons && isFocusWithinItem && (
+          <>
+            {allowEditingTitles && (
+              <IconButton
+                icon={EditIcon}
+                label="Edit title"
+                className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
+                onClick={editTitleForCurrentItem}
+                excludeFromTabOrder={!isFocusWithinItem}
+              />
+            )}
+            <IconButton
+              icon={TrashIcon}
+              label="Delete item"
+              className="bg-slate-700 opacity-0 transition-opacity duration-150 focus:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
+              onClick={() => {
+                setMusicCollageItem(index, {
+                  title: "",
+                  image: "",
+                });
+              }}
+              excludeFromTabOrder={!isFocusWithinItem}
             />
           </>
         )}
