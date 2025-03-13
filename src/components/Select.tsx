@@ -31,7 +31,7 @@ export function Select({
   return (
     <RacSelect
       className={classNames(
-        "group/select flex flex-grow overflow-hidden",
+        "focus-within-ring group/select flex flex-grow overflow-hidden",
         wrapperClassName
       )}
       selectedKey={value}
