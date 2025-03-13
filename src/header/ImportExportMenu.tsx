@@ -12,8 +12,7 @@ import {
 } from "../stores/charts";
 import { useCallback, useRef, useState } from "react";
 import ExportIcon from "../icons/ExportIcon";
-import { useToast } from "../components/Toast";
-import { useStateRef } from "../utils/useStateRef";
+import { toastQueue } from "../components/Toast";
 import { saveAsFile } from "../utils/saveAsFile";
 import { getImageFromDB, storeImageToDB } from "../stores/imageDB";
 import { z } from "zod";
@@ -59,51 +58,35 @@ const getImagesFromChart = async (
 };
 
 const useExportFunction = () => {
-  const toasts = useToast();
-  const toastsRef = useStateRef(toasts);
-
-  return useCallback(
-    async (shouldCompressImages: boolean) => {
-      const selectedChart = getSelectedChart();
-      setTimeout(() => {
-        toastsRef.current.create({
-          title: "Exporting chart",
-          description: "Please wait...",
-          type: "loading",
-          placement: "bottom-end",
-        });
+  return useCallback(async (shouldCompressImages: boolean) => {
+    const selectedChart = getSelectedChart();
+    const key = toastQueue.add({
+      title: "Exporting chart",
+      description: "Please wait...",
+      type: "loading",
+    });
+    try {
+      if (!selectedChart) throw new Error("No chart selected");
+      const images = await getImagesFromChart(
+        selectedChart,
+        shouldCompressImages
+      );
+      const chartJSON = JSON.stringify({
+        ...selectedChart,
+        id: undefined,
+        images,
       });
-      try {
-        if (!selectedChart) throw new Error("No chart selected");
-        const images = await getImagesFromChart(
-          selectedChart,
-          shouldCompressImages
-        );
-        const chartJSON = JSON.stringify({
-          ...selectedChart,
-          id: undefined,
-          images,
-        });
-        saveAsFile(
-          chartJSON,
-          `${selectedChart.title}.json`,
-          "application/json"
-        );
-        setTimeout(() => {
-          toastsRef.current.dismiss();
-          toastsRef.current.create({
-            title: "Exported chart",
-            description: `Chart "${selectedChart.title}" exported successfully!`,
-            type: "info",
-            placement: "bottom-end",
-          });
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [toastsRef]
-  );
+      saveAsFile(chartJSON, `${selectedChart.title}.json`, "application/json");
+      toastQueue.close(key);
+      toastQueue.add({
+        title: "Exported chart",
+        description: `Chart "${selectedChart.title}" exported successfully!`,
+        type: "info",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 };
 
 const ExportModal = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
@@ -157,78 +140,61 @@ export const ImportExportMenu = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const toasts = useToast();
-  const toastsRef = useStateRef(toasts);
-
-  const importChartFromFile = useCallback(
-    async (file: File) => {
-      const toastId = toasts.create({
-        title: "Importing chart",
-        description: "Please wait...",
-        type: "loading",
-        placement: "bottom-end",
+  const importChartFromFile = useCallback(async (file: File) => {
+    const toastId = toastQueue.add({
+      title: "Importing chart",
+      description: "Please wait...",
+      type: "loading",
+    });
+    try {
+      const json = JSON.parse(await file.text());
+      const chart = CommonChartOptionsParser.omit({ id: true })
+        .and(DiscriminatedChartOptionsParser)
+        .and(
+          z.object({
+            images: z.unknown(),
+          })
+        )
+        .parse(json);
+      const images = chart.images;
+      delete chart["images"];
+      const chartId = addNewChart(chart);
+      setSelectedChartId(chartId);
+      toastQueue.close(toastId);
+      toastQueue.add({
+        title: `Switched to "${chart.title}"`,
+        description: `Chart "${chart.title}" imported successfully!`,
+        type: "info",
       });
-      try {
-        const json = JSON.parse(await file.text());
-        const chart = CommonChartOptionsParser.omit({ id: true })
-          .and(DiscriminatedChartOptionsParser)
-          .and(
-            z.object({
-              images: z.unknown(),
-            })
-          )
-          .parse(json);
-        const images = chart.images;
-        delete chart["images"];
-        const chartId = addNewChart(chart);
-        setSelectedChartId(chartId);
-        setTimeout(() => {
-          toastsRef.current.dismiss(toastId);
-          toastsRef.current.create({
-            title: `Switched to "${chart.title}"`,
-            description: `Chart "${chart.title}" imported successfully!`,
-            type: "info",
-            placement: "bottom-end",
-          });
+      if (images && typeof images === "object") {
+        const toastId = toastQueue.add({
+          title: "Importing images...",
+          type: "loading",
         });
-        if (images && typeof images === "object") {
-          const toastId = toastsRef.current.create({
-            title: "Importing images...",
-            type: "loading",
-            placement: "bottom-end",
-          });
-          await Promise.all(
-            Object.entries(images).map(async ([key, value]) => {
-              await storeImageToDB({
-                id: key,
-                content: value,
-              });
-            })
-          );
-          setTimeout(() => {
-            toastsRef.current.dismiss(toastId);
-            toastsRef.current.create({
-              title: "Imported all images from chart",
-              type: "info",
-              placement: "bottom-end",
+        await Promise.all(
+          Object.entries(images).map(async ([key, value]) => {
+            await storeImageToDB({
+              id: key,
+              content: value,
             });
-          });
-        }
-      } catch (e) {
-        console.error(e);
-        setTimeout(() => {
-          toastsRef.current.dismiss(toastId);
-          toastsRef.current.create({
-            title: "Could not import chart",
-            description: "There was an error while importing the chart...",
-            type: "error",
-            placement: "bottom-end",
-          });
+          })
+        );
+        toastQueue.close(toastId);
+        toastQueue.add({
+          title: "Imported all images from chart",
+          type: "info",
         });
       }
-    },
-    [toasts, toastsRef]
-  );
+    } catch (e) {
+      console.error(e);
+      toastQueue.close(toastId);
+      toastQueue.add({
+        title: "Could not import chart",
+        description: "There was an error while importing the chart...",
+        type: "error",
+      });
+    }
+  }, []);
 
   const exportSelectedChart = useExportFunction();
 

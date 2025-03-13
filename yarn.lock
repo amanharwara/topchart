@@ -1827,80 +1827,6 @@
     "@typescript-eslint/types" "5.54.0"
     eslint-visitor-keys "^3.3.0"
 
-"@zag-js/anatomy@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/anatomy/-/anatomy-0.11.2.tgz#9976cbf7b80b4cc2072a731dd45c1edb79983fab"
-  integrity sha512-JnZLIh1uQ4EXrzdiqc37y8v4SJiDxk6LRNTblmiUIh0IMMypbIRJnga9jTh/NUB/iJ4mYc1zw+WzAEwytxPXFA==
-
-"@zag-js/core@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/core/-/core-0.11.2.tgz#da2d399b34e9ae8c28e58c8849d980a98fa632d3"
-  integrity sha512-SNKyOp3tIM4VTSkEgHVH8K260abBISzWOp459GFVrsiM1L96vNtHtomIjWO1QamgE6gRCuu+c4Adkx1GQeYDoQ==
-  dependencies:
-    "@zag-js/store" "0.11.2"
-    klona "2.0.6"
-
-"@zag-js/dom-event@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/dom-event/-/dom-event-0.11.2.tgz#2971ad2cd9c30affdc7f2a08cb8bc220c8773874"
-  integrity sha512-9PgDp1wtiFUQsIKHFwW/bfGyoGOGhBDn5DbbatUdBLR0ToyqcvdSyQNC75joN9Y4o9Z/uMibV9drFw0N6eh0Hg==
-  dependencies:
-    "@zag-js/text-selection" "0.11.2"
-    "@zag-js/types" "0.11.2"
-
-"@zag-js/dom-query@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/dom-query/-/dom-query-0.11.2.tgz#794fd37bf5c98ab4bba8bf5e6376f3731bf23c7b"
-  integrity sha512-5i2/FP4V++8YSU/HBhP9qMZJ/OvMX0p33XQsAZ5NrXm+M5nm/MfVbkuWDaU6w7wcMH+Ew+LU7GclwYqmnUmDAQ==
-
-"@zag-js/react@^0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/react/-/react-0.11.2.tgz#743d056a2d58a7e321cf542fb33eeb1fc0edc3da"
-  integrity sha512-iBg90IuBhs3jAIpHBavhbg4ada+W15xQd84+Qi2DR7fvs0V4gYhQ5+7SkVWpqsTfLrIky+ZbW+0fnGRs0EMvpA==
-  dependencies:
-    "@zag-js/core" "0.11.2"
-    "@zag-js/store" "0.11.2"
-    "@zag-js/types" "0.11.2"
-    proxy-compare "2.5.1"
-
-"@zag-js/store@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/store/-/store-0.11.2.tgz#320b61d82c5b989e05ddbb1fb0cba41ac694f945"
-  integrity sha512-aG7d+tnJ3RrRv1w/cIs6vUevpa1q9KwUCvt+b5i8tGVEorfFQHOW5IqhX3gY88k+6+bdZisgwgTDZEaaEyMbUA==
-  dependencies:
-    proxy-compare "2.5.1"
-
-"@zag-js/text-selection@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/text-selection/-/text-selection-0.11.2.tgz#ed8eefa20fd5395ebade115c6c4aab20f7afcb94"
-  integrity sha512-x/i92bocPJxfJtsmnsgUxDqv2xaBZi/bkv/kYgpM0QWY1XF/SQC3n7RTR43qPXdGMQTbVf9Bks/V/fM7/MQqIg==
-  dependencies:
-    "@zag-js/dom-query" "0.11.2"
-
-"@zag-js/toast@^0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/toast/-/toast-0.11.2.tgz#18c3f2747a91c9aa09d1d029aab35bf0d74660d8"
-  integrity sha512-OhStbP9m9bLWEzJtpO1sfIKjn/wkz8ZrrPzsQ7+xsG4E5uj2+N7Xg8J+zZUREPMBmeXyTjtbfHdoFa1Oltj3AQ==
-  dependencies:
-    "@zag-js/anatomy" "0.11.2"
-    "@zag-js/core" "0.11.2"
-    "@zag-js/dom-event" "0.11.2"
-    "@zag-js/dom-query" "0.11.2"
-    "@zag-js/types" "0.11.2"
-    "@zag-js/utils" "0.11.2"
-
-"@zag-js/types@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/types/-/types-0.11.2.tgz#8b4b695c5edbd3eb2303ca288e4a3766850ccb95"
-  integrity sha512-w8n01Qk0pv9CVlyY6+3Wv0F4LBWnWGatMmth1CD+OIPgZ2znxkykvHEiATiYbltbcTyoDwMIoXmfguQcP2vp6g==
-  dependencies:
-    csstype "3.1.2"
-
-"@zag-js/utils@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/utils/-/utils-0.11.2.tgz#563a20df5f6865d6329859435e49559cee27c8a8"
-  integrity sha512-FvrnnpZRehzeSvXZJomTbz/ZHlQ3qEDpIBpr+xv85f8tCLVEG7nCk2SRIiD8wxW4GcWKdQWT40aUW/dXbccwJQ==
-
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -2223,11 +2149,6 @@ cssesc@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/cssesc/-/cssesc-3.0.0.tgz#37741919903b868565e1c09ea747445cd18983ee"
   integrity sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==
-
-csstype@3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
-  integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
 
 csstype@^3.0.2:
   version "3.1.0"
@@ -3284,11 +3205,6 @@ json5@^1.0.1:
     array-includes "^3.1.5"
     object.assign "^4.1.3"
 
-klona@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.6.tgz#85bffbf819c03b2f53270412420a4555ef882e22"
-  integrity sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==
-
 language-subtag-registry@~0.3.2:
   version "0.3.22"
   resolved "https://registry.yarnpkg.com/language-subtag-registry/-/language-subtag-registry-0.3.22.tgz#2e1500861b2e457eba7e7ae86877cbd08fa1fd1d"
@@ -3727,11 +3643,6 @@ prop-types@^15.8.1:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
     react-is "^16.13.1"
-
-proxy-compare@2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-2.5.1.tgz#17818e33d1653fbac8c2ec31406bce8a2966f600"
-  integrity sha512-oyfc0Tx87Cpwva5ZXezSp5V9vht1c7dZBhvuV/y3ctkgMVUmiAGDVeeB0dKhGSyT0v1ZTEQYpe/RXlBVBNuCLA==
 
 punycode@^2.1.0:
   version "2.1.1"
