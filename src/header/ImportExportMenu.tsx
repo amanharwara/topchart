@@ -10,7 +10,6 @@ import {
   setSelectedChartId,
   useSelectedChart,
 } from "../stores/charts";
-import { Menu, MenuArrow, MenuItem, useMenuStore } from "@ariakit/react";
 import { useCallback, useRef, useState } from "react";
 import ExportIcon from "../icons/ExportIcon";
 import { useToast } from "../components/Toast";
@@ -19,10 +18,13 @@ import { saveAsFile } from "../utils/saveAsFile";
 import { getImageFromDB, storeImageToDB } from "../stores/imageDB";
 import { z } from "zod";
 import { base64ToWebP, canUseWebP } from "../utils/webp";
-import Modal from "../components/Modal";
-import Toggle from "../components/Toggle";
+import { Modal } from "../components/Modal";
+import { Toggle } from "../components/Toggle";
 import Button from "../components/Button";
 import { blobToDataURL } from "../addCoverArt/blobToDataURL";
+import { MenuTrigger } from "react-aria-components";
+import { Tooltip } from "../components/Tooltip";
+import { Menu, MenuItem } from "../components/Menu";
 
 const getImagesFromChart = async (
   chart: Chart,
@@ -122,19 +124,17 @@ const ExportModal = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       title={`Export chart "${selectedChart?.title}"`}
       isOpen={true}
       setOpen={setOpen}
-      initialFocus={exportButtonRef}
     >
       <div className="px-2.5 py-3">
         <div className="flex flex-col gap-1">
-          <label className="flex items-center gap-3 font-semibold">
-            <Toggle
-              value={shouldCompressImages}
-              onChange={setShouldCompressImages}
-              className="flex-shrink-0 max-h-5"
-              aria-describedby="image-compress-description"
-            />
+          <Toggle
+            isSelected={shouldCompressImages}
+            onChange={setShouldCompressImages}
+            className="flex items-center gap-3 font-semibold"
+            aria-describedby="image-compress-description"
+          >
             Compress images to reduce size?
-          </label>
+          </Toggle>
           <div id="image-compress-description" className="text-sm max-w-[40ch]">
             When enabled, images will be converted to WebP before exporting,
             which allows for much smaller sizes without a noticeable loss in
@@ -143,7 +143,7 @@ const ExportModal = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
         </div>
       </div>
       <div className="border-t border-gray-800 dark:border-slate-600 px-2.5 py-2">
-        <Button ref={exportButtonRef} onClick={onExport}>
+        <Button ref={exportButtonRef} onClick={onExport} autoFocus>
           Export
         </Button>
       </div>
@@ -156,8 +156,6 @@ export const ImportExportMenu = () => {
 
   const anchorRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const menuStore = useMenuStore();
 
   const toasts = useToast();
   const toastsRef = useStateRef(toasts);
@@ -235,13 +233,10 @@ export const ImportExportMenu = () => {
   const exportSelectedChart = useExportFunction();
 
   return (
-    <>
-      <IconButton
-        icon={ImportIcon}
-        label="Import/Export"
-        ref={anchorRef}
-        onClick={menuStore.toggle}
-      />
+    <MenuTrigger>
+      <Tooltip content="Import/Export">
+        <IconButton icon={ImportIcon} label="Import/Export" ref={anchorRef} />
+      </Tooltip>
       <input
         type="file"
         accept="application/json"
@@ -254,26 +249,9 @@ export const ImportExportMenu = () => {
           importChartFromFile(file);
         }}
       />
-      <Menu
-        portal={true}
-        store={menuStore}
-        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 rounded border border-gray-800 z-50"
-        getAnchorRect={() => {
-          const refRect = anchorRef.current?.getBoundingClientRect();
-
-          return {
-            x: refRect?.x,
-            y: refRect?.y,
-            width: refRect?.width,
-            height: refRect?.height,
-          };
-        }}
-        gutter={4}
-      >
-        <MenuArrow className="hidden" />
+      <Menu>
         <MenuItem
-          className="flex items-center gap-3 py-1.5 px-5 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
-          onClick={() => {
+          onAction={() => {
             if (!fileInputRef.current) return;
             fileInputRef.current.click();
           }}
@@ -282,8 +260,7 @@ export const ImportExportMenu = () => {
           Import chart
         </MenuItem>
         <MenuItem
-          className="flex items-center gap-3 py-1.5 px-5 cursor-pointer dark:hover:bg-slate-700 dark:focus:bg-slate-700 hover:bg-slate-300 focus:bg-slate-300"
-          onClick={() => {
+          onAction={() => {
             if (canUseWebP) {
               setShowExportModal(true);
             } else {
@@ -296,6 +273,6 @@ export const ImportExportMenu = () => {
         </MenuItem>
       </Menu>
       {showExportModal && <ExportModal setOpen={setShowExportModal} />}
-    </>
+    </MenuTrigger>
   );
 };

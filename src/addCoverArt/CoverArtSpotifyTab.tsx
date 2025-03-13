@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import RadioButtonGroup from "../components/RadioButtonGroup";
-import Select from "../components/Select";
+import { RadioButtonGroup } from "../components/RadioButtonGroup";
+import { Select } from "../components/Select";
 import Spinner from "../components/Spinner";
 import {
   SpotifyArtist,
@@ -237,15 +237,17 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
   return (
     <div className="flex flex-col gap-4 p-4 min-h-0 overflow-y-auto">
       <RadioButtonGroup
+        aria-label="List type"
         value={topType}
-        onChange={setTopType}
+        onChange={setTopType as (v: string) => void}
         items={TopTypeOptions}
       />
       <div className="flex flex-col gap-1">
         <div className="font-semibold">Time Range</div>
         <Select
+          aria-label="Time range"
           value={timeRange}
-          setValue={setTimeRange}
+          setValue={setTimeRange as (v: string) => void}
           options={TimeRangeOptions}
         />
       </div>

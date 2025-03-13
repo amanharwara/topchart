@@ -21,12 +21,13 @@ main {
 }
 
 *:focus-visible,
-.focus-within-ring:focus-within {
+.focus-within-ring:focus-within,
+.focus-visible {
   @apply shadow-none outline-none ring-2 ring-blue-500 ring-offset-1 dark:ring-offset-slate-900;
 }
 
-[data-backdrop] {
-  @apply bg-gray-600/75 dark:bg-gray-900/75;
+.react-aria-ModalOverlay {
+  @apply fixed inset-0 bg-gray-600/75 dark:bg-gray-900/75;
 }
 
 .square-aspect-ratio {

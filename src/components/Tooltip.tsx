@@ -1,38 +1,21 @@
-import {
-  Tooltip as AriakitTooltip,
-  TooltipAnchor,
-  TooltipArrow,
-  useTooltipStore,
-} from "@ariakit/react";
+import { ReactNode } from "react";
+import { TooltipTrigger, Tooltip as RacTooltip } from "react-aria-components";
+import { PopoverArrow } from "./PopoverArrow";
 
-const Tooltip = ({
-  text,
+export function Tooltip({
+  content,
   children,
-  forceHide,
 }: {
-  text: string;
-  children: React.ReactNode;
-  forceHide?: boolean;
-}) => {
-  const state = useTooltipStore({
-    open: forceHide ? false : undefined,
-  });
-
+  content: ReactNode;
+  children: ReactNode;
+}) {
   return (
-    <>
-      <TooltipAnchor className="hidden md:block" store={state}>
-        {children}
-      </TooltipAnchor>
-      <AriakitTooltip
-        store={state}
-        className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 px-2.5 rounded border border-gray-800 dark:border-0"
-        gutter={-1}
-      >
-        <TooltipArrow />
-        {text}
-      </AriakitTooltip>
-    </>
+    <TooltipTrigger delay={500}>
+      {children}
+      <RacTooltip className="dark:bg-slate-600 dark:text-white bg-slate-100 py-1 px-2.5 rounded border border-gray-800 dark:border-0 mt-2">
+        <PopoverArrow />
+        {content}
+      </RacTooltip>
+    </TooltipTrigger>
   );
-};
-
-export default Tooltip;
+}

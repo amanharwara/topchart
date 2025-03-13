@@ -3,20 +3,24 @@ import {
   ComponentType,
   ForwardedRef,
   forwardRef,
+  ReactNode,
 } from "react";
 import classNames from "../utils/classNames";
+import { ButtonProps, Button as RacButton } from "react-aria-components";
 
 type Props = {
   hideLabelOnMobile?: boolean;
   icon?: ComponentType<ComponentPropsWithoutRef<"svg">>;
-} & ComponentPropsWithoutRef<"button">;
+  children: ReactNode;
+  onClick?: () => void;
+} & Omit<ButtonProps, "children">;
 
 const Button = forwardRef(function Button(
-  { hideLabelOnMobile, className, icon: Icon, ...props }: Props,
+  { hideLabelOnMobile, className, icon: Icon, onClick, ...props }: Props,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   return (
-    <button
+    <RacButton
       type="button"
       className={classNames(
         "flex items-center gap-1.5 rounded border border-solid border-slate-600 dark:text-white focus:bg-slate-600 focus:text-white hover:bg-slate-600 hover:text-white",
@@ -24,6 +28,7 @@ const Button = forwardRef(function Button(
         className
       )}
       ref={ref}
+      onPress={onClick}
       {...props}
     >
       {Icon ? <Icon className="h-4 w-4" /> : null}
@@ -35,7 +40,7 @@ const Button = forwardRef(function Button(
       >
         {props.children}
       </span>
-    </button>
+    </RacButton>
   );
 });
 

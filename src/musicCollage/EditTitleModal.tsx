@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import Modal from "../components/Modal";
+import { Modal } from "../components/Modal";
 import SaveIcon from "../icons/SaveIcon";
 import {
   getMusicCollageItem,

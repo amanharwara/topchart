@@ -2,9 +2,9 @@ import ColorPickerButton from "../components/ColorPickerButton";
 import IconButton from "../components/IconButton";
 import Input from "../components/Input";
 import InputWithIcon from "../components/InputWithIcon";
-import RadioButtonGroup from "../components/RadioButtonGroup";
-import Select from "../components/Select";
-import Toggle from "../components/Toggle";
+import { RadioButtonGroup } from "../components/RadioButtonGroup";
+import { Select } from "../components/Select";
+import { Toggle } from "../components/Toggle";
 import ColorPickerIcon from "../icons/ColorPickerIcon";
 import ImageIcon from "../icons/ImageIcon";
 import LinkIcon from "../icons/LinkIcon";
@@ -57,6 +57,7 @@ function GapOption() {
     <div className="flex flex-col gap-2.5">
       <div className="text-lg font-semibold">Gap Between Items</div>
       <RadioButtonGroup
+        aria-label="Gap between items"
         items={[
           {
             label: "None",
@@ -91,6 +92,7 @@ function PaddingOption() {
     <div className="flex flex-col gap-2.5">
       <div className="text-lg font-semibold">Padding</div>
       <RadioButtonGroup
+        aria-label="Padding"
         items={[
           {
             label: "None",
@@ -134,64 +136,58 @@ function AlbumTitleOptions() {
     <>
       <div className="flex flex-col gap-2.5">
         <div className="text-lg font-semibold">Album Titles</div>
-        <label className="flex select-none items-center gap-3">
-          <Toggle
-            value={showTitles}
-            onChange={(checked) => {
-              setSelectedMusicCollageProperty("showTitles", checked);
-            }}
-          />
+        <Toggle
+          className="flex select-none items-center gap-3"
+          isSelected={showTitles}
+          onChange={(checked) => {
+            setSelectedMusicCollageProperty("showTitles", checked);
+          }}
+        >
           Show album titles
-        </label>
-        <label
+        </Toggle>
+        <Toggle
           className={classNames(
             "flex items-center gap-3",
             !showTitles && "cursor-not-allowed text-gray-500"
           )}
+          isDisabled={!showTitles}
+          isSelected={positionTitlesBelowCover}
+          onChange={(checked) => {
+            setSelectedMusicCollageProperty(
+              "positionTitlesBelowCover",
+              checked
+            );
+          }}
         >
-          <Toggle
-            disabled={!showTitles}
-            value={positionTitlesBelowCover}
-            onChange={(checked) => {
-              setSelectedMusicCollageProperty(
-                "positionTitlesBelowCover",
-                checked
-              );
-            }}
-          />
           Position album titles below cover
-        </label>
-        <label
+        </Toggle>
+        <Toggle
           className={classNames(
             "flex items-center gap-3",
             !showTitles && "cursor-not-allowed text-gray-500"
           )}
+          isDisabled={!showTitles}
+          isSelected={allowEditingTitles}
+          onChange={(checked) => {
+            setSelectedMusicCollageProperty("allowEditingTitles", checked);
+          }}
         >
-          <Toggle
-            disabled={!showTitles}
-            value={allowEditingTitles}
-            onChange={(checked) => {
-              setSelectedMusicCollageProperty("allowEditingTitles", checked);
-            }}
-          />
           Allow editing titles
-        </label>
-        <label
+        </Toggle>
+        <Toggle
           className={classNames(
             "flex items-center gap-3",
             (!showTitles || positionTitlesBelowCover) &&
               "cursor-not-allowed text-gray-500"
           )}
+          isDisabled={!showTitles || positionTitlesBelowCover}
+          isSelected={groupTitles}
+          onChange={(checked) => {
+            setSelectedMusicCollageProperty("groupTitles", checked);
+          }}
         >
-          <Toggle
-            disabled={!showTitles || positionTitlesBelowCover}
-            value={groupTitles}
-            onChange={(checked) => {
-              setSelectedMusicCollageProperty("groupTitles", checked);
-            }}
-          />
           Group titles
-        </label>
+        </Toggle>
       </div>
     </>
   );
@@ -274,6 +270,7 @@ function FontOption() {
     <div className="flex flex-col gap-2.5">
       <div className="text-lg font-semibold">Font style</div>
       <Select
+        aria-label="Font style"
         value={fontStyle}
         setValue={(value) =>
           setSelectedMusicCollageProperty(
@@ -353,15 +350,15 @@ function ChartTitleOption() {
   return (
     <div className="flex flex-col gap-2.5">
       <div className="text-lg font-semibold">Chart title</div>
-      <label className="flex select-none items-center gap-3">
-        <Toggle
-          value={showChartTitle}
-          onChange={(checked) => {
-            setSelectedMusicCollageProperty("showChartTitle", checked);
-          }}
-        />
+      <Toggle
+        className="flex select-none items-center gap-3"
+        isSelected={showChartTitle}
+        onChange={(checked) => {
+          setSelectedMusicCollageProperty("showChartTitle", checked);
+        }}
+      >
         Show chart title
-      </label>
+      </Toggle>
     </div>
   );
 }
@@ -372,9 +369,12 @@ function ImageRenderingOptions() {
   return (
     <div className="flex flex-col gap-2.5">
       <div className="text-lg font-semibold">Image fit</div>
-      <Select<ImageFit>
+      <Select
+        aria-label="Image fit"
         value={imageFit}
-        setValue={(value) => setSelectedMusicCollageProperty("imageFit", value)}
+        setValue={(value) =>
+          setSelectedMusicCollageProperty("imageFit", value as ImageFit)
+        }
         options={[
           {
             label: "Fit inside",

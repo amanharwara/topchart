@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import IconButton from "../components/IconButton";
-import Select from "../components/Select";
+import { Select } from "../components/Select";
 import AddIcon from "../icons/AddIcon";
 import EditIcon from "../icons/EditIcon";
 import SaveIcon from "../icons/SaveIcon";
@@ -18,7 +18,7 @@ import {
   useSelectedChartType,
 } from "../stores/charts";
 import MusicCollageOptions from "./MusicCollageOptions";
-import Modal from "../components/Modal";
+import { Modal } from "../components/Modal";
 import Input from "../components/Input";
 import Button from "../components/Button";
 
@@ -114,6 +114,7 @@ const CurrentChartOption = () => {
         {isSelectingChart && (
           <>
             <Select
+              aria-label="Current chart"
               value={selectedChart.id}
               setValue={setSelectedChartId}
               options={charts.map(({ id, title }) => ({
@@ -208,6 +209,7 @@ const ChartTypeOption = () => {
       <div className="text-lg font-semibold">Chart type:</div>
       <div className="flex gap-3">
         <Select
+          aria-label="Chart type"
           value={chartType}
           setValue={(type) => setSelectedChartType(type as ChartType)}
           options={Object.entries(EnabledChartTypes).map(([value, label]) => ({

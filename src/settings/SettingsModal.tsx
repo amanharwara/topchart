@@ -1,6 +1,6 @@
 import Button from "../components/Button";
-import Modal from "../components/Modal";
-import Toggle from "../components/Toggle";
+import { Modal } from "../components/Modal";
+import { Toggle } from "../components/Toggle";
 import SpotifyIcon from "../icons/SpotifyIcon";
 import UserIcon from "../icons/UserIcon";
 import {
@@ -68,15 +68,18 @@ const SettingsModal = () => {
       setOpen={setSettingsModalOpen}
     >
       <div className="p-4 pb-2.5">
-        <label className="flex items-center gap-2 justify-between cursor-pointer">
-          <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
+          <Toggle
+            isSelected={darkMode}
+            onChange={setDarkMode}
+            className="flex flex-row-reverse items-center gap-2 justify-between"
+          >
             <div className="text-sm font-bold">Dark Mode</div>
-            <div className="text-xs dark:text-gray-400 text-gray-600">
-              Toggle dark mode
-            </div>
+          </Toggle>
+          <div className="text-xs dark:text-gray-400 text-gray-600">
+            Toggle dark mode
           </div>
-          <Toggle value={darkMode} onChange={setDarkMode} />
-        </label>
+        </div>
       </div>
       <SpotifySettings />
     </Modal>

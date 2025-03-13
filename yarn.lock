@@ -7,27 +7,6 @@
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
-"@ariakit/core@0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@ariakit/core/-/core-0.2.7.tgz#b7ee9d44ec552f3010201ed01c4f40f18afc48c3"
-  integrity sha512-Hs0N1EMYq88WW4v9xnSIHNR38TvbQuoUX6FYFmeLCZSTIXQBiET7lr1DQXwOOmdEtRtlxQ5HsxbTkxeOkPv+eg==
-
-"@ariakit/react-core@0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@ariakit/react-core/-/react-core-0.2.12.tgz#b2b1184f0ed5e817e92b76ae8684caec7f2eca06"
-  integrity sha512-3KSKlX10nnhCvjsbPW0CAnqG+6grryfwnMkeJJ/h34FSV7hEfUMexmIjKBVZyfBG08Xj8NjSK8kkx9c3ChkXeA==
-  dependencies:
-    "@ariakit/core" "0.2.7"
-    "@floating-ui/dom" "^1.0.0"
-    use-sync-external-store "^1.2.0"
-
-"@ariakit/react@^0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@ariakit/react/-/react-0.2.12.tgz#4a2a2c0977e40cf192f44f3c54ea61d7ac4e02ac"
-  integrity sha512-4rAgMyUURHW78EKgRCanhyRUtsiYCOxO65BBHF4mg3tZsDeOvu9kBG5IAXX8mUgakTcyr0EKXuOtGThaj7gobA==
-  dependencies:
-    "@ariakit/react-core" "0.2.12"
-
 "@babel/runtime-corejs3@^7.10.2":
   version "7.18.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.18.9.tgz#7bacecd1cb2dd694eacd32a91fcf7021c20770ae"
@@ -100,18 +79,6 @@
   version "8.35.0"
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.35.0.tgz#b7569632b0b788a0ca0e438235154e45d42813a7"
   integrity sha512-JXdzbRiWclLVoD8sNUjR443VVlYqiYmDVT6rGUEIEHU5YJW0gaVZwV2xgM7D4arkvASqD0IlLUVjHiFuxaftRw==
-
-"@floating-ui/core@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.0.1.tgz#00e64d74e911602c8533957af0cce5af6b2e93c8"
-  integrity sha512-bO37brCPfteXQfFY0DyNDGB3+IMe4j150KFQcgJ5aBP295p9nBGeHEs/p0czrRbtlHq4Px/yoPXO/+dOCcF4uA==
-
-"@floating-ui/dom@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.0.1.tgz#3321d4e799d6ac2503e729131d07ad0e714aabeb"
-  integrity sha512-wBDiLUKWU8QNPNOTAFHiIAkBv1KlHauG2AhqjSeh2H+wR8PX+AArXfz8NkRexH5PgMJMmSOS70YS89AbWYh5dA==
-  dependencies:
-    "@floating-ui/core" "^1.0.1"
 
 "@formatjs/ecma402-abstract@2.3.3":
   version "2.3.3"
@@ -1886,28 +1853,6 @@
   resolved "https://registry.yarnpkg.com/@zag-js/dom-query/-/dom-query-0.11.2.tgz#794fd37bf5c98ab4bba8bf5e6376f3731bf23c7b"
   integrity sha512-5i2/FP4V++8YSU/HBhP9qMZJ/OvMX0p33XQsAZ5NrXm+M5nm/MfVbkuWDaU6w7wcMH+Ew+LU7GclwYqmnUmDAQ==
 
-"@zag-js/element-size@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/element-size/-/element-size-0.11.2.tgz#e2ace5a9171b6d5d0e498ed617c889ec92f55d06"
-  integrity sha512-I/gLU7uYTP+eLcXq4V6PmniCP8rSZMFd9zmZeHI6cVbrHVlP45hLfN6zoy28znGHoeZDBEhkLt3gXEhrFslTJA==
-
-"@zag-js/form-utils@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/form-utils/-/form-utils-0.11.2.tgz#3159a28dae9a69bc486d65ad6ecf2a204770913c"
-  integrity sha512-Mtfm/+7j1DV8TQSOYtGYlJ1HoRq2i1wDxC3zO8jJSi1NuZ9NExauLrOgCkH4ZrSO10mHrF+PehgBDmiBY65Zqw==
-  dependencies:
-    "@zag-js/mutation-observer" "0.11.2"
-
-"@zag-js/mutation-observer@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/mutation-observer/-/mutation-observer-0.11.2.tgz#f2866e487063d3f019c35d8b4f07e557a62ee42c"
-  integrity sha512-Fd5ceiuTIIMur45JalOqHyuhaDkeYH3zaoSNkRAJwDhJlsTkY3J+nIkFfABTX8vQTQ0hH755eSNcqehIulKZZA==
-
-"@zag-js/numeric-range@0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/numeric-range/-/numeric-range-0.11.2.tgz#7b46736a6e69cd27bd09a873d5dbca69945420cc"
-  integrity sha512-XOpTV/N1BbyS5i/LJ34wqeYJEkzQ3iHJVYutMuu1FfZlnVx7c91P/lFtmd5dkTc6d8Laaew04zyAENeNzNNFGg==
-
 "@zag-js/react@^0.11.2":
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/@zag-js/react/-/react-0.11.2.tgz#743d056a2d58a7e321cf542fb33eeb1fc0edc3da"
@@ -1917,21 +1862,6 @@
     "@zag-js/store" "0.11.2"
     "@zag-js/types" "0.11.2"
     proxy-compare "2.5.1"
-
-"@zag-js/slider@^0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@zag-js/slider/-/slider-0.11.2.tgz#ce607edf98840d60f955215f3aec536517c0e4f6"
-  integrity sha512-7Y1heE14fOuBAYWvL8bAhUNeyDbGNIRyDtec7HUQo0ePm2CoBmm8KeolBSz8hTFJBepH+O4MkUyq+ifGAyWacQ==
-  dependencies:
-    "@zag-js/anatomy" "0.11.2"
-    "@zag-js/core" "0.11.2"
-    "@zag-js/dom-event" "0.11.2"
-    "@zag-js/dom-query" "0.11.2"
-    "@zag-js/element-size" "0.11.2"
-    "@zag-js/form-utils" "0.11.2"
-    "@zag-js/numeric-range" "0.11.2"
-    "@zag-js/types" "0.11.2"
-    "@zag-js/utils" "0.11.2"
 
 "@zag-js/store@0.11.2":
   version "0.11.2"

@@ -18,16 +18,16 @@ import {
   useSetMusicCollageItem,
 } from "../stores/charts";
 import { useResultDrag } from "./useResultDrag";
-import {
-  Disclosure,
-  DisclosureContent,
-  useDisclosureStore,
-} from "@ariakit/react";
 import CaretDownIcon from "../icons/CaretDownIcon";
 import { useQuery } from "@tanstack/react-query";
 import { recentsStore } from "../stores/recents";
 import { useStore } from "zustand";
 import Spinner from "../components/Spinner";
+import {
+  Disclosure,
+  DisclosurePanel,
+  Button as RacButton,
+} from "react-aria-components";
 
 const RecentlyUploadedImage = ({
   id,
@@ -212,8 +212,6 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
     recentsStore,
     (s) => s.recentlyUploadedImages
   );
-  const showRecentDisclosureState = useDisclosureStore();
-  const isShowingRecentDisclosure = showRecentDisclosureState.useState("open");
 
   return (
     <div className="flex flex-col gap-2.5 p-4 overflow-y-auto max-h-[70vh] relative">
@@ -271,41 +269,49 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
       )}
       {recentlyUploadedImageIds.length > 0 && (
         <div className="rounded px-2 py-1 border border-slate-600 dark:bg-slate-600 max-w-sm">
-          <Disclosure
-            className="w-full flex items-center justify-between text-sm font-semibold"
-            store={showRecentDisclosureState}
-          >
-            <div>Recently uploaded</div>
-            <CaretDownIcon
-              className={classNames(
-                "w-4 h-4 transition-transform",
-                isShowingRecentDisclosure && "rotate-180"
-              )}
-            />
+          <Disclosure>
+            {({ isExpanded, state }) => (
+              <>
+                <RacButton
+                  slot="trigger"
+                  className="w-full flex items-center justify-between text-sm font-semibold"
+                >
+                  <div>Recently uploaded</div>
+                  <CaretDownIcon
+                    className={classNames(
+                      "w-4 h-4 transition-transform",
+                      isExpanded && "rotate-180"
+                    )}
+                  />
+                </RacButton>
+                <DisclosurePanel
+                  className={classNames(
+                    "flex-col gap-2.5 pt-1.5 pb-1",
+                    isExpanded && "flex"
+                  )}
+                >
+                  <div className="grid grid-cols-3 gap-2">
+                    {recentlyUploadedImageIds.map((id) => (
+                      <RecentlyUploadedImage
+                        id={id}
+                        key={id}
+                        setCurrentImage={setCurrentImage}
+                        toggleDisclosure={state.toggle}
+                      />
+                    ))}
+                  </div>
+                  <Button
+                    className="border-slate-500 hover:!bg-slate-500 justify-center"
+                    onClick={() => {
+                      recentsStore.getState().clearRecentlyUploadedImages();
+                    }}
+                  >
+                    Clear recents
+                  </Button>
+                </DisclosurePanel>
+              </>
+            )}
           </Disclosure>
-          <DisclosureContent
-            className="flex flex-col gap-2.5 pt-1.5 pb-1"
-            store={showRecentDisclosureState}
-          >
-            <div className="grid grid-cols-3 gap-2">
-              {recentlyUploadedImageIds.map((id) => (
-                <RecentlyUploadedImage
-                  id={id}
-                  key={id}
-                  setCurrentImage={setCurrentImage}
-                  toggleDisclosure={showRecentDisclosureState.toggle}
-                />
-              ))}
-            </div>
-            <Button
-              className="border-slate-500 hover:!bg-slate-500 justify-center"
-              onClick={() => {
-                recentsStore.getState().clearRecentlyUploadedImages();
-              }}
-            >
-              Clear recents
-            </Button>
-          </DisclosureContent>
         </div>
       )}
     </div>

@@ -1,51 +1,32 @@
-import {
-  VisuallyHidden,
-  Radio,
-  RadioGroup,
-  useRadioStore,
-} from "@ariakit/react";
+import { Radio, RadioGroup, RadioGroupProps } from "react-aria-components";
 import classNames from "../utils/classNames";
 
-type Props<Value> = {
-  items: { label: string; value: Value }[];
-  value: Value;
-  onChange: (value: Value) => void;
-};
+type Props = {
+  items: { label: string; value: string }[];
+  value: string;
+  onChange: (value: string) => void;
+} & Omit<RadioGroupProps, "value" | "onChange">;
 
-function RadioButtonGroup<Value extends string>({
-  value,
-  items,
-  onChange,
-}: Props<Value>) {
-  const radio = useRadioStore({
-    value,
-    orientation: "horizontal",
-    setValue(value) {
-      onChange(value as Value);
-    },
-  });
-
+export function RadioButtonGroup({ value, items, onChange, ...props }: Props) {
   return (
     <RadioGroup
-      store={radio}
+      value={value}
+      onChange={onChange}
       className="flex divide-x divide-slate-600 rounded border border-slate-600"
+      {...props}
     >
       {items.map(({ label, value: itemValue }) => (
-        <label
+        <Radio
+          value={itemValue}
+          key={itemValue}
           className={classNames(
             "focus-within-ring flex-grow select-none py-1.5 text-center",
             itemValue === value && "bg-slate-600 text-white"
           )}
-          key={itemValue}
         >
-          <VisuallyHidden>
-            <Radio value={itemValue} />
-          </VisuallyHidden>
           {label}
-        </label>
+        </Radio>
       ))}
     </RadioGroup>
   );
 }
-
-export default RadioButtonGroup;
