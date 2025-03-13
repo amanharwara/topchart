@@ -31,7 +31,7 @@ export function SliderOption({
         <Label className="text-lg font-semibold">{label}</Label>
         <SliderOutput />
       </div>
-      <SliderTrack className="relative h-6">
+      <SliderTrack className="relative h-6 focus-within-ring">
         {({ state }) => (
           <>
             <div className="absolute h-1 top-1/2 -translate-y-1/2 w-full rounded-full bg-slate-700 dark:bg-white" />
