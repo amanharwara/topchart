@@ -1,62 +1,50 @@
-import * as slider from "@zag-js/slider";
-import { useMachine, normalizeProps } from "@zag-js/react";
-import { useId } from "react";
+import {
+  Label,
+  Slider,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack,
+} from "react-aria-components";
 
-const SliderOption = ({
+export function SliderOption({
   label,
   value,
   onChange,
+  min,
+  max,
 }: {
   label: string;
   value: number;
   onChange: (value: number) => void;
-}) => {
-  const [state, send] = useMachine(
-    slider.machine({
-      id: useId(),
-      value,
-      onChange: ({ value }) => onChange(value),
-      min: 1,
-      max: 10,
-    })
-  );
-
-  const api = slider.connect(state, send, normalizeProps);
-
+  min: number;
+  max: number;
+}) {
   return (
-    <div {...api.rootProps} className="flex flex-col gap-2.5">
+    <Slider
+      className="flex flex-col gap-2.5"
+      minValue={min}
+      maxValue={max}
+      value={value}
+      onChange={onChange}
+    >
       <div className="flex justify-between items-center">
-        <label className="text-lg font-semibold" {...api.labelProps}>
-          {label}
-        </label>
-        <output {...api.outputProps}>{api.value}</output>
+        <Label className="text-lg font-semibold">{label}</Label>
+        <SliderOutput />
       </div>
-      <div
-        className="select-none touch-none relative flex items-center py-2.5"
-        {...api.controlProps}
-      >
-        <div
-          className="relative h-1 rounded-full flex-1 bg-slate-700 dark:bg-white"
-          {...api.trackProps}
-        >
-          <div
-            className="absolute bg-blue-500 h-1 rounded-full"
-            style={{
-              left: "var(--slider-range-start)",
-              right: "var(--slider-range-end)",
-            }}
-            {...api.rangeProps}
-          />
-        </div>
-        <div
-          {...api.thumbProps}
-          className="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 border-2 dark:border-white border-slate-700"
-        >
-          <input {...api.hiddenInputProps} />
-        </div>
-      </div>
-    </div>
+      <SliderTrack className="relative h-6">
+        {({ state }) => (
+          <>
+            <div className="absolute h-1 top-1/2 -translate-y-1/2 w-full rounded-full bg-slate-700 dark:bg-white" />
+            <div
+              className="absolute h-1 top-1/2 -translate-y-1/2 rounded-full bg-blue-500"
+              style={{
+                width: state.getThumbPercent(0) * 100 + "%",
+              }}
+            />
+            <SliderThumb className="top-1/2 flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-700 border-2 dark:border-white border-slate-700" />
+          </>
+        )}
+      </SliderTrack>
+    </Slider>
   );
-};
-
-export default SliderOption;
+}

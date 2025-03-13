@@ -16,7 +16,7 @@ import {
   ImageFit,
 } from "../stores/charts";
 import classNames from "../utils/classNames";
-import SliderOption from "./SliderOption";
+import { SliderOption } from "./SliderOption";
 
 function RowsOption() {
   const rows = useSelectedMusicCollageProperty("rows");
@@ -28,6 +28,8 @@ function RowsOption() {
       onChange={(value) => {
         setSelectedMusicCollageProperty("rows", value);
       }}
+      min={1}
+      max={10}
     />
   );
 }
@@ -42,6 +44,8 @@ function ColumnsOption() {
       onChange={(value) => {
         setSelectedMusicCollageProperty("columns", value);
       }}
+      min={1}
+      max={10}
     />
   );
 }
