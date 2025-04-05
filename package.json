@@ -19,7 +19,7 @@
     "idb": "^7.1.1",
     "immer": "^9.0.19",
     "nanoid": "^4.0.1",
-    "next": "15.2.2",
+    "next": "15.2.4",
     "react": "18.2.0",
     "react-aria-components": "^1.7.1",
     "react-dom": "18.2.0",
