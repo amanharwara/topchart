@@ -58,7 +58,7 @@ const MusicCollageParser = z.object({
   positionTitlesBelowCover: z.boolean(),
   allowEditingTitles: z.boolean(),
   groupTitles: z.boolean().default(true),
-  imageFit: ImageFitParser,
+  imageFit: ImageFitParser.default("cover"),
 });
 export type MusicCollage = z.infer<typeof MusicCollageParser>;
 
@@ -112,6 +112,7 @@ const ChartParser = CommonChartOptionsParser.and(
   DiscriminatedChartOptionsParser
 );
 export type Chart = z.infer<typeof ChartParser>;
+export type ChartWithoutId = Omit<Chart, "id">;
 
 const MaxNumberOfRows = 10;
 const MaxNumberOfColumns = 10;
@@ -362,11 +363,16 @@ export const addNewDefaultChart = (title?: string, type?: ChartType) => {
   return newChart.id;
 };
 
-export const addNewChart = (chart: Omit<Chart, "id">) => {
-  const id = nanoid();
+export const addNewChart = (chart: ChartWithoutId, id = nanoid()) => {
   const newChart = {
     ...chart,
   } as Chart;
+  // when importing charts from files, we have an images field on the chart
+  // which contains all the images for it. we don't want to store those in the
+  // state since we import them separately into indexedDB.
+  if ("images" in newChart) {
+    delete newChart.images;
+  }
   newChart.id = id;
   useChartStore.setState((state) => ({
     charts: [...state.charts, newChart],

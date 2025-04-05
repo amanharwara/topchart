@@ -49,12 +49,12 @@ export function Select({
         <span className="overflow-hidden text-ellipsis">
           <SelectValue />
         </span>
-        <CaretDownIcon className="w-4 h-4 group-data-[open=true]/select:rotate-180" />
+        <CaretDownIcon className="w-4 h-4 group-data-[open=true]/select:rotate-180 flex-shrink-0" />
       </Button>
       <Popover
         offset={2}
         className={classNames(
-          "w-[--trigger-width] rounded border border-slate-600 dark:bg-gray-800 bg-slate-100 p-1",
+          "w-[--trigger-width] rounded border border-slate-600 dark:bg-gray-800 bg-slate-100 p-1 overflow-auto",
           popoverClassName
         )}
       >
