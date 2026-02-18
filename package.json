@@ -18,7 +18,7 @@
     "html-to-image": "^1.11.11",
     "idb": "^7.1.1",
     "immer": "^9.0.19",
-    "nanoid": "^4.0.1",
+    "nanoid": "^5.1.6",
     "next": "16.1.6",
     "react": "19.2.4",
     "react-aria-components": "^1.7.1",
