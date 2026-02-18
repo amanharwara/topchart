@@ -1,6 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @next/next/no-img-element */
-
 import classNames from "../utils/classNames";
 import { ReactNode, useState } from "react";
 import { CoverArtSearchTab } from "./CoverArtSearchTab";
@@ -22,7 +19,7 @@ const TabButton = (props: {
     className={classNames(
       "flex-grow border-slate-600 py-2.5 text-sm uppercase hover:bg-slate-500",
       props.selected && "bg-slate-600 text-white font-semibold",
-      props.className
+      props.className,
     )}
     onClick={props.onClick}
   >

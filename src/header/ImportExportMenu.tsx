@@ -51,7 +51,7 @@ async function getImagesFromChart(chart: Chart, shouldCompressImages: boolean) {
         }
 
         images[item.image] = image;
-      })
+      }),
     );
   }
   return images;
@@ -59,7 +59,7 @@ async function getImagesFromChart(chart: Chart, shouldCompressImages: boolean) {
 
 async function getChartJSON(
   chart: Chart,
-  shouldCompressImages: boolean
+  shouldCompressImages: boolean,
 ): Promise<string> {
   const images = await getImagesFromChart(chart, shouldCompressImages);
   const chartJSON = JSON.stringify({
@@ -86,7 +86,7 @@ async function exportSelectedChart(shouldCompressImages: boolean) {
     saveDataAsFile(
       chartJSON,
       `${selectedChart.title}.json`,
-      "application/json"
+      "application/json",
     );
     toastQueue.close(key);
     toastQueue.add({
@@ -101,7 +101,7 @@ async function exportSelectedChart(shouldCompressImages: boolean) {
 
 async function exportMultipleCharts(
   charts: Chart[],
-  shouldCompressImages: boolean
+  shouldCompressImages: boolean,
 ): Promise<void> {
   const zip = await import("@zip.js/zip.js");
   const writer = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
@@ -112,7 +112,7 @@ async function exportMultipleCharts(
       const blob = new Blob([chartJSON], { type: "application/json" });
       const fileName = `${chart.id}.json`;
       await writer.add(fileName, new zip.BlobReader(blob));
-    })
+    }),
   );
 
   const zipBlob = await writer.close();
@@ -129,7 +129,7 @@ function parseChartFromText(text: string): ParsedChart {
     .and(
       z.object({
         images: z.record(z.string()),
-      })
+      }),
     )
     .parse(json);
   return chart;
@@ -142,7 +142,7 @@ async function importImagesToDB(images: Record<string, string>) {
         id: key,
         content: value,
       });
-    })
+    }),
   );
 }
 
@@ -222,7 +222,7 @@ function CurrentChartExportModal({
 }) {
   const selectedChart = useSelectedChart();
   const [shouldCompressImages, setShouldCompressImages] = useState(
-    () => canUseWebP
+    () => canUseWebP,
   );
   const exportButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -270,10 +270,10 @@ function ExportMultipleChartsModal({
 }) {
   const charts = useChartsList();
   const [selectedChartIDs, setSelectedChartIDs] = useState<string[]>(() =>
-    charts.map((chart) => chart.id)
+    charts.map((chart) => chart.id),
   );
   const [shouldCompressImages, setShouldCompressImages] = useState(
-    () => canUseWebP
+    () => canUseWebP,
   );
 
   const [isExporting, setIsExporting] = useState(false);
@@ -285,7 +285,7 @@ function ExportMultipleChartsModal({
     try {
       await exportMultipleCharts(
         charts.filter((chart) => selectedChartIDs.includes(chart.id)),
-        shouldCompressImages
+        shouldCompressImages,
       );
     } catch (err) {
       if (err instanceof Error) {
@@ -384,7 +384,7 @@ function ImportMultipleChartsModal({
     setIsImporting(true);
     setImportResult(undefined);
     const chartsToImport = charts.filter((chart) =>
-      selectedChartIDs.includes(chart.id)
+      selectedChartIDs.includes(chart.id),
     );
     try {
       let index = 0;
@@ -393,7 +393,7 @@ function ImportMultipleChartsModal({
         const chart = chartsToImport[index];
         if (!chart)
           throw new Error(
-            `Trying to access chart at index ${index} which is not available`
+            `Trying to access chart at index ${index} which is not available`,
           );
         addNewChart(chart, chart.id);
         await importImagesToDB(chart.images);
@@ -445,7 +445,7 @@ function ImportMultipleChartsModal({
       {!hasChartsToImport && (
         <div className="px-2.5 !mb-1.5">
           <div className="mb-1">
-            Pick {!!importResult ? "another" : ""} file to import:
+            Pick {importResult ? "another" : ""} file to import:
           </div>
           <input
             type="file"
@@ -457,7 +457,7 @@ function ImportMultipleChartsModal({
               try {
                 const charts = (await getAllChartsFromFile(file)).map(
                   (chart) =>
-                    ({ ...chart, id: nanoid() } as Chart & ParsedImages)
+                    ({ ...chart, id: nanoid() } as Chart & ParsedImages),
                 );
                 setCharts(charts);
                 setSelectedChartIDs(charts.map((chart) => chart.id));

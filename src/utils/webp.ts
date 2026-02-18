@@ -1,7 +1,7 @@
 export const canUseWebP = (() => {
   const canvas = document.createElement("canvas");
 
-  if (!!(canvas.getContext && canvas.getContext("2d"))) {
+  if (canvas.getContext && canvas.getContext("2d")) {
     return canvas.toDataURL("image/webp").indexOf("data:image/webp") === 0;
   }
 
@@ -28,14 +28,14 @@ export const base64ToWebP = (base64: string) => {
         (data) => {
           if (!data) {
             reject(
-              "Could not convert image to WebP (no data in toBlob callback)"
+              "Could not convert image to WebP (no data in toBlob callback)",
             );
             return;
           }
           resolve(data);
         },
         "image/webp",
-        90
+        90,
       );
     };
     image.onerror = (error) => reject(error);

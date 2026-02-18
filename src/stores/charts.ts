@@ -62,15 +62,13 @@ const MusicCollageParser = z.object({
 });
 export type MusicCollage = z.infer<typeof MusicCollageParser>;
 
-const ChartTypeParser = z.union([
-  z.literal("musicCollage"),
-  z.literal("spotify-artists"),
-  z.literal("spotify-tracks"),
-  z.literal("lastfm-top-5"),
-  z.literal("lastfm-collage"),
-  z.literal("tier-list"),
-]);
-export type ChartType = z.infer<typeof ChartTypeParser>;
+export type ChartType =
+  | "musicCollage"
+  | "spotify-artists"
+  | "spotify-tracks"
+  | "lastfm-top-5"
+  | "lastfm-collage"
+  | "tier-list";
 
 export const EnabledChartTypes: Partial<{ [key in ChartType]: string }> = {
   musicCollage: "Music Collage",
@@ -108,10 +106,11 @@ export const DiscriminatedChartOptionsParser = z.discriminatedUnion("type", [
     options: z.object({}),
   }),
 ]);
-const ChartParser = CommonChartOptionsParser.and(
-  DiscriminatedChartOptionsParser
-);
-export type Chart = z.infer<typeof ChartParser>;
+// const ChartParser = CommonChartOptionsParser.and(
+//   DiscriminatedChartOptionsParser
+// );
+export type Chart = z.infer<typeof CommonChartOptionsParser> &
+  z.infer<typeof DiscriminatedChartOptionsParser>;
 export type ChartWithoutId = Omit<Chart, "id">;
 
 const MaxNumberOfRows = 10;
@@ -141,6 +140,7 @@ const getMusicCollageDefaultOptions = (): MusicCollage => ({
   imageFit: "cover",
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DefaultOptionsForChartType: Partial<{ [key in ChartType]: () => any }> = {
   musicCollage: getMusicCollageDefaultOptions,
 };
@@ -170,7 +170,7 @@ const getNewChartWithDefaults = ({
 };
 
 export const isMusicCollageChart = (
-  chart: Chart | undefined
+  chart: Chart | undefined,
 ): chart is Chart & {
   type: "musicCollage";
   options: MusicCollage;
@@ -189,7 +189,7 @@ interface ChartStore {
 
   setMusicCollageItem: (
     index: number,
-    item: Partial<Omit<MusicCollageItem, "id">>
+    item: Partial<Omit<MusicCollageItem, "id">>,
   ) => void;
   moveMusicCollageItem: (oldIndex: number, newIndex: number) => void;
 
@@ -218,10 +218,10 @@ const useChartStore = create<ChartStore>()(
         set(
           produce((state: ChartStore) => {
             const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
+              (chart) => chart.id === state.selectedChartId,
             );
             if (selectedChart) selectedChart.title = title;
-          })
+          }),
         );
       },
 
@@ -229,12 +229,12 @@ const useChartStore = create<ChartStore>()(
         set(
           produce((state: ChartStore) => {
             const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
+              (chart) => chart.id === state.selectedChartId,
             );
             if (!selectedChart) return;
             if (
               !confirm(
-                "Changing the chart type will reset all options. Are you sure?"
+                "Changing the chart type will reset all options. Are you sure?",
               )
             )
               return;
@@ -245,18 +245,18 @@ const useChartStore = create<ChartStore>()(
             } else {
               selectedChart.options = {};
             }
-          })
+          }),
         );
       },
 
       setMusicCollageItem: (
         index: number,
-        item: Partial<Omit<MusicCollageItem, "id">>
+        item: Partial<Omit<MusicCollageItem, "id">>,
       ) => {
         set(
           produce((state: ChartStore) => {
             const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
+              (chart) => chart.id === state.selectedChartId,
             );
             if (!isMusicCollageChart(selectedChart)) {
               return;
@@ -266,7 +266,7 @@ const useChartStore = create<ChartStore>()(
               ...existingItem,
               ...item,
             };
-          })
+          }),
         );
       },
 
@@ -274,7 +274,7 @@ const useChartStore = create<ChartStore>()(
         set(
           produce((state: ChartStore) => {
             const selectedChart = state.charts.find(
-              (chart) => chart.id === state.selectedChartId
+              (chart) => chart.id === state.selectedChartId,
             );
 
             if (!isMusicCollageChart(selectedChart)) {
@@ -299,7 +299,7 @@ const useChartStore = create<ChartStore>()(
             }
 
             items.splice(newIndex, 0, itemToInsert);
-          })
+          }),
         );
       },
 
@@ -334,11 +334,11 @@ const useChartStore = create<ChartStore>()(
                 "musicCollageEditingTitleFor",
                 "musicCollageAddingCoverTo",
                 "isDownloading",
-              ].includes(key)
-          )
+              ].includes(key),
+          ),
         ),
-    }
-  )
+    },
+  ),
 );
 
 export const getSelectedChart = () => {
@@ -420,7 +420,7 @@ export const useSetSelectedChartType = () =>
 
 export const useSelectedMusicCollageEditingTitleFor = (): [
   number,
-  (itemIndex: number) => void
+  (itemIndex: number) => void,
 ] =>
   useChartStore((s) => [
     s.musicCollageEditingTitleFor,
@@ -429,7 +429,7 @@ export const useSelectedMusicCollageEditingTitleFor = (): [
 
 export const useSelectedMusicCollageAddingCoverTo = (): [
   number,
-  (itemIndex: number) => void
+  (itemIndex: number) => void,
 ] =>
   useChartStore((s) => [
     s.musicCollageAddingCoverTo,
@@ -446,7 +446,7 @@ export const getMusicCollageItem = (index: number) => {
   const state = useChartStore.getState();
 
   const selectedChart = state.charts.find(
-    (chart) => chart.id === state.selectedChartId
+    (chart) => chart.id === state.selectedChartId,
   );
 
   if (!isMusicCollageChart(selectedChart)) {
@@ -462,7 +462,7 @@ export const useSetIsDownloading = () =>
   useChartStore((s) => s.setIsDownloading);
 
 export function useSelectedMusicCollageProperty<
-  Prop extends keyof MusicCollage
+  Prop extends keyof MusicCollage,
 >(prop: Prop, defaultValue?: unknown): MusicCollage[Prop] {
   return useChartStore((s) => {
     const selectedChart = s.charts.find((c) => c.id === s.selectedChartId);
@@ -475,17 +475,17 @@ export function useSelectedMusicCollageProperty<
 }
 
 export function setSelectedMusicCollageProperty<
-  Prop extends keyof MusicCollage
+  Prop extends keyof MusicCollage,
 >(prop: Prop, value: MusicCollage[Prop]) {
   useChartStore.setState(
     produce((state: ChartStore) => {
       const selectedChart = state.charts.find(
-        (c) => c.id === state.selectedChartId
+        (c) => c.id === state.selectedChartId,
       );
       if (!isMusicCollageChart(selectedChart)) {
         throw new Error("Selected chart is not a music collage");
       }
       selectedChart.options[prop] = value;
-    })
+    }),
   );
 }

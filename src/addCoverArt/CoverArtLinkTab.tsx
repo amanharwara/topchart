@@ -1,10 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable jsx-a11y/alt-text */
-
 import IconButton from "../components/IconButton";
 import CloseIcon from "../icons/CloseIcon";
 import DownloadIcon from "../icons/DownloadIcon";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Image, storeImageToDB } from "../stores/imageDB";
 import ErrorIcon from "../icons/ErrorIcon";
 import Spinner from "../components/Spinner";
@@ -49,7 +46,7 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
     {
       enabled: false,
       retry: 0,
-    }
+    },
   );
 
   const reset = () => {
@@ -57,7 +54,7 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
     linkInputRef.current?.focus();
   };
 
-  const linkInputId = `link-input-${Date.now()}`;
+  const linkInputId = "link-input-" + useId();
 
   const isAddingToSpecificItem = itemIndex > -1;
 
@@ -121,6 +118,7 @@ export const CoverArtLinkTab = ({ itemIndex }: { itemIndex: number }) => {
         <div className="flex items-center justify-center h-36 w-36 rounded bg-slate-600">
           {isFetching && <Spinner className="w-10 h-10" />}
           {image && (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={image.content}
               {...dragAttributes}

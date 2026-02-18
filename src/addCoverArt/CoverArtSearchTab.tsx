@@ -75,7 +75,7 @@ const SearchResult = ({
     {
       retry: 1,
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const SearchResult = ({
     <div
       className={classNames(
         "flex items-center justify-center square-aspect-ratio rounded select-none bg-slate-600",
-        isAddingToSpecificItem && "cursor-pointer"
+        isAddingToSpecificItem && "cursor-pointer",
       )}
       onClick={() => {
         if (!isAddingToSpecificItem || !image) return;
@@ -134,7 +134,7 @@ export const CoverArtSearchTab = ({ itemIndex }: { itemIndex: number }) => {
   const [searchQuery, setSearchQuery] = useState(() =>
     itemIndex > -1 && recentsStore.getState().lastSearchQuery
       ? recentsStore.getState().lastSearchQuery
-      : ""
+      : "",
   );
 
   const {
@@ -177,14 +177,16 @@ export const CoverArtSearchTab = ({ itemIndex }: { itemIndex: number }) => {
           console.error(error);
           throw error;
         } else {
-          throw new Error("Could not search");
+          throw new Error("Could not search", {
+            cause: error,
+          });
         }
       }
     },
     {
       enabled: false,
       retry: 0,
-    }
+    },
   );
 
   return (

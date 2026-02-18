@@ -114,7 +114,7 @@ function Result({
     {
       retry: 1,
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   useEffect(() => {
@@ -154,6 +154,7 @@ function Result({
 
   const dragAttributes = isDraggable
     ? {
+        // eslint-disable-next-line react-hooks/refs
         ref: mergeRefs([setNodeRef, draggableRef]),
         style: dragImageStyle,
         ...attributes,
@@ -170,7 +171,7 @@ function Result({
           "flex items-center p-2 gap-4 select-none hover:cursor-grab hover:bg-slate-200 hover:dark:bg-slate-700 rounded",
           isAddingToSpecificItem && "hover:cursor-pointer",
           isLoading && "justify-center cursor-wait",
-          isDragging && "cursor-grabbing fixed [&>*:not(img)]:hidden"
+          isDragging && "cursor-grabbing fixed [&>*:not(img)]:hidden",
         )}
         onClick={() => {
           if (!isAddingToSpecificItem || !image) return;
@@ -231,7 +232,7 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
     timeRange,
     selectedChart?.type === "musicCollage"
       ? selectedChart.options.rows * selectedChart.options.columns
-      : 10
+      : 10,
   );
 
   return (
@@ -312,7 +313,7 @@ export function CoverArtSpotifyTab({ itemIndex }: { itemIndex: number }) {
                   title,
                   image: image.id,
                 });
-              })
+              }),
             );
 
             setAddingCoverTo(-1);

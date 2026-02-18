@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 
 import classNames from "../utils/classNames";
@@ -49,7 +48,7 @@ const RecentlyUploadedImage = ({
     },
     {
       networkMode: "always",
-    }
+    },
   );
 
   if (!isFetching && !image) return null;
@@ -190,7 +189,7 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
       handleFileInput(
         Array.from(event.dataTransfer.items)
           .map((item) => item.getAsFile())
-          .filter((item) => !!item) as File[]
+          .filter((item) => !!item) as File[],
       );
 
       event.dataTransfer.clearData();
@@ -210,7 +209,7 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
 
   const recentlyUploadedImageIds = useStore(
     recentsStore,
-    (s) => s.recentlyUploadedImages
+    (s) => s.recentlyUploadedImages,
   );
 
   return (
@@ -218,7 +217,7 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
       <button
         className={classNames(
           "flex w-full cursor-pointer flex-col items-center gap-1 rounded border-2 border-dashed border-slate-600 py-6 transition-colors duration-150 hover:border-slate-500",
-          isDraggingFiles && "border-slate-500"
+          isDraggingFiles && "border-slate-500",
         )}
         onClick={() => {
           selectFiles().then((files) => {
@@ -280,14 +279,14 @@ export const CoverArtUploadTab = ({ itemIndex }: { itemIndex: number }) => {
                   <CaretDownIcon
                     className={classNames(
                       "w-4 h-4 transition-transform",
-                      isExpanded && "rotate-180"
+                      isExpanded && "rotate-180",
                     )}
                   />
                 </RacButton>
                 <DisclosurePanel
                   className={classNames(
                     "flex-col gap-2.5 pt-1.5 pb-1",
-                    isExpanded && "flex"
+                    isExpanded && "flex",
                   )}
                 >
                   <div className="grid grid-cols-3 gap-2">

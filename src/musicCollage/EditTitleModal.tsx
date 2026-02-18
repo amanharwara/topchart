@@ -20,6 +20,7 @@ const EditTitleModal = () => {
   const [title, setTitle] = useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTitle(itemToEdit?.title ?? "");
   }, [itemToEdit]);
 

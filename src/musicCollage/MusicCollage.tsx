@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 
 import classNames from "../utils/classNames";
@@ -117,7 +116,7 @@ const CollageItem = ({
       <div
         className={classNames(
           "relative h-40 w-40 select-none bg-white",
-          isDragging && "ring-2 ring-blue-700"
+          isDragging && "ring-2 ring-blue-700",
         )}
         ref={setNodeRef}
         style={dragStyle}
@@ -212,7 +211,7 @@ const MusicCollage = () => {
   const columns = collage.columns;
 
   const hasAnyTitle = collage.items.some(
-    (item: MusicCollageItem) => !!item.title
+    (item: MusicCollageItem) => !!item.title,
   );
 
   const shouldPositionTitlesBelowCover = collage.positionTitlesBelowCover;
@@ -229,7 +228,7 @@ const MusicCollage = () => {
         className={classNames(
           "flex flex-col w-max select-none",
           padding(),
-          font
+          font,
         )}
         style={{
           background: currentBackground,
@@ -268,7 +267,7 @@ const MusicCollage = () => {
                       key={row}
                       className={classNames(
                         "h-40",
-                        !collage.groupTitles && "contents"
+                        !collage.groupTitles && "contents",
                       )}
                     >
                       {visibleItems.map((item, index) => {

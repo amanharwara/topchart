@@ -35,7 +35,7 @@ function generateRandomString(length: number) {
 
 function base64encode(string: ArrayBuffer) {
   return btoa(
-    String.fromCharCode.apply(null, Array.from(new Uint8Array(string)))
+    String.fromCharCode.apply(null, Array.from(new Uint8Array(string))),
   )
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
@@ -131,7 +131,7 @@ async function fetchAndSetSpotifyAccessToken(code: string) {
 
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch spotify access token (HTTP Status: ${response.status})`
+      `Failed to fetch spotify access token (HTTP Status: ${response.status})`,
     );
   }
 
@@ -171,7 +171,7 @@ async function refreshSpotifyAccessToken() {
 
   if (!response.ok) {
     throw new Error(
-      `Failed to refresh spotify access token (HTTP Status: ${response.status})`
+      `Failed to refresh spotify access token (HTTP Status: ${response.status})`,
     );
   }
 
@@ -194,7 +194,7 @@ async function refreshSpotifyAccessToken() {
 async function getLatestSpotifyAccessToken() {
   const accessToken = localStorage.getItem(SpotifyAccessTokenKey);
   const accessTokenExpiresAt = localStorage.getItem(
-    SpotifyAccessTokenExpiresAtKey
+    SpotifyAccessTokenExpiresAtKey,
   );
 
   if (!accessToken || !accessTokenExpiresAt) {
@@ -225,7 +225,7 @@ async function fetchSpotifyUser() {
 
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch spotify user (HTTP Status: ${response.status})`
+      `Failed to fetch spotify user (HTTP Status: ${response.status})`,
     );
   }
 
@@ -271,7 +271,7 @@ const SpotifyTrackParser = z.object({
   artists: z.array(
     SpotifyArtistParser.omit({
       images: true,
-    })
+    }),
   ),
   album: SpotifyTrackAlbumParser,
   type: z.literal("track"),
@@ -283,12 +283,11 @@ const SpotifyTopItemsListParser = z.object({
     .discriminatedUnion("type", [SpotifyArtistParser, SpotifyTrackParser])
     .array(),
 });
-type SpotifyTopItemsList = z.infer<typeof SpotifyTopItemsListParser>;
 
 export function useSpotifyTopItems(
   type: SpotifyTopType,
   range: SpotifyTimeRange,
-  limit = 10
+  limit = 10,
 ) {
   return useQuery(
     [type, range, limit],
@@ -305,12 +304,12 @@ export function useSpotifyTopItems(
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch spotify top items (HTTP Status: ${response.status})`
+          `Failed to fetch spotify top items (HTTP Status: ${response.status})`,
         );
       }
 
@@ -322,6 +321,6 @@ export function useSpotifyTopItems(
     },
     {
       retry: 0,
-    }
+    },
   );
 }

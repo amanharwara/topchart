@@ -24,8 +24,9 @@ SOFTWARE.
 
 import { MutableRefObject, Ref, RefCallback } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mergeRefs<T = any>(
-  refs: Array<MutableRefObject<T> | Ref<T>>
+  refs: Array<MutableRefObject<T> | Ref<T>>,
 ): RefCallback<T> {
   return (value) => {
     refs.forEach((ref) => {

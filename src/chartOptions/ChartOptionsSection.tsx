@@ -12,8 +12,8 @@ import {
   useSelectedChart,
   setSelectedChartId,
   useSetSelectedChartTitle,
-  EnabledChartTypes,
-  useSetSelectedChartType,
+  // EnabledChartTypes,
+  // useSetSelectedChartType,
   ChartType,
   useSelectedChartType,
 } from "../stores/charts";
@@ -100,6 +100,7 @@ const CurrentChartOption = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentTitle(selectedChart?.title);
   }, [selectedChart]);
 
@@ -146,7 +147,7 @@ const CurrentChartOption = () => {
               label="Delete chart"
               onClick={() => {
                 const shouldDeleteChart = confirm(
-                  `Do you want to delete chart "${selectedChart.title}"?`
+                  `Do you want to delete chart "${selectedChart.title}"?`,
                 );
 
                 if (shouldDeleteChart) {
@@ -200,27 +201,27 @@ const CurrentChartOption = () => {
   );
 };
 
-const ChartTypeOption = () => {
-  const chartType = useSelectedChartType();
-  const setSelectedChartType = useSetSelectedChartType();
+// const ChartTypeOption = () => {
+//   const chartType = useSelectedChartType();
+//   const setSelectedChartType = useSetSelectedChartType();
 
-  return (
-    <div className="flex flex-col gap-2.5">
-      <div className="text-lg font-semibold">Chart type:</div>
-      <div className="flex gap-3">
-        <Select
-          aria-label="Chart type"
-          value={chartType}
-          setValue={(type) => setSelectedChartType(type as ChartType)}
-          options={Object.entries(EnabledChartTypes).map(([value, label]) => ({
-            value,
-            label,
-          }))}
-        />
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="flex flex-col gap-2.5">
+//       <div className="text-lg font-semibold">Chart type:</div>
+//       <div className="flex gap-3">
+//         <Select
+//           aria-label="Chart type"
+//           value={chartType}
+//           setValue={(type) => setSelectedChartType(type as ChartType)}
+//           options={Object.entries(EnabledChartTypes).map(([value, label]) => ({
+//             value,
+//             label,
+//           }))}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
 
 const OptionsForCurrentType = () => {
   const chartType = useSelectedChartType();
