@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { MutableRefObject, LegacyRef, RefCallback } from "react";
+import { MutableRefObject, Ref, RefCallback } from "react";
 
 export function mergeRefs<T = any>(
-  refs: Array<MutableRefObject<T> | LegacyRef<T>>
+  refs: Array<MutableRefObject<T> | Ref<T>>
 ): RefCallback<T> {
   return (value) => {
     refs.forEach((ref) => {
