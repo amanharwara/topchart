@@ -200,7 +200,7 @@ async function getAllChartsFromFile(file: File): Promise<ParsedChart[]> {
 
   for (let i = 0; i < numberOfEntries; i++) {
     const entry = entries[i];
-    if (!entry || !entry.getData) continue;
+    if (!entry || entry.directory) continue;
     try {
       const text = await entry.getData(new zip.TextWriter());
       const chart = parseChartFromText(text);
